@@ -6,8 +6,8 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: '22'
           cache: npm
@@ -24,7 +24,7 @@ jobs:
       - run: cargo build --locked --no-default-features --bin keycast-bridge-demo
       - run: node scripts/smoke.mjs
       - run: cargo build --locked --release
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: keycast-bridge-linux-x86_64-test-build
           path: |
