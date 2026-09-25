@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Keycast Bridge
+Comment=Show keyboard shortcuts in OBS
+Comment[fr]=Afficher les raccourcis clavier dans OBS
+Exec=/usr/local/bin/keycast-bridge
+Icon=input-keyboard
+Terminal=false
+Categories=AudioVideo;Utility;
+StartupNotify=true

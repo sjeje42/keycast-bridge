@@ -1,0 +1,36 @@
+[package]
+name = "keycast-bridge"
+version = "0.1.0-alpha.1"
+edition = "2021"
+license = "GPL-3.0-only"
+description = "Local keyboard shortcut overlay for OBS on Linux / Wayland"
+authors = ["Jérôme Stavrianos"]
+
+[features]
+default = ["gui"]
+gui = ["dep:gtk4"]
+
+[dependencies]
+anyhow = "1"
+axum = { version = "0.8", features = ["ws"] }
+evdev = "0.13"
+gtk4 = { version = "0.9", optional = true, features = ["v4_8"] }
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "net", "sync", "time", "macros"] }
+uuid = { version = "1", features = ["v4"] }
+xkbcommon = "0.8"
+
+[[bin]]
+name = "keycast-bridge"
+path = "src/bin/gui.rs"
+required-features = ["gui"]
+
+[[bin]]
+name = "keycast-bridge-capture"
+path = "src/bin/capture.rs"
+
+[[bin]]
+name = "keycast-bridge-demo"
+path = "src/bin/demo.rs"

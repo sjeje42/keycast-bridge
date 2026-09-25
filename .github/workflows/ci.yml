@@ -1,0 +1,33 @@
+name: Build and test
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Native dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libxkbcommon-dev pkg-config
+      - name: Rust stable
+        run: rustup update stable --no-self-update && rustup default stable && rustup component add rustfmt clippy
+      - run: npm --prefix web ci
+      - run: npm --prefix web run check && npm --prefix web run build
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked
+      - run: cargo build --locked --no-default-features --bin keycast-bridge-demo
+      - run: node scripts/smoke.mjs
+      - run: cargo build --locked --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keycast-bridge-linux-x86_64-test-build
+          path: |
+            target/release/keycast-bridge
+            target/release/keycast-bridge-capture
+            target/release/keycast-bridge-demo
