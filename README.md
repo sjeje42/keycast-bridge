@@ -1,8 +1,19 @@
 # Keycast Bridge
 
+**English** · [Français](README.fr.md)
+
+[![Rust stable](https://img.shields.io/badge/Rust-stable-000000?logo=rust&logoColor=white)](Cargo.toml)
+[![GTK4](https://img.shields.io/badge/GTK-4-7FE719?logo=gtk&logoColor=white)](Cargo.toml)
+[![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00?logo=svelte&logoColor=white)](web/package.json)
+[![Linux Debian 13](https://img.shields.io/badge/Linux-Debian_13-A81D33?logo=debian&logoColor=white)](docs/TESTING.md)
+[![Wayland](https://img.shields.io/badge/Wayland-native-F0C674)](README.md#features)
+[![OBS Browser Source](https://img.shields.io/badge/OBS-Browser_Source-302E31?logo=obsstudio&logoColor=white)](README.md#obs-setup)
+[![Build and test](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml)
+[![License GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
+
 **A local keyboard shortcut overlay for OBS on Linux / Wayland.**
 
-[Documentation française](docs/README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
+[Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
 Version **0.1.0-alpha.1**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
@@ -62,7 +73,7 @@ cargo run --locked --no-default-features --bin keycast-bridge-demo
 
 The demo prints a local URL and sends synthetic shortcuts every three seconds. It does not open any input device. Only one app/demo can use port 48732 at a time.
 
-The generated web assets are embedded into Rust binaries; build the web frontend before Cargo. Run `npm --prefix web run check` and `cargo fmt --check` before committing. CI builds the GTK app and runs tests; an included workflow is not a claim that it has run on GitHub.
+The generated web assets are embedded into Rust binaries; build the web frontend before Cargo. Run `npm --prefix web run check` and `cargo fmt --check` before committing. CI builds the GTK app, checks formatting and linting, and runs unit and HTTP/WebSocket integration tests. The badge above links to the current workflow status.
 
 ## Current limits
 
