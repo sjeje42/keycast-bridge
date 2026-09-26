@@ -13,7 +13,7 @@
 
 **Afficher les raccourcis clavier dans OBS, sous Linux et Wayland.**
 
-Version **0.1.0-alpha.1**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS en paquet Debian. Le fonctionnement sur d’autres compositeurs reste à tester.
+Version **0.1.0-alpha.2**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -27,6 +27,20 @@ Version **0.1.0-alpha.1**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-onl
 - Raccourcis clavier dans une source Navigateur OBS transparente ; taille, durée et thème clair/sombre réglables.
 - Arrêt par bouton ou **Ctrl+Alt+F12**, aperçu et démonstration sans accès au clavier.
 - Aucun historique des frappes ni télémétrie ; accès à l’overlay limité à la machine locale avec une URL aléatoire par lancement.
+
+## Paquet Debian 13 (amd64)
+
+Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
+
+```sh
+sudo apt install ./keycast-bridge_0.1.0~alpha.2-1_amd64.deb
+```
+
+Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.
+
+Cible : **Debian 13, PC Intel/AMD 64 bits**. Ubuntu et les autres versions de Debian ne sont pas validés. Désinstaller une ancienne installation depuis les sources avec son script avant d’installer le paquet. Le composant seul installé manuellement dans `/usr/local/libexec` peut rester : le paquet utilise `/usr/libexec`.
+
+**OBS :** le paquet Debian ne fournit pas la source Navigateur. Utiliser le [Flatpak officiel d’OBS](https://obsproject.com/kb/linux-installation), qui l’inclut. Keycast Bridge reste installé avec le paquet Debian.
 
 ## Installation depuis les sources
 
@@ -70,7 +84,7 @@ L’option **Afficher aussi les touches de texte** permet les raccourcis à une 
 - **Pas d’arrêt automatique au verrouillage de GNOME.** Arrêter avant de verrouiller/changer de session.
 - Un seul clavier à la fois. Après débranchement : actualiser, sélectionner à nouveau et redémarrer.
 - Changement de disposition dans GNOME : arrêter, choisir la nouvelle disposition, redémarrer.
-- Pas encore de souris, de composition des accents/Compose/IME, de préférences persistantes, de paquet `.deb` ou de synchronisation initiale Verr. Maj/Verr. Num.
+- Pas encore de souris, de composition des accents/Compose/IME, de préférences persistantes ou de synchronisation initiale Verr. Maj/Verr. Num.
 - Relâcher les modificateurs avant de lancer la capture.
 
 C’est une version alpha : les essais sur un véritable clavier sous GNOME et dans OBS restent indispensables avant une diffusion publique. Voir [la procédure de test](docs/TESTING.md).

@@ -13,7 +13,10 @@ use std::{
     time::Duration,
 };
 
-const HELPER: &str = "/usr/local/libexec/keycast-bridge-capture";
+const HELPER: &str = match option_env!("KEYCAST_HELPER_PATH") {
+    Some(path) => path,
+    None => "/usr/local/libexec/keycast-bridge-capture",
+};
 fn tr(fr: bool, french: &'static str, english: &'static str) -> &'static str {
     if fr {
         french
