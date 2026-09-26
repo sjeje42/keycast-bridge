@@ -42,20 +42,115 @@ Cible : **Debian 13, PC Intel/AMD 64 bits**. Ubuntu et les autres versions de De
 
 **OBS :** le paquet Debian ne fournit pas la source Navigateur. Utiliser le [Flatpak officiel d’OBS](https://obsproject.com/kb/linux-installation), qui l’inclut. Keycast Bridge reste installé avec le paquet Debian.
 
-## Installation depuis les sources
+## Installation depuis les sources — autres distributions Linux
+
+Cette méthode compile Keycast Bridge sur la machine cible, sans créer de paquet. **GTK 4.8 minimum**, Rust stable récent, Node.js 22 et npm sont nécessaires. Les commandes ci-dessous sont prévues pour Bash.
+
+| Distribution | Méthode | Validation |
+| --- | --- | --- |
+| Debian 13 | Paquet ci-dessus ou compilation | Capture/OBS confirmés sur GNOME ; installation du paquet testée en conteneur |
+| Ubuntu 24.04 LTS et versions ultérieures | Compilation avec APT | Compilation et tests automatisés sur Ubuntu 24.04 ; capture sur poste réel à valider |
+| Linux Mint 22.x (base Ubuntu 24.04) | Même procédure qu’Ubuntu | À valider sur poste réel |
+| Fedora Workstation, version maintenue | Compilation avec DNF | Procédure proposée, pas encore testée sur Fedora |
+| Manjaro / Arch Linux à jour | Compilation avec Pacman | Procédure proposée, pas encore testée sur ces distributions |
+
+Le paquet `.deb` fourni reste destiné à Debian 13. Pour les autres distributions, suivre les étapes ci-dessous. Le fonctionnement sur tous les compositeurs Wayland n’est pas encore validé.
+
+### 1. Installer les dépendances de sa distribution
+
+**Debian 13 / Ubuntu 24.04+ / Linux Mint 22.x :**
 
 ```sh
-sudo apt install build-essential pkg-config libgtk-4-dev libxkbcommon-dev libxkbcommon-tools xkb-data nodejs npm cargo rustc pkexec
+sudo apt update
+sudo apt install build-essential pkg-config git curl ca-certificates libgtk-4-dev libxkbcommon-dev xkb-data pkexec polkitd xdg-utils
 ```
 
-Utiliser Rust stable récent (les dépendances verrouillées peuvent demander une version plus récente que celle de Debian). Node.js 22 conseillé. Depuis le dossier du projet, **avec ton utilisateur habituel** :
+**Fedora Workstation (installation classique avec DNF) :**
 
 ```sh
-./scripts/build.sh
-sudo ./scripts/install.sh
+sudo dnf install gcc gcc-c++ make pkgconf-pkg-config git curl ca-certificates gtk4-devel libxkbcommon-devel xkeyboard-config polkit xdg-utils
 ```
 
-Ouvrir **Keycast Bridge** dans les applications GNOME. L’interface propose un choix Français / English. Le serveur et l’interface ne tournent jamais en administrateur. Seule l’ouverture du clavier choisi demande une autorisation ; les privilèges sont ensuite abandonnés.
+Cette procédure ne couvre pas Fedora Silverblue/Kinoite et les autres variantes immuables.
+
+**Manjaro / Arch Linux :**
+
+```sh
+sudo pacman -Syu --needed base-devel pkgconf git curl ca-certificates gtk4 libxkbcommon xkeyboard-config polkit xdg-utils
+```
+
+Cette commande met également le système à jour pour éviter une mise à jour partielle. Redémarrer si la mise à jour du système le demande, puis reprendre ici.
+
+### 2. Préparer Rust et Node.js
+
+Installer [Rust avec rustup](https://rust-lang.org/tools/install/) avec son utilisateur habituel. Si rustup est déjà installé, passer directement à la commande de mise à jour :
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+. "$HOME/.cargo/env"
+rustup update stable
+```
+
+Pour utiliser **Node.js 22 avec npm**, comme dans les tests GitHub, installer [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) si nécessaire, sans `sudo` :
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "$HOME/.nvm" || printf %s "$XDG_CONFIG_HOME/nvm")"
+. "$NVM_DIR/nvm.sh"
+nvm install 22
+nvm use 22
+```
+
+Si Node.js 22 et npm sont déjà disponibles, l’étape nvm est facultative. Vérifier les outils :
+
+```sh
+rustup run stable rustc --version
+node --version
+npm --version
+pkg-config --modversion gtk4
+command -v pkexec
+```
+
+### 3. Télécharger, compiler et installer
+
+```sh
+git clone https://github.com/sjeje42/keycast-bridge.git
+cd keycast-bridge
+RUSTUP_TOOLCHAIN=stable sh scripts/build.sh
+sudo sh scripts/install.sh
+```
+
+Tant que le dépôt est privé, utiliser un compte GitHub autorisé pour le clonage, ou télécharger **Code → Download ZIP**, extraire l’archive et ouvrir un terminal dans le dossier contenant `Cargo.toml`. L’archive de sources comprend `scripts/` et `data/` ; l’ancienne archive des trois exécutables seuls ne suffit pas pour cette procédure.
+
+La compilation s’effectue **sans sudo**. Le script d’installation place les exécutables dans `/usr/local/bin`, le composant de capture dans `/usr/local/libexec`, et installe le lanceur et la règle Polkit. Cette étape est indispensable : lancer seulement l’exécutable compilé n’installe pas le composant de capture.
+
+Si le paquet Debian est déjà installé, le retirer avec `sudo apt remove keycast-bridge` avant une installation depuis les sources : les deux méthodes partagent la règle Polkit.
+
+### 4. Lancer et configurer OBS
+
+Ouvrir **Keycast Bridge** depuis le menu des applications, ou exécuter `/usr/local/bin/keycast-bridge`, sans sudo. Dans une session graphique minimale, un agent d’authentification Polkit doit être actif pour afficher la demande d’autorisation.
+
+OBS doit proposer **Sources → + → Navigateur**. Si cette source manque, suivre les [instructions officielles OBS pour Linux](https://obsproject.com/kb/linux-installation) pour installer le Flatpak officiel. Keycast Bridge peut rester installé nativement sur la distribution. Voir la configuration détaillée ci-dessous.
+
+### Mise à jour et désinstallation de la version compilée
+
+Fermer Keycast Bridge avant de réinstaller. Depuis un clone Git sans modifications locales :
+
+```sh
+git pull --ff-only
+RUSTUP_TOOLCHAIN=stable sh scripts/build.sh
+sudo sh scripts/install.sh
+```
+
+Avec une archive ZIP, télécharger les nouvelles sources et refaire la compilation/installation. Pour désinstaller **la version compilée**, depuis le dossier des sources :
+
+```sh
+sudo sh scripts/uninstall.sh
+```
+
+Pour **le paquet Debian**, utiliser uniquement `sudo apt remove keycast-bridge`, pas le script.
+
+Noms des dépendances et commandes de gestion des paquets : [Ubuntu](https://packages.ubuntu.com/noble/libgtk-4-dev), [Fedora GTK4](https://packages.fedoraproject.org/pkgs/gtk4/gtk4-devel/), [Fedora libxkbcommon](https://packages.fedoraproject.org/pkgs/libxkbcommon/libxkbcommon-devel/), [Arch GTK4](https://archlinux.org/packages/extra/x86_64/gtk4/), [Manjaro Pacman](https://wiki.manjaro.org/index.php/Pacman_Overview).
 
 ## Premier tutoriel dans OBS
 
@@ -95,11 +190,7 @@ Après installation, lancer `keycast-bridge-demo` dans un terminal et copier l�
 
 ## Désinstallation
 
-```sh
-sudo ./scripts/uninstall.sh
-```
-
-Le script retire uniquement les fichiers installés de Keycast Bridge.
+Paquet Debian : `sudo apt remove keycast-bridge`. Installation depuis les sources : `sudo sh scripts/uninstall.sh`, depuis le dossier des sources. Utiliser uniquement la méthode correspondant à son installation.
 
 ## Développement et tests
 

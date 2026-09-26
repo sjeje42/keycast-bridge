@@ -47,22 +47,115 @@ Targets **Debian 13 on Intel/AMD 64-bit PCs**. Other Debian versions and Ubuntu 
 
 **OBS:** Debian’s OBS package has no Browser Source. Use the [official OBS Flatpak](https://obsproject.com/kb/linux-installation), which includes it. Keycast Bridge itself remains a Debian package.
 
-## Build on Debian 13
+## Install from source — other Linux distributions
 
-Install build tools with your usual package manager:
+This method compiles Keycast Bridge on the target machine without creating a package. Requires **GTK 4.8 or newer**, current stable Rust, Node.js 22 and npm. Commands below assume Bash.
+
+| Distribution | Method | Validation |
+| --- | --- | --- |
+| Debian 13 | Package above or source build | Capture/OBS confirmed on GNOME; package installation tested in a container |
+| Ubuntu 24.04 LTS and later | Build with APT dependencies | Automated builds and tests on Ubuntu 24.04; real desktop capture still needs testing |
+| Linux Mint 22.x (Ubuntu 24.04 base) | Same procedure as Ubuntu | Real desktop testing pending |
+| Fedora Workstation, supported release | Build with DNF dependencies | Proposed instructions, not yet tested on Fedora |
+| Up-to-date Manjaro / Arch Linux | Build with Pacman dependencies | Proposed instructions, not yet tested on these distributions |
+
+The provided `.deb` remains intended for Debian 13. Use the source instructions below for other distributions. Compatibility with every Wayland compositor has not yet been validated.
+
+### 1. Install your distribution’s dependencies
+
+**Debian 13 / Ubuntu 24.04+ / Linux Mint 22.x:**
 
 ```sh
-sudo apt install build-essential pkg-config libgtk-4-dev libxkbcommon-dev libxkbcommon-tools xkb-data nodejs npm cargo rustc pkexec
+sudo apt update
+sudo apt install build-essential pkg-config git curl ca-certificates libgtk-4-dev libxkbcommon-dev xkb-data pkexec polkitd xdg-utils
 ```
 
-Use a current stable Rust toolchain (the locked dependencies may require a newer version than the distribution provides). Node.js 22 is recommended. Build **as your ordinary user**, not root:
+**Fedora Workstation (traditional DNF installation):**
 
 ```sh
-./scripts/build.sh
-sudo ./scripts/install.sh
+sudo dnf install gcc gcc-c++ make pkgconf-pkg-config git curl ca-certificates gtk4-devel libxkbcommon-devel xkeyboard-config polkit xdg-utils
 ```
 
-Launch **Keycast Bridge** from the GNOME applications menu. `sudo ./scripts/uninstall.sh` removes only the installed application files.
+These instructions do not cover Fedora Silverblue/Kinoite or other immutable variants.
+
+**Manjaro / Arch Linux:**
+
+```sh
+sudo pacman -Syu --needed base-devel pkgconf git curl ca-certificates gtk4 libxkbcommon xkeyboard-config polkit xdg-utils
+```
+
+This also updates the system to avoid partial upgrades. If the system update requires a reboot, reboot before continuing.
+
+### 2. Set up Rust and Node.js
+
+Install [Rust with rustup](https://rust-lang.org/tools/install/) as your ordinary user. If rustup is already installed, skip directly to the update command:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+. "$HOME/.cargo/env"
+rustup update stable
+```
+
+To use **Node.js 22 with npm**, matching GitHub tests, install [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) if needed, without `sudo`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "$HOME/.nvm" || printf %s "$XDG_CONFIG_HOME/nvm")"
+. "$NVM_DIR/nvm.sh"
+nvm install 22
+nvm use 22
+```
+
+Skip nvm setup if Node.js 22 and npm are already available. Check the tools:
+
+```sh
+rustup run stable rustc --version
+node --version
+npm --version
+pkg-config --modversion gtk4
+command -v pkexec
+```
+
+### 3. Download, compile and install
+
+```sh
+git clone https://github.com/sjeje42/keycast-bridge.git
+cd keycast-bridge
+RUSTUP_TOOLCHAIN=stable sh scripts/build.sh
+sudo sh scripts/install.sh
+```
+
+While the repository is private, cloning requires an authorized GitHub account. Alternatively, download **Code → Download ZIP**, extract it and open a terminal in the directory containing `Cargo.toml`. The source archive contains `scripts/` and `data/`; the older archive containing only three executables is not sufficient for this procedure.
+
+Build **without sudo**. The installation script places executables in `/usr/local/bin`, the capture helper in `/usr/local/libexec`, and installs the launcher and Polkit policy. Installation is required: running the compiled GUI alone does not install the capture helper.
+
+If the Debian package is already installed, remove it with `sudo apt remove keycast-bridge` before installing from source: both methods share the Polkit policy.
+
+### 4. Launch and configure OBS
+
+Open **Keycast Bridge** from your applications menu, or run `/usr/local/bin/keycast-bridge`, without sudo. A minimal graphical session must have a running Polkit authentication agent to display the authorization prompt.
+
+OBS must offer **Sources → + → Browser**. If missing, follow the [official OBS Linux instructions](https://obsproject.com/kb/linux-installation) to install the official Flatpak. Keycast Bridge itself can remain installed natively. See the detailed OBS setup below.
+
+### Update or remove a source installation
+
+Close Keycast Bridge before reinstalling. From an unmodified Git clone:
+
+```sh
+git pull --ff-only
+RUSTUP_TOOLCHAIN=stable sh scripts/build.sh
+sudo sh scripts/install.sh
+```
+
+For ZIP downloads, download fresh sources and repeat the build/install steps. To remove **a source installation**, run from the source directory:
+
+```sh
+sudo sh scripts/uninstall.sh
+```
+
+For **the Debian package**, use only `sudo apt remove keycast-bridge`, not the script.
+
+Dependency names and package-manager commands: [Ubuntu](https://packages.ubuntu.com/noble/libgtk-4-dev), [Fedora GTK4](https://packages.fedoraproject.org/pkgs/gtk4/gtk4-devel/), [Fedora libxkbcommon](https://packages.fedoraproject.org/pkgs/libxkbcommon/libxkbcommon-devel/), [Arch GTK4](https://archlinux.org/packages/extra/x86_64/gtk4/), [Manjaro Pacman](https://wiki.manjaro.org/index.php/Pacman_Overview).
 
 ## OBS setup
 
