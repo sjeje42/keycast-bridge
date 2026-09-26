@@ -7,6 +7,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/keycast-rustup
 sh /tmp/keycast-rustup.sh -y --profile minimal --default-toolchain stable
 . "$HOME/.cargo/env"
 export KEYCAST_HELPER_PATH=/usr/libexec/keycast-bridge-capture
-cargo test --locked
+cargo test --locked --no-default-features
 cargo build --locked --release
 sh packaging/build-deb.sh

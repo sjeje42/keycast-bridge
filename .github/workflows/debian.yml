@@ -31,7 +31,10 @@ jobs:
       - name: Test install, GUI launch, removal and reinstall on clean Debian 13
         run: docker run --rm -v "$PWD:/work:ro" -w /work debian:13-slim sh packaging/test-install.sh
       - name: Checksums
-        run: cd dist && sha256sum *.deb > SHA256SUMS
+        run: |
+          sudo chown -R "$(id -u):$(id -g)" dist
+          cd dist
+          sha256sum *.deb > SHA256SUMS
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: keycast-bridge-debian13-amd64
