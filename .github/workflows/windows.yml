@@ -2,7 +2,6 @@ name: Windows portable
 on:
   push:
     branches: [main]
-    paths: ['src/**', 'web/**', 'Cargo.*', 'packaging/windows/**', '.github/workflows/windows.yml', 'docs/WINDOWS.md']
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,7 +23,7 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           npm --prefix web run build
           exit $LASTEXITCODE
-      - uses: msys2/setup-msys2@6204bae4ecd64866443f88c0e8f7c84cb8f1bebe
+      - uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884
         with:
           msystem: UCRT64
           update: true

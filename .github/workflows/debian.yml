@@ -2,14 +2,6 @@ name: Debian 13 package
 on:
   push:
     branches: [main]
-    paths:
-      - 'packaging/build-deb.sh'
-      - 'packaging/build-in-debian.sh'
-      - 'packaging/test-install.sh'
-      - '.github/workflows/debian.yml'
-      - 'Cargo.*'
-      - 'src/**'
-      - 'web/**'
   workflow_dispatch:
 permissions:
   contents: read
