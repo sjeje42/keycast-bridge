@@ -5,7 +5,7 @@ Paquet prêt à installer pour **Debian 13, amd64 (PC Intel/AMD 64 bits)**.
 Télécharger le `.deb`, puis dans son dossier :
 
 ```sh
-sudo apt install ./keycast-bridge_0.1.0~alpha.2-1_amd64.deb
+sudo apt install ./keycast-bridge_0.1.0.alpha.2-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Interface FR/EN, capture avec autorisation administrateur, overlay transparent OBS. Aucune compilation nécessaire.

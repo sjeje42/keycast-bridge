@@ -3,7 +3,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packaging/**'
+      - 'packaging/build-deb.sh'
+      - 'packaging/build-in-debian.sh'
+      - 'packaging/test-install.sh'
       - '.github/workflows/debian.yml'
       - 'Cargo.toml'
   workflow_dispatch:

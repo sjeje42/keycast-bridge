@@ -48,5 +48,7 @@ Description: Local keyboard shortcut overlay for OBS on Linux and Wayland
 CONTROL
 chmod 0644 "$pkg/DEBIAN/control" "$pkg/usr/share/applications/"* "$pkg/usr/share/polkit-1/actions/"*
 mkdir -p dist
-dpkg-deb --root-owner-group --build "$pkg" "dist/keycast-bridge_${version}_amd64.deb"
-dpkg-deb --info "dist/keycast-bridge_${version}_amd64.deb"
+# GitHub replaces tildes in asset names; use the final name before checksumming.
+filename_version=$(printf '%s' "$version" | tr '~' '.')
+dpkg-deb --root-owner-group --build "$pkg" "dist/keycast-bridge_${filename_version}_amd64.deb"
+dpkg-deb --info "dist/keycast-bridge_${filename_version}_amd64.deb"

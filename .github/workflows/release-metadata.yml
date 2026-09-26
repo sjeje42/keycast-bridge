@@ -1,0 +1,29 @@
+name: Release metadata
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['packaging/RELEASE.md']
+permissions:
+  contents: write
+jobs:
+  metadata:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Refresh release notes and checksums using downloaded asset names
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')
+          tag="v$version"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            echo "No published release yet; packaging workflow will supply metadata."
+            exit 0
+          fi
+          mkdir -p release-assets
+          gh release download "$tag" --pattern '*.deb' --dir release-assets
+          (cd release-assets && sha256sum *.deb > SHA256SUMS)
+          gh release upload "$tag" release-assets/SHA256SUMS --clobber
+          gh release edit "$tag" --notes-file packaging/RELEASE.md

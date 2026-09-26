@@ -33,7 +33,7 @@ Version **0.1.0-alpha.2**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-onl
 Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
 
 ```sh
-sudo apt install ./keycast-bridge_0.1.0~alpha.2-1_amd64.deb
+sudo apt install ./keycast-bridge_0.1.0.alpha.2-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.

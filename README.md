@@ -38,7 +38,7 @@ See the [exact validation status](docs/VALIDATION.md).
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.1.0~alpha.2-1_amd64.deb
+sudo apt install ./keycast-bridge_0.1.0.alpha.2-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.
