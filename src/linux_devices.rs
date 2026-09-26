@@ -7,6 +7,8 @@ pub struct Info {
     pub name: String,
     pub keyboard: bool,
     pub mouse: bool,
+    pub vendor: Option<String>,
+    pub product: Option<String>,
     pub serial: Option<String>,
     pub physical: Option<String>,
 }
@@ -28,15 +30,22 @@ pub fn info(device: &udev::Device) -> Option<Info> {
         return None;
     }
     let parent = device.parent()?;
-    let text =
-        |v: Option<&std::ffi::OsStr>| v.map(|s| s.to_string_lossy().trim_matches('"').to_owned());
+    let text = |v: Option<&std::ffi::OsStr>| {
+        v.map(|s| s.to_string_lossy().trim_matches('"').to_owned())
+            .filter(|s| !s.is_empty())
+    };
     Some(Info {
         id: device.syspath().to_string_lossy().into_owned(),
         path,
         name: text(parent.attribute_value("name")).unwrap_or_else(|| "Input device".into()),
         keyboard,
         mouse,
-        serial: text(device.property_value("ID_SERIAL")),
+        vendor: text(device.property_value("ID_VENDOR_ID"))
+            .or_else(|| text(parent.attribute_value("id/vendor"))),
+        product: text(device.property_value("ID_MODEL_ID"))
+            .or_else(|| text(parent.attribute_value("id/product"))),
+        serial: text(device.property_value("ID_SERIAL_SHORT"))
+            .or_else(|| text(parent.attribute_value("uniq"))),
         physical: text(device.property_value("ID_PATH")),
     })
 }

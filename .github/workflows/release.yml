@@ -50,6 +50,11 @@ jobs:
           DEBIAN_RUN: ${{ steps.gates.outputs.debian }}
           WINDOWS_RUN: ${{ steps.gates.outputs.windows }}
         run: |
+          current=$(gh api "repos/$GH_REPO/branches/main" --jq '.commit.sha')
+          if [ "$current" != "$SHA" ]; then
+            echo 'A newer main commit exists; waiting for its verified builds.'
+            exit 0
+          fi
           version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml","rb"))["package"]["version"])')
           tag="v$version"
           if gh release view "$tag" >/dev/null 2>&1; then

@@ -124,6 +124,7 @@ pub fn run() -> Result<()> {
     };
     // Nothing has started threads before fork.
     let (broker, reader) = UnixDatagram::pair()?;
+    let parent_pid = unsafe { libc::getpid() };
     match unsafe { fork()? } {
         ForkResult::Child => {
             drop(broker);
@@ -138,6 +139,11 @@ pub fn run() -> Result<()> {
                     anyhow::ensure!(
                         libc::getuid() == uid && libc::geteuid() == uid,
                         "Privilege drop failed"
+                    );
+                    anyhow::ensure!(
+                        libc::prctl(libc::PR_SET_PDEATHSIG, libc::SIGTERM, 0, 0, 0) == 0
+                            && libc::getppid() == parent_pid,
+                        "Broker exited during startup"
                     );
                     anyhow::ensure!(
                         libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == 0,
@@ -173,7 +179,7 @@ pub fn run() -> Result<()> {
 }
 
 fn same_keyboard(wanted: &Info, info: &Info) -> bool {
-    if wanted.name != info.name {
+    if wanted.name != info.name || wanted.vendor != info.vendor || wanted.product != info.product {
         return false;
     }
     match (&wanted.serial, &info.serial) {
@@ -210,14 +216,19 @@ fn broker_loop(socket: &UnixDatagram, child: Pid, selection: &str, mouse: bool) 
         }
         Some(selected)
     };
-    let keyboard_allowed = |info: &Info| {
+    let keyboard_allowed = |info: &Info, initial: bool| {
         info.keyboard
-            && selected
-                .as_ref()
-                .is_none_or(|list| list.iter().any(|wanted| same_keyboard(wanted, info)))
+            && selected.as_ref().is_none_or(|list| {
+                list.iter()
+                    .any(|wanted| (initial && wanted.id == info.id) || same_keyboard(wanted, info))
+            })
     };
-    let accepts = |info: &Info| keyboard_allowed(info) || (mouse && info.mouse);
-    let open = |device: &udev::Device, info: &Info| -> Result<()> {
+    let accepts =
+        |info: &Info, initial: bool| keyboard_allowed(info, initial) || (mouse && info.mouse);
+    let open = |device: &udev::Device, info: &Info, initial: bool| -> Result<()> {
+        let mut info = info.clone();
+        info.keyboard = keyboard_allowed(&info, initial);
+        info.mouse = mouse && info.mouse;
         use std::os::unix::fs::OpenOptionsExt;
         let file = std::fs::OpenOptions::new()
             .read(true)
@@ -236,13 +247,10 @@ fn broker_loop(socket: &UnixDatagram, child: Pid, selection: &str, mouse: bool) 
                 || (mouse && info.mouse && k.contains(KeyCode::BTN_LEFT))),
             "Not an authorized input device"
         );
-        let mut info = info.clone();
-        info.mouse = mouse && info.mouse;
-        info.keyboard = keyboard_allowed(&info);
         send(socket, &Notice::Add(info), Some(input.as_raw_fd()))
     };
     for (device, info) in initial {
-        if accepts(&info) && open(&device, &info).is_ok() {
+        if accepts(&info, true) && open(&device, &info, true).is_ok() {
             devices.insert(info.id.clone(), info);
         }
     }
@@ -263,7 +271,10 @@ fn broker_loop(socket: &UnixDatagram, child: Pid, selection: &str, mouse: bool) 
                 udev::EventType::Add | udev::EventType::Change
             ) {
                 if let Some(info) = linux_devices::info(&event) {
-                    if !devices.contains_key(&id) && accepts(&info) && open(&event, &info).is_ok() {
+                    if !devices.contains_key(&id)
+                        && accepts(&info, false)
+                        && open(&event, &info, false).is_ok()
+                    {
                         devices.insert(id, info);
                     }
                 }
@@ -449,6 +460,8 @@ mod tests {
             name: "Keyboard".into(),
             keyboard: true,
             mouse: false,
+            vendor: Some("1234".into()),
+            product: Some("5678".into()),
             serial: Some("unique-123".into()),
             physical: Some("usb-port-1".into()),
         }
