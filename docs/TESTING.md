@@ -32,9 +32,22 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 - [ ] Ctrl+Alt+F12 clears OBS and stops; no emergency chord is displayed.
 - [ ] Stop during the authorization dialog, then authorize: no event reaches OBS.
 - [ ] Stop/restart rapidly: old capture cannot publish into new session.
-- [ ] Close app / disconnect keyboard: capture ends, OBS clears. No helper remains.
+- [ ] Close app: capture ends, OBS clears. No helper remains. Disconnecting a keyboard clears its state while capture continues.
 - [ ] Restart app: old URL fails, new URL works; preferences intentionally reset.
 - [ ] OBS reconnect / hidden source / slow consumer: no stale key replay.
 - [ ] Long session: no persistent key logs or increasing memory backlog.
 
-**Not guaranteed in this alpha:** initial Caps/Num Lock state, automatic desktop layout tracking, multi-keyboard chords, Compose/IME, lock-screen auto-pause, mouse input.
+**Not guaranteed in this alpha:** initial Caps/Num Lock state, automatic desktop layout tracking, multi-keyboard chords, Compose/IME, lock-screen auto-pause, mouse wheel/motion.
+
+
+## 0.2.0-alpha.2 acceptance checks (physical hardware required)
+
+- Linux all-keyboards mode: start with no USB keyboard, connect one, type Ctrl+C, disconnect, connect a different model; capture and OBS must continue without another authorization.
+- Selected mode: select two keyboards, ensure a third is ignored. Reconnect a selected keyboard with a changed event number; it must resume. With no serial, use the same USB port.
+- Hold Ctrl while unplugging, then type a plain letter on another keyboard: no stuck Ctrl label. Stop while no devices remain; helper and broker must exit. Killing the GUI must stop them within three seconds.
+- Test a combined keyboard/mouse device: enabling mouse must not enable that device's keyboard if unselected. Leave mouse disabled and confirm no buttons are transmitted.
+- Mouse on: left/right/middle clicks, quick taps, held buttons, simultaneous keyboard shortcut, disconnect while held. Buttons must light visibly, then clear; stopping must remove everything.
+- Windows: launch extracted ZIP without MSYS2/Rust installed. Test FR AZERTY and US QWERTY foreground layouts, AltGr, Ctrl+Alt+F12, USB unplug/replug and stop/start. Secure/UAC desktops are outside scope.
+- Windows halo: full primary-monitor capture plus Browser Source with matching bounds; test 100%, 150%, 200% DPI and a secondary display. No ring should appear for clicks outside the primary monitor. Cropped/window capture is unsupported.
+
+Record OS, keyboard model, selected mode, DPI, OBS source dimensions and result. Do not include sensitive captured text.

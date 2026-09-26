@@ -15,7 +15,7 @@
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
-Version **0.1.0-alpha.2**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0-alpha.2**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). Other compositors are an architectural target, not a tested compatibility claim.
 
@@ -23,10 +23,18 @@ Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). 
 
 See the [exact validation status](docs/VALIDATION.md).
 
+## Windows and input improvements in 0.2.0-alpha.2
+
+[Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
+
+Linux now defaults to all keyboards, with optional multiple selection and udev hotplug. A privileged opener passes evdev descriptors over a private Unix socket to a reader that drops privileges. Reconnecting a selected keyboard uses its serial/name or physical USB port/name, never a remembered event number. Without a serial, use the same port. Modifiers are tracked per keyboard: perform a shortcut on one keyboard.
+
+Optional left/right/middle mouse feedback is available on both systems. Windows also offers a click ring for the full primary monitor; align the monitor capture and browser source in OBS. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
+
 ## Features
 
-- Explicit start, administrator authorization for one selected keyboard, stop button and **Ctrl+Alt+F12** stop shortcut.
-- Capture opens a single evdev device, drops root privileges, and forwards normalized labels over an anonymous pipe.
+- Explicit start, administrator authorization for selected keyboards, stop button and **Ctrl+Alt+F12** stop shortcut.
+- Linux capture uses udev hotplug, multiple keyboards, a privileged descriptor broker and an unprivileged reader.
 - AZERTY FR, QWERTY US / UK and QWERTZ DE using libxkbcommon. Select the same layout as your desktop.
 - Default shortcuts mode: Ctrl / left Alt / Super combinations, function and navigation keys. Shift alone and AltGr text are excluded. Single-letter app shortcuts need the optional all-keys mode.
 - Transparent OBS Browser Source, light/dark keycaps, adjustable size and lifetime, preview and copy-URL buttons.
@@ -38,7 +46,7 @@ See the [exact validation status](docs/VALIDATION.md).
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.1.0.alpha.2-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.2-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.
@@ -67,13 +75,13 @@ The provided `.deb` remains intended for Debian 13. Use the source instructions 
 
 ```sh
 sudo apt update
-sudo apt install build-essential pkg-config git curl ca-certificates libgtk-4-dev libxkbcommon-dev xkb-data pkexec polkitd xdg-utils
+sudo apt install build-essential pkg-config git curl ca-certificates libgtk-4-dev libxkbcommon-dev libudev-dev xkb-data pkexec polkitd xdg-utils
 ```
 
 **Fedora Workstation (traditional DNF installation):**
 
 ```sh
-sudo dnf install gcc gcc-c++ make pkgconf-pkg-config git curl ca-certificates gtk4-devel libxkbcommon-devel xkeyboard-config polkit xdg-utils
+sudo dnf install gcc gcc-c++ make pkgconf-pkg-config git curl ca-certificates gtk4-devel libxkbcommon-devel systemd-devel xkeyboard-config polkit xdg-utils
 ```
 
 These instructions do not cover Fedora Silverblue/Kinoite or other immutable variants.
@@ -81,7 +89,7 @@ These instructions do not cover Fedora Silverblue/Kinoite or other immutable var
 **Manjaro / Arch Linux:**
 
 ```sh
-sudo pacman -Syu --needed base-devel pkgconf git curl ca-certificates gtk4 libxkbcommon xkeyboard-config polkit xdg-utils
+sudo pacman -Syu --needed base-devel pkgconf git curl ca-certificates gtk4 libxkbcommon systemd xkeyboard-config polkit xdg-utils
 ```
 
 This also updates the system to avoid partial upgrades. If the system update requires a reboot, reboot before continuing.
@@ -185,9 +193,9 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 ## Current limits
 
 - No automatic password-field detection: stop capture before entering secrets, even in shortcuts-only mode.
-- One selected keyboard; unplugging ends capture. Refresh and restart after reconnecting.
+- Linux hotplug continues without restarting. A selected keyboard without a serial number must return to the same USB port.
 - Layout changes in GNOME are not automatically tracked; stop, choose the new layout, then restart.
-- No text reconstruction, Compose/dead-key composition, IME, mouse visualization, persistent preferences yet.
+- No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization, persistent preferences yet.
 - Key-repeat events are intentionally ignored. Modifiers held before Start must be released and pressed again. Caps Lock / Num Lock state already active at startup is not synchronized with GNOME.
 - System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; lock-screen auto-pause is not implemented.
 - This alpha needs real-device acceptance tests before it should be used for live broadcasts.

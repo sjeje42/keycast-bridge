@@ -1,0 +1,61 @@
+name: Windows portable
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'web/**', 'Cargo.*', 'packaging/windows/**', '.github/workflows/windows.yml', 'docs/WINDOWS.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Browser overlay
+        run: |
+          npm --prefix web ci
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm --prefix web run check
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm --prefix web run build
+          exit $LASTEXITCODE
+      - uses: msys2/setup-msys2@6204bae4ecd64866443f88c0e8f7c84cb8f1bebe
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-rust
+            mingw-w64-ucrt-x86_64-gtk4
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkgconf
+            python
+      - name: Build, test and collect runtime
+        shell: msys2 {0}
+        run: |
+          cargo test --locked --release
+          cargo build --locked --release
+          python packaging/windows/bundle.py
+      - name: Launch portable GUI without MSYS2 on PATH
+        run: packaging/windows/test-portable.ps1
+      - name: HTTP and WebSocket smoke test
+        run: |
+          $env:KEYCAST_DEMO = Join-Path $PWD 'dist/keycast-bridge-windows-x64/keycast-bridge-demo.exe'
+          node scripts/smoke.mjs
+          exit $LASTEXITCODE
+      - name: Archive and checksum
+        run: |
+          Compress-Archive -Path dist/keycast-bridge-windows-x64 -DestinationPath dist/keycast-bridge_0.2.0-alpha.2_windows-x64.zip
+          $hash = (Get-FileHash dist/*.zip -Algorithm SHA256).Hash.ToLower()
+          "$hash  keycast-bridge_0.2.0-alpha.2_windows-x64.zip" | Set-Content dist/SHA256SUMS-windows.txt
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: keycast-bridge-windows-x64
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS-windows.txt
+          if-no-files-found: error

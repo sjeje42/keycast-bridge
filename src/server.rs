@@ -17,6 +17,7 @@ pub struct Inner {
     pub session: u64,
     pub status: &'static str,
     pub config: Event,
+    pub device_status: String,
 }
 pub struct Bridge {
     pub token: String,
@@ -32,10 +33,12 @@ impl Bridge {
             inner: Mutex::new(Inner {
                 session: 0,
                 status: "stopped",
+                device_status: String::new(),
                 config: Event::Config {
                     size: 40,
                     duration: 1800,
                     dark: true,
+                    halo: false,
                 },
             }),
         })
@@ -47,14 +50,24 @@ impl Bridge {
         let mut inner = self.inner.lock().unwrap();
         inner.session += 1;
         inner.status = "stopped";
+        inner.device_status.clear();
         let _ = self.tx.send(Event::Clear);
+    }
+    pub fn halo(&self, enabled: bool) {
+        let mut inner = self.inner.lock().unwrap();
+        if let Event::Config { halo, .. } = &mut inner.config {
+            *halo = enabled;
+        }
+        let _ = self.tx.send(inner.config.clone());
     }
     pub fn config(&self, size: u32, duration: u32, dark: bool) {
         let mut inner = self.inner.lock().unwrap();
+        let halo = matches!(inner.config, Event::Config { halo: true, .. });
         inner.config = Event::Config {
             size: size.clamp(20, 96),
             duration: duration.clamp(300, 5000),
             dark,
+            halo,
         };
         let _ = self.tx.send(inner.config.clone());
     }

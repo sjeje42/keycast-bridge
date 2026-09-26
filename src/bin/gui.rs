@@ -1,18 +1,21 @@
+#![cfg_attr(windows, windows_subsystem = "windows")]
+
 use gtk4::{
     glib, prelude::*, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton,
-    ComboBoxText, Entry, Label, Orientation, SpinButton,
+    ComboBoxText, Entry, Label, Orientation, ScrolledWindow, SpinButton,
 };
 use keycast_bridge::{
     model::Event,
     server::{self, Bridge, PORT},
 };
+#[cfg(target_os = "linux")]
 use std::{
     io::{BufRead, Write},
     process::{Command, Stdio},
-    sync::Arc,
-    time::Duration,
 };
+use std::{sync::Arc, time::Duration};
 
+#[cfg(target_os = "linux")]
 const HELPER: &str = match option_env!("KEYCAST_HELPER_PATH") {
     Some(path) => path,
     None => "/usr/local/libexec/keycast-bridge-capture",
@@ -25,7 +28,8 @@ fn tr(fr: bool, french: &'static str, english: &'static str) -> &'static str {
     }
 }
 
-fn start(state: Arc<Bridge>, device: String, layout: String, all: bool) {
+#[cfg(target_os = "linux")]
+fn start(state: Arc<Bridge>, device: String, layout: String, all: bool, mouse: bool) {
     state.stop();
     let generation = {
         let mut inner = state.inner.lock().unwrap();
@@ -40,6 +44,7 @@ fn start(state: Arc<Bridge>, device: String, layout: String, all: bool) {
                     &device,
                     &layout,
                     if all { "all" } else { "shortcuts" },
+                    if mouse { "mouse" } else { "no-mouse" },
                 ])
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
@@ -72,11 +77,11 @@ fn start(state: Arc<Bridge>, device: String, layout: String, all: bool) {
                 }
                 match event {
                     Event::Ready => inner.status = "capturing",
-                    Event::Key { .. } => {
+                    Event::Key { .. } | Event::Mouse { .. } => {
                         let _ = state.tx.send(event);
                     }
+                    Event::DeviceStatus { message } => inner.device_status = message,
                     Event::Clear => {
-                        inner.status = "stopped";
                         let _ = state.tx.send(Event::Clear);
                     }
                     _ => (),
@@ -105,30 +110,58 @@ fn start(state: Arc<Bridge>, device: String, layout: String, all: bool) {
     });
 }
 
-fn populate(devices: &ComboBoxText) {
-    devices.remove_all();
-    if let Ok(entries) = std::fs::read_dir("/sys/class/input") {
-        let mut choices = Vec::new();
-        for entry in entries.flatten() {
-            let name = entry.file_name().to_string_lossy().into_owned();
-            if !name.starts_with("event") {
-                continue;
-            }
-            let label =
-                std::fs::read_to_string(entry.path().join("device/name")).unwrap_or_default();
-            choices.push((
-                format!("/dev/input/{name}"),
-                format!("{} — {name}", label.trim()),
-            ));
-        }
-        choices.sort();
-        for (id, label) in choices {
-            devices.append(Some(&id), &label);
+type Choices = std::rc::Rc<std::cell::RefCell<Vec<(String, CheckButton)>>>;
+#[cfg(target_os = "linux")]
+fn populate(devices: &ComboBoxText, list: &GtkBox, choices: &Choices) {
+    let previous: Vec<String> = choices
+        .borrow()
+        .iter()
+        .filter(|(_, c)| c.is_active())
+        .map(|(id, _)| id.clone())
+        .collect();
+    while let Some(child) = list.first_child() {
+        list.remove(&child);
+    }
+    choices.borrow_mut().clear();
+    if devices.active_id().is_none() {
+        devices.append(
+            Some("all"),
+            "Tous les claviers (automatique) / All keyboards (automatic)",
+        );
+        devices.append(
+            Some("selected"),
+            "Claviers sélectionnés / Selected keyboards",
+        );
+        devices.set_active(Some(0));
+    }
+    if let Ok(found) = keycast_bridge::linux_devices::enumerate() {
+        for (_, info) in found.into_iter().filter(|(_, i)| i.keyboard) {
+            let check = CheckButton::with_label(&info.name);
+            check.set_tooltip_text(info.physical.as_deref());
+            check.set_active(previous.contains(&info.id));
+            list.append(&check);
+            choices.borrow_mut().push((info.id, check));
         }
     }
+}
+
+#[cfg(windows)]
+fn start(state: Arc<Bridge>, _device: String, _layout: String, all: bool, mouse: bool) {
+    keycast_bridge::windows_capture::start(state, all, mouse);
+}
+
+#[cfg(windows)]
+fn populate(devices: &ComboBoxText, _list: &GtkBox, _choices: &Choices) {
+    devices.remove_all();
+    devices.append(
+        Some("windows"),
+        "Windows — tous les claviers / all keyboards",
+    );
     devices.set_active(Some(0));
 }
+
 fn main() -> anyhow::Result<()> {
+    #[cfg(target_os = "linux")]
     anyhow::ensure!(
         unsafe { libc::geteuid() } != 0,
         "Do not launch the application as root"
@@ -152,6 +185,10 @@ fn main() -> anyhow::Result<()> {
         .build();
     let ui_state = state.clone();
     app.connect_activate(move |app| build_ui(app, ui_state.clone()));
+    if std::env::var("KEYCAST_SMOKE_TEST").as_deref() == Ok("1") {
+        let smoke_app = app.clone();
+        glib::timeout_add_local_once(Duration::from_secs(2), move || smoke_app.quit());
+    }
     app.run();
     state.stop();
     Ok(())
@@ -199,13 +236,18 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     keyboard_label.set_xalign(0.0);
     root.append(&keyboard_label);
     let devices = ComboBoxText::new();
-    populate(&devices);
+    let choices: Choices = Default::default();
+    let device_list = GtkBox::new(Orientation::Vertical, 4);
+    populate(&devices, &device_list, &choices);
     root.append(&devices);
+    root.append(&device_list);
     let refresh = Button::new();
     root.append(&refresh);
     {
         let devices = devices.clone();
-        refresh.connect_clicked(move |_| populate(&devices));
+        let list = device_list.clone();
+        let choices = choices.clone();
+        refresh.connect_clicked(move |_| populate(&devices, &list, &choices));
     }
     let layout_label = Label::new(None);
     layout_label.set_xalign(0.0);
@@ -219,10 +261,28 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     ] {
         layout.append(Some(id), label);
     }
+    #[cfg(windows)]
+    {
+        layout.remove_all();
+        layout.append(Some("auto"), "Automatique / Automatic — Windows");
+    }
     layout.set_active(Some(0));
     root.append(&layout);
     let all = CheckButton::new();
     root.append(&all);
+    let mouse = CheckButton::new();
+    root.append(&mouse);
+    let halo = CheckButton::new();
+    halo.set_visible(cfg!(windows));
+    root.append(&halo);
+    {
+        let s = state.clone();
+        halo.connect_toggled(move |v| s.halo(v.is_active()));
+    }
+    let device_status = Label::new(None);
+    device_status.set_xalign(0.0);
+    device_status.set_wrap(true);
+    root.append(&device_status);
     let actions = GtkBox::new(Orientation::Horizontal, 8);
     let start_button = Button::new();
     start_button.add_css_class("suggested-action");
@@ -235,13 +295,30 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     root.append(&actions);
     {
         let (s, d, l, a) = (state.clone(), devices.clone(), layout.clone(), all.clone());
+        let mouse = mouse.clone();
+        let choices = choices.clone();
         start_button.connect_clicked(move |_| {
             if let (Some(device), Some(layout)) = (d.active_id(), l.active_id()) {
+                let selection = if device == "selected" {
+                    let ids: Vec<String> = choices
+                        .borrow()
+                        .iter()
+                        .filter(|(_, c)| c.is_active())
+                        .map(|(id, _)| id.clone())
+                        .collect();
+                    if ids.is_empty() {
+                        return;
+                    }
+                    serde_json::to_string(&ids).unwrap()
+                } else {
+                    device.to_string()
+                };
                 start(
                     s.clone(),
-                    device.to_string(),
+                    selection,
                     layout.to_string(),
                     a.is_active(),
+                    mouse.is_active(),
                 );
             }
         });
@@ -277,7 +354,10 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     {
         let s = state.clone();
         preview.connect_clicked(move |_| {
-            let _ = Command::new("xdg-open").arg(s.url()).spawn();
+            let _ = gtk4::gio::AppInfo::launch_default_for_uri(
+                &s.url(),
+                None::<&gtk4::gio::AppLaunchContext>,
+            );
         });
     }
     let appearance = GtkBox::new(Orientation::Horizontal, 8);
@@ -343,21 +423,45 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             "authorizing" => tr(fr, "Autorisation en cours…", "Waiting for authorization…"),
             "error" => tr(
                 fr,
-                "Échec : vérifier le clavier, l’installation et l’autorisation.",
-                "Failed: check keyboard, installation and authorization.",
+                if cfg!(windows) {
+                    "Échec de la capture Windows. Arrêter puis réessayer."
+                } else {
+                    "Échec : vérifier le clavier, l’installation et l’autorisation."
+                },
+                if cfg!(windows) {
+                    "Windows capture failed. Stop and try again."
+                } else {
+                    "Failed: check keyboard, installation and authorization."
+                },
             ),
             _ => tr(fr, "○ Capture arrêtée", "○ Capture stopped"),
         });
         keyboard_label.set_text(tr(
             fr,
-            "Clavier (les périphériques non clavier seront refusés)",
-            "Keyboard (non-keyboard devices will be rejected)",
+            if cfg!(windows) {
+                "Claviers de la session Windows"
+            } else {
+                "Clavier (les périphériques non clavier seront refusés)"
+            },
+            if cfg!(windows) {
+                "Keyboards in the Windows session"
+            } else {
+                "Keyboard (non-keyboard devices will be rejected)"
+            },
         ));
         refresh.set_label(tr(fr, "Actualiser les périphériques", "Refresh devices"));
         layout_label.set_text(tr(
             fr,
-            "Disposition — doit correspondre à celle de GNOME",
-            "Layout — must match your GNOME layout",
+            if cfg!(windows) {
+                "Disposition — suit la fenêtre active"
+            } else {
+                "Disposition — doit correspondre à celle de GNOME"
+            },
+            if cfg!(windows) {
+                "Layout — follows the active window"
+            } else {
+                "Layout — must match your GNOME layout"
+            },
         ));
         all.set_label(Some(tr(
             fr,
@@ -367,11 +471,34 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         start_button.set_label(tr(fr, "Démarrer", "Start"));
         stop_button.set_label(tr(fr, "Arrêter", "Stop"));
         demo.set_label(tr(fr, "Tester le rendu", "Test overlay"));
-        start_button.set_sensitive(!active && devices.active_id().is_some());
+        let custom = devices.active_id().is_some_and(|id| id == "selected");
+        device_list.set_visible(custom);
+        device_list.set_sensitive(!active);
+        start_button.set_sensitive(
+            !active && (!custom || choices.borrow().iter().any(|(_, c)| c.is_active())),
+        );
         for widget in [&devices, &layout] {
             widget.set_sensitive(!active);
         }
+        if cfg!(windows) {
+            devices.set_sensitive(false);
+            layout.set_sensitive(false);
+            refresh.set_visible(false);
+        }
         all.set_sensitive(!active);
+        mouse.set_sensitive(!active);
+        mouse.set_label(Some(tr(
+            fr,
+            "Afficher les clics de souris",
+            "Show mouse clicks",
+        )));
+        halo.set_label(Some(tr(
+            fr,
+            "Cercle au clic — écran principal complet",
+            "Click ring — full primary monitor",
+        )));
+        halo.set_sensitive(mouse.is_active());
+        device_status.set_text(&s.inner.lock().unwrap().device_status);
         refresh.set_sensitive(!active);
         obs.set_text(tr(
             fr,
@@ -386,6 +513,10 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         notice.set_text(tr(fr, "Ctrl + Alt + F12 : arrêt immédiat. Aucun historique. Pas de détection des mots de passe. L’URL change à chaque lancement : la recopier dans OBS.", "Ctrl + Alt + F12: stop immediately. No history. No password-field detection. The URL changes on each launch: update it in OBS."));
         glib::ControlFlow::Continue
     });
-    window.set_child(Some(&root));
+    let scroll = ScrolledWindow::builder()
+        .child(&root)
+        .hscrollbar_policy(gtk4::PolicyType::Never)
+        .build();
+    window.set_child(Some(&scroll));
     window.present();
 }

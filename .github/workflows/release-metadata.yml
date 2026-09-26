@@ -23,7 +23,7 @@ jobs:
             exit 0
           fi
           mkdir -p release-assets
-          gh release download "$tag" --pattern '*.deb' --dir release-assets
-          (cd release-assets && sha256sum *.deb > SHA256SUMS)
+          gh release download "$tag" --pattern '*.deb' --pattern '*.zip' --dir release-assets
+          (cd release-assets && sha256sum *.deb *.zip > SHA256SUMS)
           gh release upload "$tag" release-assets/SHA256SUMS --clobber
           gh release edit "$tag" --notes-file packaging/RELEASE.md

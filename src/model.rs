@@ -7,11 +7,22 @@ pub enum Event {
     Key {
         label: String,
     },
+    Mouse {
+        button: u8,
+        pressed: bool,
+        x: Option<f64>,
+        y: Option<f64>,
+    },
+    DeviceStatus {
+        message: String,
+    },
     Clear,
     Config {
         size: u32,
         duration: u32,
         dark: bool,
+        #[serde(default)]
+        halo: bool,
     },
 }
 

@@ -1,0 +1,64 @@
+name: Publish verified alpha
+on:
+  workflow_run:
+    workflows: [Build and test, Debian 13 package, Windows portable]
+    types: [completed]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-alpha
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Require all three successful builds for this commit
+        id: gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          gh api "repos/$GH_REPO/actions/runs?head_sha=$SHA&per_page=100" > /tmp/runs.json
+          python3 - <<'PY'
+          import json, os
+          runs=json.load(open('/tmp/runs.json'))['workflow_runs']
+          names={'Build and test':'ci','Debian 13 package':'debian','Windows portable':'windows'}
+          found={}
+          for name,key in names.items():
+              matches=[r for r in runs if r['name']==name and r['event']=='push']
+              if not matches: break
+              latest=max(matches,key=lambda r:r['id'])
+              if latest['conclusion']!='success': break
+              found[key]=latest['id']
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              if len(found)==3:
+                  out.write('ready=true\n')
+                  for k,v in found.items(): out.write(f'{k}={v}\n')
+          PY
+      - name: Download verified packages and publish
+        if: steps.gates.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          DEBIAN_RUN: ${{ steps.gates.outputs.debian }}
+          WINDOWS_RUN: ${{ steps.gates.outputs.windows }}
+        run: |
+          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml","rb"))["package"]["version"])')
+          tag="v$version"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo 'Version already published; leaving existing release unchanged.'
+            exit 0
+          fi
+          gh run download "$DEBIAN_RUN" -n keycast-bridge-debian13-amd64 -D dist
+          gh run download "$WINDOWS_RUN" -n keycast-bridge-windows-x64 -D dist
+          cd dist
+          sha256sum *.deb *.zip > SHA256SUMS
+          cd ..
+          gh release create "$tag" dist/*.deb dist/*.zip dist/SHA256SUMS --target "$SHA" --prerelease --title "Keycast Bridge $version — Linux & Windows" --notes-file packaging/RELEASE.md

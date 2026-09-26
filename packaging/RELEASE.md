@@ -1,27 +1,18 @@
-## Français
+## Français — 0.2.0-alpha.2
 
-Paquet prêt à installer pour **Debian 13, amd64 (PC Intel/AMD 64 bits)**.
+- **Windows x64 portable** : extraire entièrement le ZIP puis lancer `keycast-bridge.exe`. GTK et ses DLL sont inclus ; aucun outil de compilation ni droit administrateur nécessaire.
+- **Linux : branchement/débranchement à chaud** via udev, tous les claviers par défaut ou sélection multiple. Un processus privilégié ouvre les périphériques ; le lecteur travaille sans privilèges.
+- **Clics de souris optionnels** : boutons gauche, droit et milieu mis en couleur dans l’incrustation.
+- **Cercle au clic Windows** : écran principal complet, avec les deux sources OBS alignées. Sous Linux/Wayland, seule la visualisation des boutons est fournie.
 
-Télécharger le `.deb`, puis dans son dossier :
+Debian 13 amd64 : `sudo apt install ./keycast-bridge_0.2.0.alpha.2-1_amd64.deb`.
 
-```sh
-sudo apt install ./keycast-bridge_0.1.0.alpha.2-1_amd64.deb
-```
+OBS doit fournir la source **Navigateur**. Sur Debian, utiliser le Flatpak officiel OBS. L’URL change à chaque lancement. Relâcher les modificateurs avant de démarrer ; arrêter avant de saisir des informations sensibles. Aucune détection des mots de passe.
 
-Lancer **Keycast Bridge** depuis le menu des applications. Interface FR/EN, capture avec autorisation administrateur, overlay transparent OBS. Aucune compilation nécessaire.
-
-**OBS : utiliser une version avec source Navigateur, notamment le Flatpak officiel. Le paquet OBS de Debian ne fournit pas cette source.**
-
-Cette alpha intègre l’installateur Debian, la règle Polkit et les dépendances. Construction sous Debian 13, tests Rust, installation/désinstallation/réinstallation et lancement GTK4 en écran virtuel automatisés. Le fonctionnement clavier et OBS a été confirmé par l’utilisateur sur la précédente alpha ; le nouveau paquet reste à valider sur un poste GNOME réel.
-
-Une ancienne installation complète depuis les sources dans `/usr/local` doit être désinstallée avec son script avant ce paquet. Le composant seul installé manuellement dans `/usr/local/libexec` peut rester : le paquet utilise `/usr/libexec`.
+La publication est conditionnée aux tests Linux, à la construction/installation du paquet Debian et aux tests de l’archive Windows. Les nouveaux comportements USB et souris, le DPI et l’alignement OBS restent à vérifier sur du matériel réel. [Guide Windows](https://github.com/sjeje42/keycast-bridge/blob/main/docs/WINDOWS.md) · [Tests manuels](https://github.com/sjeje42/keycast-bridge/blob/main/docs/TESTING.md).
 
 ## English
 
-Ready-to-install **Debian 13 amd64** package. Download the `.deb`, then run the command above in its directory. Launch **Keycast Bridge** from your applications menu. Dependencies, capture helper and Polkit policy are included or installed by APT. No compilation needed.
+Portable Windows x64 build, Linux udev hotplug with automatic or multiple keyboard selection, optional colored mouse-button feedback and a Windows primary-monitor click ring. Extract the entire Windows ZIP; run as a normal user. Debian 13 amd64 installation command above.
 
-OBS requires **Browser Source**; use the official OBS Flatpak. Debian's OBS package does not include it.
-
-Built and tested on Debian 13, including Rust tests and a clean-container install, virtual-display GTK4 launch, removal and reinstall. Real keyboard/OBS operation was confirmed by the user on the previous alpha; the new package still needs testing on a real GNOME desktop. Ubuntu and other Debian versions are not validated.
-
-Uninstall an old complete source installation in `/usr/local` first. A standalone manually installed helper may remain; this package uses `/usr/libexec`.
+Release publication requires passing Linux CI, Debian package install/launch tests and Windows portable tests. Physical USB/mouse capture, DPI and OBS alignment still require desktop validation. Wayland has button feedback only, no pointer-position ring. No password detection; stop before sensitive input. Overlay URL changes every launch.

@@ -11,9 +11,9 @@
 [![Build and test](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml)
 [![License GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 
-**Afficher les raccourcis clavier dans OBS, sous Linux et Wayland.**
+**Afficher les raccourcis clavier dans OBS, sous Linux/Wayland et Windows.**
 
-Version **0.1.0-alpha.2**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
+Version **0.2.0-alpha.2**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -22,18 +22,24 @@ Version **0.1.0-alpha.2**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-onl
 ## Fonctionnalités
 
 - Interface native GTK4 en français et en anglais ; moteur de capture et serveur local en Rust ; overlay Svelte et TypeScript.
-- Capture d’un clavier choisi, avec autorisation administrateur puis abandon des privilèges.
+- Linux : tous les claviers automatiquement ou sélection multiple, branchement/débranchement via udev sans redémarrer ; autorisation Polkit, ouverture privilégiée et lecteur sans privilèges.
+- Windows : capture native de tous les claviers, sans administrateur, avec disposition de la fenêtre active.
+- Clics gauche/droit/milieu optionnels, avec bouton coloré ; cercle au clic sous Windows sur l’écran principal.
 - Dispositions AZERTY France, QWERTY US / Royaume-Uni et QWERTZ Allemagne, interprétées avec libxkbcommon.
 - Raccourcis clavier dans une source Navigateur OBS transparente ; taille, durée et thème clair/sombre réglables.
 - Arrêt par bouton ou **Ctrl+Alt+F12**, aperçu et démonstration sans accès au clavier.
 - Aucun historique des frappes ni télémétrie ; accès à l’overlay limité à la machine locale avec une URL aléatoire par lancement.
+
+## Windows portable (x64)
+
+Extraire entièrement le ZIP fourni par le workflow **Windows portable** ou les Releases, puis lancer `keycast-bridge.exe`. Aucun outil de compilation à installer. [Installation, halo et limites Windows](docs/WINDOWS.md).
 
 ## Paquet Debian 13 (amd64)
 
 Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
 
 ```sh
-sudo apt install ./keycast-bridge_0.1.0.alpha.2-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.2-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.
@@ -62,13 +68,13 @@ Le paquet `.deb` fourni reste destiné à Debian 13. Pour les autres distributio
 
 ```sh
 sudo apt update
-sudo apt install build-essential pkg-config git curl ca-certificates libgtk-4-dev libxkbcommon-dev xkb-data pkexec polkitd xdg-utils
+sudo apt install build-essential pkg-config git curl ca-certificates libgtk-4-dev libxkbcommon-dev libudev-dev xkb-data pkexec polkitd xdg-utils
 ```
 
 **Fedora Workstation (installation classique avec DNF) :**
 
 ```sh
-sudo dnf install gcc gcc-c++ make pkgconf-pkg-config git curl ca-certificates gtk4-devel libxkbcommon-devel xkeyboard-config polkit xdg-utils
+sudo dnf install gcc gcc-c++ make pkgconf-pkg-config git curl ca-certificates gtk4-devel libxkbcommon-devel systemd-devel xkeyboard-config polkit xdg-utils
 ```
 
 Cette procédure ne couvre pas Fedora Silverblue/Kinoite et les autres variantes immuables.
@@ -76,7 +82,7 @@ Cette procédure ne couvre pas Fedora Silverblue/Kinoite et les autres variantes
 **Manjaro / Arch Linux :**
 
 ```sh
-sudo pacman -Syu --needed base-devel pkgconf git curl ca-certificates gtk4 libxkbcommon xkeyboard-config polkit xdg-utils
+sudo pacman -Syu --needed base-devel pkgconf git curl ca-certificates gtk4 libxkbcommon systemd xkeyboard-config polkit xdg-utils
 ```
 
 Cette commande met également le système à jour pour éviter une mise à jour partielle. Redémarrer si la mise à jour du système le demande, puis reprendre ici.
@@ -154,7 +160,7 @@ Noms des dépendances et commandes de gestion des paquets : [Ubuntu](https://pac
 
 ## Premier tutoriel dans OBS
 
-1. Choisir le périphérique clavier et **AZERTY — France**, ou la disposition utilisée dans GNOME. Les périphériques non clavier sont refusés lors du démarrage.
+1. Linux : conserver **Tous les claviers (automatique)** ou choisir **Claviers sélectionnés** et cocher les périphériques. Choisir la disposition utilisée sur le bureau. Windows : disposition automatique.
 2. Cliquer sur **Copier l’URL OBS**. Dans OBS : **Sources → + → Navigateur**. Coller l’URL, largeur 1920, hauteur 1080, ou les dimensions de ta scène.
 3. Cliquer sur **Tester le rendu** : un raccourci fictif s’affiche sans lire ton clavier. **Ouvrir l’aperçu** affiche le rendu dans ton navigateur.
 4. Régler taille, durée et thème. Le fond de la page reste transparent.
@@ -177,9 +183,10 @@ L’option **Afficher aussi les touches de texte** permet les raccourcis à une 
 - Serveur limité à `127.0.0.1`, URL aléatoire et vérification d’origine.
 - **Aucune détection des champs de mot de passe.** Arrêter avant toute saisie sensible.
 - **Pas d’arrêt automatique au verrouillage de GNOME.** Arrêter avant de verrouiller/changer de session.
-- Un seul clavier à la fois. Après débranchement : actualiser, sélectionner à nouveau et redémarrer.
+- Linux : les nouveaux claviers rejoignent automatiquement la capture en mode tous. En sélection, un clavier reconnu revient après rebranchement ; sans numéro de série, conserver le même port USB. Les modificateurs sont suivis séparément par clavier : effectuer une combinaison sur un même clavier.
+- Les clics sont affichés dans l’incrustation sur les deux systèmes. Sous Wayland, aucun halo à la position du pointeur : evdev ne fournit pas les coordonnées globales du compositeur. Sous Windows, voir les contraintes d’alignement de l’écran principal dans [WINDOWS.md](docs/WINDOWS.md).
 - Changement de disposition dans GNOME : arrêter, choisir la nouvelle disposition, redémarrer.
-- Pas encore de souris, de composition des accents/Compose/IME, de préférences persistantes ou de synchronisation initiale Verr. Maj/Verr. Num.
+- Pas encore de molette/déplacement du pointeur, de composition des accents/Compose/IME, de préférences persistantes ou de synchronisation initiale Verr. Maj/Verr. Num.
 - Relâcher les modificateurs avant de lancer la capture.
 
 C’est une version alpha : les essais sur un véritable clavier sous GNOME et dans OBS restent indispensables avant une diffusion publique. Voir [la procédure de test](docs/TESTING.md).

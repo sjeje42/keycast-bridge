@@ -13,7 +13,7 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - name: Native dependencies
-        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libxkbcommon-dev pkg-config
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libxkbcommon-dev libudev-dev pkg-config
       - name: Rust stable
         run: rustup update stable --no-self-update && rustup default stable && rustup component add rustfmt clippy
       - run: npm --prefix web ci

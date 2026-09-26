@@ -7,7 +7,9 @@ on:
       - 'packaging/build-in-debian.sh'
       - 'packaging/test-install.sh'
       - '.github/workflows/debian.yml'
-      - 'Cargo.toml'
+      - 'Cargo.*'
+      - 'src/**'
+      - 'web/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,8 +19,6 @@ concurrency:
 jobs:
   debian:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-node@v7.0.0
@@ -42,16 +42,3 @@ jobs:
           name: keycast-bridge-debian13-amd64
           path: dist/*
           if-no-files-found: error
-      - name: Publish tested alpha package
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RELEASE_COMMIT: ${{ github.sha }}
-        run: |
-          version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')
-          tag="v$version"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            echo "Release already exists; keeping published assets unchanged. New build is in Actions artifacts."
-          else
-            gh release create "$tag" dist/*.deb dist/SHA256SUMS --target "$RELEASE_COMMIT" --prerelease --title "Keycast Bridge $version — Debian 13" --notes-file packaging/RELEASE.md
-          fi

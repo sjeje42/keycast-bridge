@@ -1,27 +1,18 @@
-# Alpha validation report — 2026-09-25
+# Validation — 0.2.0-alpha.2
 
-## Passed in the development environment
+## Local checks completed
 
-- `npm ci`, Svelte/TypeScript checking: zero errors and warnings.
-- Vite production build: successful; CSS/JS bundled locally, no CDN dependency.
-- `cargo check --locked` including the GTK4 GUI, using extracted Ubuntu GTK 4.14 development libraries.
-- `cargo clippy --locked --all-targets -- -D warnings`, including GTK4: successful.
-- `cargo fmt --check`: successful.
-- `cargo test --locked --no-default-features`: **7 tests passed**.
-- Native demo executable compiled and ran.
-- HTTP/WebSocket integration: valid overlay, invalid token / foreign Origin rejected, configuration and synthetic shortcut received.
-- Chromium 134 headless: actual Svelte overlay rendered; background transparent; shortcut expired; no browser errors. Screenshot: `overlay-preview.png`.
+- Svelte/TypeScript: zero errors and warnings; Vite production build succeeds.
+- Rust Linux tests without GUI: 10 passed, including SCM_RIGHTS descriptor transfer, device identity after event renumbering, keyboard filtering and HTTP authorization.
+- Linux Clippy without GUI: no warnings. GTK4 GUI compilation check succeeds using extracted development libraries.
+- Windows capture backend cross-compilation check succeeds; native Windows linking and execution are checked by the Windows workflow.
 
-## Passed on GitHub Actions
+## Automated release gates
 
-The [first Build and test run](https://github.com/sjeje42/keycast-bridge/actions/runs/36164115444) completed successfully for commit `afbdae2c4d3ae8e1de809a25eb82ea697647855b` on Ubuntu 24.04, including formatting, Clippy, tests, the HTTP/WebSocket smoke check and release compilation. This does not validate capture on physical hardware or Debian 13.
+Publication requires successful **Build and test**, **Debian 13 package** and **Windows portable** runs for the same commit. Debian tests package installation, virtual-display GUI launch, removal and reinstall. Windows tests keyboard normalization, native build, portable GUI launch without MSYS2 on PATH and HTTP/WebSocket operation.
 
-## Not validated here
+See the [Actions results](https://github.com/sjeje42/keycast-bridge/actions) for the actual result of each build. Workflow configuration alone is not evidence of passing tests.
 
-- Running the GTK window in an actual graphical session; only compiler/type checking and linting were performed for this binary.
-- A complete linked/release GTK executable on Debian 13.
-- Actual evdev capture, privilege drop with Polkit, unplug/replug, or live emergency shortcut on physical hardware.
-- OBS Browser Source availability and behavior in the user's Debian package.
-- GNOME / KDE / wlroots cross-compositor compatibility.
+## Manual validation still required
 
-The source is a reviewable alpha, not a tested production release or a ready-to-install binary package. Follow `TESTING.md` for real-device acceptance before live use.
+Physical USB reconnect, privileged hotplug broker behavior on a desktop, mouse capture, Windows DPI and OBS alignment have not been exercised in this development environment. Follow [TESTING.md](TESTING.md). The user's keyboard/OBS success on the previous 0.1 alpha does not validate these new features. Fedora, Manjaro and other desktops remain unverified.
