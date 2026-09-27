@@ -9,7 +9,7 @@ The GUI/server refuses root. `pkexec` launches an administrator-installed helper
 - A root broker monitors udev, enumerates input event nodes, checks device numbers and evdev capabilities, and opens only the selected keyboards and optionally mice. It stays privileged for hotplug but never reads key events or connects to the network.
 - An event reader drops supplementary groups, GID and UID, enables `NO_NEW_PRIVS`, and receives descriptors via `SCM_RIGHTS` on an inherited, private `AF_UNIX` socketpair. No public Unix socket is created. The reader uses epoll and keeps per-device modifier state; removal closes the descriptor and discards that state.
 
-Only normalized labels, mouse buttons (no Linux pointer coordinates), readiness and device notifications reach the GUI via stdout. Stdin carries a heartbeat. Stop or application exit invalidates the generation and closes stdin; EOF or three seconds without heartbeat stops the reader, then the broker exits. Event node numbers are not stored as persistent identity. Selected devices use serial/name, falling back to physical USB path/name; this is convenience matching, not cryptographic device authentication. Input remains visible to the reader after privilege drop; filtering is application policy, not hardware isolation.
+Only normalized labels, held modifier states, mouse buttons (no Linux pointer coordinates), readiness and device notifications reach the GUI via stdout. Stdin carries a heartbeat. Stop or application exit invalidates the generation and closes stdin; EOF or three seconds without heartbeat stops the reader, then the broker exits. Event node numbers are not stored as persistent identity. Selected devices use serial/name, falling back to physical USB path/name; this is convenience matching, not cryptographic device authentication. Input remains visible to the reader after privilege drop; filtering is application policy, not hardware isolation.
 
 ## Windows
 
@@ -22,3 +22,6 @@ Only IPv4 localhost is bound. A random per-launch capability token protects the 
 Other same-user software, administrators, a compromised GUI or malicious OBS browser extensions are outside the threat model. The token may appear in OBS configuration or browser history: do not share it. Restarting rotates it. The emergency shortcut consumes no keys; other applications receive it too. On Linux, press it on a captured keyboard, with all modifiers on that keyboard. No independent security audit is claimed.
 
 Report vulnerabilities privately to the maintainer; do not include actual captured secrets.
+
+
+Appearance preferences (position and colors only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.

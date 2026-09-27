@@ -1,5 +1,8 @@
 #![cfg_attr(windows, windows_subsystem = "windows")]
 
+#[path = "gui/appearance.rs"]
+mod appearance_controls;
+
 use gtk4::{
     glib, prelude::*, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton,
     ComboBoxText, Entry, Label, Orientation, ScrolledWindow, SpinButton,
@@ -382,44 +385,24 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     let duration_label = Label::new(None);
     let duration = SpinButton::with_range(300.0, 5000.0, 100.0);
     duration.set_value(1800.0);
-    let dark = CheckButton::new();
-    dark.set_active(true);
     appearance.append(&size_label);
     appearance.append(&size);
     appearance.append(&duration_label);
     appearance.append(&duration);
-    appearance.append(&dark);
     root.append(&appearance);
     {
-        let (s, d, k) = (state.clone(), duration.clone(), dark.clone());
+        let (s, d) = (state.clone(), duration.clone());
         size.connect_value_changed(move |v| {
-            s.config(
-                v.value_as_int() as u32,
-                d.value_as_int() as u32,
-                k.is_active(),
-            )
+            s.config(v.value_as_int() as u32, d.value_as_int() as u32)
         });
     }
     {
-        let (s, z, k) = (state.clone(), size.clone(), dark.clone());
+        let (s, z) = (state.clone(), size.clone());
         duration.connect_value_changed(move |v| {
-            s.config(
-                z.value_as_int() as u32,
-                v.value_as_int() as u32,
-                k.is_active(),
-            )
+            s.config(z.value_as_int() as u32, v.value_as_int() as u32)
         });
     }
-    {
-        let (s, z, d) = (state.clone(), size.clone(), duration.clone());
-        dark.connect_toggled(move |k| {
-            s.config(
-                z.value_as_int() as u32,
-                d.value_as_int() as u32,
-                k.is_active(),
-            )
-        });
-    }
+    appearance_controls::build(&root, state.clone(), language.clone());
     let notice = Label::new(None);
     notice.set_wrap(true);
     notice.set_xalign(0.0);
@@ -524,7 +507,6 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         preview.set_label(tr(fr, "Ouvrir l’aperçu", "Open preview"));
         size_label.set_text(tr(fr, "Taille", "Size"));
         duration_label.set_text(tr(fr, "Durée (ms)", "Duration (ms)"));
-        dark.set_label(Some(tr(fr, "Sombre", "Dark")));
         notice.set_text(tr(fr, "Ctrl + Alt + F12 : arrêt immédiat. Aucun historique. Pas de détection des mots de passe. L’URL change à chaque lancement : la recopier dans OBS.", "Ctrl + Alt + F12: stop immediately. No history. No password-field detection. The URL changes on each launch: update it in OBS."));
         glib::ControlFlow::Continue
     });

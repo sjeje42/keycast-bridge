@@ -13,7 +13,7 @@
 
 **Afficher les raccourcis clavier dans OBS, sous Linux/Wayland et Windows.**
 
-Version **0.2.0-alpha.4**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
+Version **0.2.0-alpha.5**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -39,7 +39,7 @@ Extraire entièrement le ZIP fourni par le workflow **Windows portable** ou les 
 Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.4-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.5-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.
@@ -223,3 +223,13 @@ Keycast Bridge est une nouvelle implémentation inspirée du besoin couvert par 
 ### Touches maintenues et dessin à la souris
 
 Maj (`Shift`), Ctrl, Alt et leurs combinaisons restent affichés dans une ligne en direct tant qu’ils sont enfoncés, y compris pendant un clic ou un glisser avec la Plume. Un contour violet distingue les touches maintenues du dernier raccourci, affiché temporairement au-dessus. Disponible sous Linux et Windows, sans activer les touches de texte. Activez « Afficher les clics de souris » pour voir aussi les boutons.
+
+### Position et couleurs
+
+Ouvrir **Position et couleurs**, puis glisser le bloc dans l’aperçu schématique. Les neuf emplacements prédéfinis et les champs **X/Y (%)** permettent aussi de le positionner au clavier. 0 % correspond au bord gauche/haut et 100 % au bord droit/bas de l’espace disponible, avec une marge pour garder les touches visibles. Les deux lignes et l’icône souris se déplacent ensemble.
+
+Choisir séparément le fond, les touches, le texte et les trois couleurs de clic. L’accent sert aussi au contour des modificateurs et au cercle au clic. Les boutons de palette claire/sombre conservent la position ; **Tout réinitialiser** remet position et couleurs par défaut.
+
+Les changements s’appliquent immédiatement dans OBS, même pendant la capture. L’aperçu GTK est schématique : **Tester le rendu** permet de vérifier le résultat exact dans OBS, mais arrête la capture en cours. Les coordonnées sont relatives à la source Navigateur, pas à une fenêtre d’un autre logiciel ; attention au recadrage de cette source dans OBS. Le cercle de clic reste attaché au pointeur.
+
+Position et couleurs sont enregistrées dans `%APPDATA%\keycast-bridge\appearance.json` sous Windows, et `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` ou `~/.config/keycast-bridge/appearance.json` sous Linux. Ce fichier ne contient aucune frappe ni URL OBS. Les autres options restent limitées à la session. En cas d’échec de sauvegarde, l’interface le signale.

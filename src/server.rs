@@ -1,3 +1,4 @@
+use crate::appearance::{preferences_path, Appearance};
 use crate::model::Event;
 use axum::{
     extract::{
@@ -43,6 +44,10 @@ impl Bridge {
                     duration: 1800,
                     dark: true,
                     halo: false,
+                    appearance: preferences_path()
+                        .as_deref()
+                        .and_then(Appearance::load)
+                        .unwrap_or_default(),
                 },
             }),
         })
@@ -73,15 +78,30 @@ impl Bridge {
         }
         let _ = self.tx.send(inner.config.clone());
     }
-    pub fn config(&self, size: u32, duration: u32, dark: bool) {
+    pub fn appearance(&self) -> Appearance {
+        match &self.inner.lock().unwrap().config {
+            Event::Config { appearance, .. } => appearance.clone(),
+            _ => Appearance::default(),
+        }
+    }
+    pub fn set_appearance(&self, value: Appearance) {
         let mut inner = self.inner.lock().unwrap();
-        let halo = matches!(inner.config, Event::Config { halo: true, .. });
-        inner.config = Event::Config {
-            size: size.clamp(20, 96),
-            duration: duration.clamp(300, 5000),
-            dark,
-            halo,
-        };
+        if let Event::Config { appearance, .. } = &mut inner.config {
+            *appearance = value.sanitized();
+        }
+        let _ = self.tx.send(inner.config.clone());
+    }
+    pub fn config(&self, size: u32, duration: u32) {
+        let mut inner = self.inner.lock().unwrap();
+        if let Event::Config {
+            size: old_size,
+            duration: old_duration,
+            ..
+        } = &mut inner.config
+        {
+            *old_size = size.clamp(20, 96);
+            *old_duration = duration.clamp(300, 5000);
+        }
         let _ = self.tx.send(inner.config.clone());
     }
 }
@@ -169,6 +189,32 @@ pub async fn serve(state: Arc<Bridge>, listener: tokio::net::TcpListener) -> std
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn live_appearance_preserves_capture_modifiers_and_other_settings() {
+        let b = Bridge::new();
+        let mut rx = b.tx.subscribe();
+        b.inner.lock().unwrap().status = "capturing";
+        b.inner.lock().unwrap().modifiers = vec!["Ctrl".into()];
+        let style = Appearance {
+            x: 0.0,
+            y: 25.0,
+            accent: "#22aa44".into(),
+            ..Default::default()
+        };
+        b.set_appearance(style.clone());
+        b.halo(true);
+        b.config(64, 2300);
+        let inner = b.inner.lock().unwrap();
+        assert_eq!(inner.session, 0);
+        assert_eq!(inner.status, "capturing");
+        assert_eq!(inner.modifiers, ["Ctrl"]);
+        assert!(
+            matches!(&inner.config, Event::Config { size:64, duration:2300, halo:true, appearance, .. } if appearance == &style)
+        );
+        while let Ok(event) = rx.try_recv() {
+            assert!(matches!(event, Event::Config { .. }));
+        }
+    }
     #[test]
     fn reject_foreign_origins_hosts_and_tokens() {
         let b = Bridge::new();

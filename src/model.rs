@@ -26,6 +26,8 @@ pub enum Event {
         dark: bool,
         #[serde(default)]
         halo: bool,
+        #[serde(default)]
+        appearance: crate::appearance::Appearance,
     },
 }
 

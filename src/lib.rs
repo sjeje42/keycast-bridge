@@ -1,3 +1,4 @@
+pub mod appearance;
 #[cfg(target_os = "linux")]
 pub mod capture;
 pub mod model;
