@@ -118,7 +118,11 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
         let preview = preview.clone();
         button.connect_clicked(move |_| {
             let previous = s.appearance();
-            let mut a = Appearance::default();
+            let mut a = Appearance {
+                canvas_width: previous.canvas_width,
+                canvas_height: previous.canvas_height,
+                ..Default::default()
+            };
             if mode != 2 {
                 a.x = previous.x;
                 a.y = previous.y;
@@ -181,6 +185,12 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
             let a = s.appearance();
             cr.set_source_rgb(0.12, 0.14, 0.18);
             let _ = cr.paint();
+            let (ox, oy, w, h) = canvas_rect(w, h, &a);
+            cr.set_source_rgb(0.18, 0.21, 0.26);
+            cr.rectangle(ox, oy, w, h);
+            let _ = cr.fill();
+            let _ = cr.save();
+            cr.translate(ox, oy);
             cr.set_source_rgba(1.0, 1.0, 1.0, 0.12);
             for i in 1..4 {
                 cr.move_to(w * f64::from(i) / 4.0, 0.0);
@@ -209,6 +219,7 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
             cr.set_font_size((bw / 10.0).min(17.0));
             cr.move_to(left + 14.0, top + 30.0);
             let _ = cr.show_text("Ctrl + Shift");
+            let _ = cr.restore();
         });
     }
     let gesture = GestureDrag::new();
@@ -230,6 +241,7 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
             let w = f64::from(preview.width());
             let h = f64::from(preview.height());
             let mut a = s.appearance();
+            let (_, _, w, h) = canvas_rect(w, h, &a);
             a.x = origin.get().0 + dx / (w - (w * 0.38).min(210.0) - 16.0).max(1.0) * 100.0;
             a.y = origin.get().1 + dy / (h - 64.0).max(1.0) * 100.0;
             s.set_appearance(a);
@@ -317,4 +329,130 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
     };
     let _ = update();
     glib::timeout_add_local(Duration::from_millis(100), update);
+}
+
+pub fn canvas_controls(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
+    let heading = Label::new(None);
+    heading.set_xalign(0.0);
+    heading.add_css_class("heading");
+    root.append(&heading);
+    let presets = ComboBoxText::new();
+    for (id, title) in [
+        ("1920x1080", "1920 × 1080 — Full HD"),
+        ("1280x720", "1280 × 720 — HD"),
+        ("2560x1440", "2560 × 1440 — QHD"),
+        ("3840x2160", "3840 × 2160 — UHD / 4K"),
+        ("1080x1920", "1080 × 1920 — 9:16"),
+        ("1080x1080", "1080 × 1080 — 1:1"),
+    ] {
+        presets.append(Some(id), title);
+    }
+    presets.append(Some("custom"), "Personnalisé / Custom");
+    root.append(&presets);
+    let row = GtkBox::new(Orientation::Horizontal, 8);
+    let width_label = Label::new(None);
+    let height_label = Label::new(None);
+    let width = SpinButton::with_range(160.0, 7680.0, 1.0);
+    let height = SpinButton::with_range(160.0, 7680.0, 1.0);
+    row.append(&width_label);
+    row.append(&width);
+    row.append(&height_label);
+    row.append(&height);
+    root.append(&row);
+    let hint = Label::new(None);
+    hint.set_wrap(true);
+    hint.set_xalign(0.0);
+    root.append(&hint);
+    let saved = Label::new(None);
+    saved.set_wrap(true);
+    saved.set_xalign(0.0);
+    root.append(&saved);
+    let updating = Rc::new(Cell::new(false));
+    let failed = Rc::new(Cell::new(false));
+    for (spin, horizontal) in [(&width, true), (&height, false)] {
+        let state = state.clone();
+        let updating = updating.clone();
+        let failed = failed.clone();
+        spin.connect_value_changed(move |spin| {
+            if updating.get() {
+                return;
+            }
+            let mut a = state.appearance();
+            if horizontal {
+                a.canvas_width = spin.value_as_int() as u32;
+            } else {
+                a.canvas_height = spin.value_as_int() as u32;
+            }
+            state.set_appearance(a);
+            save(&state, &failed);
+        });
+    }
+    {
+        let state = state.clone();
+        let updating = updating.clone();
+        let failed = failed.clone();
+        presets.connect_changed(move |combo| {
+            if updating.get() {
+                return;
+            }
+            if let Some(id) = combo.active_id() {
+                if let Some((w, h)) = id
+                    .split_once('x')
+                    .and_then(|(w, h)| Some((w.parse::<u32>().ok()?, h.parse::<u32>().ok()?)))
+                {
+                    let mut a = state.appearance();
+                    a.canvas_width = w;
+                    a.canvas_height = h;
+                    state.set_appearance(a);
+                    save(&state, &failed);
+                }
+            }
+        });
+    }
+    let weak = root.downgrade();
+    let mut previous = None;
+    let mut update = move || {
+        if weak.upgrade().is_none() {
+            return glib::ControlFlow::Break;
+        }
+        let fr = language.active_id().is_some_and(|id| id == "fr");
+        let a = state.appearance();
+        if previous != Some((a.canvas_width, a.canvas_height)) {
+            updating.set(true);
+            width.set_value(a.canvas_width.into());
+            height.set_value(a.canvas_height.into());
+            if !presets.set_active_id(Some(&format!("{}x{}", a.canvas_width, a.canvas_height))) {
+                presets.set_active_id(Some("custom"));
+            }
+            updating.set(false);
+            previous = Some((a.canvas_width, a.canvas_height));
+        }
+        heading.set_text(tr(fr, "Format de l’incrustation OBS", "OBS overlay canvas"));
+        width_label.set_text(tr(fr, "Largeur (px)", "Width (px)"));
+        height_label.set_text(tr(fr, "Hauteur (px)", "Height (px)"));
+        hint.set_text(&format!("{} {} × {}. {}", tr(fr, "Dans les propriétés de la source Navigateur OBS, reporter", "In OBS Browser Source properties, enter"), a.canvas_width, a.canvas_height, tr(fr, "L’application ne modifie pas ces propriétés automatiquement. Si le format diffère, l’incrustation s’ajuste sans déformation avec des marges transparentes.", "The application does not change those properties automatically. If the format differs, the overlay fits without distortion with transparent margins.")));
+        saved.set_text(if failed.get() {
+            tr(
+                fr,
+                "Format appliqué, mais sauvegarde impossible.",
+                "Canvas applied, but could not be saved.",
+            )
+        } else {
+            tr(
+                fr,
+                "Format mémorisé pour le prochain lancement.",
+                "Canvas saved for the next launch.",
+            )
+        });
+        glib::ControlFlow::Continue
+    };
+    let _ = update();
+    glib::timeout_add_local(Duration::from_millis(150), update);
+}
+
+fn canvas_rect(width: f64, height: f64, a: &Appearance) -> (f64, f64, f64, f64) {
+    let scale = (width / f64::from(a.canvas_width)).min(height / f64::from(a.canvas_height));
+    let w = f64::from(a.canvas_width) * scale;
+    let h = f64::from(a.canvas_height) * scale;
+    ((width - w) / 2.0, (height - h) / 2.0, w, h)
 }

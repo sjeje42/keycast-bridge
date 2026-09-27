@@ -1,5 +1,7 @@
 # Keycast Bridge
 
+[Complete user guide — English](docs/USER_GUIDE.en.md) · [Guide français](docs/USER_GUIDE.fr.md)
+
 **English** · [Français](README.fr.md)
 
 [![Rust stable](https://img.shields.io/badge/Rust-stable-000000?logo=rust&logoColor=white)](Cargo.toml)
@@ -15,7 +17,7 @@
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
-Version **0.2.0-alpha.5**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0-alpha.6**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). Other compositors are an architectural target, not a tested compatibility claim.
 
@@ -23,7 +25,7 @@ Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). 
 
 See the [exact validation status](docs/VALIDATION.md).
 
-## Windows and input improvements in 0.2.0-alpha.5
+## Windows and input improvements in 0.2.0-alpha.6
 
 [Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
 
@@ -46,7 +48,7 @@ Optional left/right/middle mouse feedback is available on both systems. Windows 
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.5-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.6-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.
@@ -168,7 +170,7 @@ Dependency names and package-manager commands: [Ubuntu](https://packages.ubuntu.
 ## OBS setup
 
 1. Select your keyboard and layout in Keycast Bridge. The device list includes non-keyboards; the capture helper rejects them.
-2. Copy the OBS URL. In OBS, add **Browser** as a source; use **1920 × 1080**, or your canvas size. Paste the URL. Keep the page background transparent.
+2. Copy the OBS URL. In OBS, add **Browser** as a source; match the dimensions chosen in **Settings → Canvas and size** (default **1920 × 1080**). Paste the URL. Keep the page background transparent.
 3. Click **Test overlay** to display a synthetic shortcut; no keyboard access is needed. **Open preview** opens the same overlay in your browser.
 4. Click **Start** and authorize the selected keyboard. Check that the status says **Capture active** before recording.
 5. Click **Stop**, or press **Ctrl+Alt+F12** on the selected keyboard. The shortcut itself is not displayed.
@@ -217,4 +219,8 @@ Customize background, key background, text and all three click colors. The accen
 
 Changes apply live in OBS during capture. The GTK preview is schematic; **Test overlay** shows exact output in OBS but stops active capture. Positions are relative to the Browser Source; cropping that source can hide content. The click ring remains at the pointer.
 
-Position and colors persist in `%APPDATA%\keycast-bridge\appearance.json` on Windows and `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` or `~/.config/keycast-bridge/appearance.json` on Linux. No keystrokes or OBS token are stored. Other options remain session-only. Save failures are shown in the interface.
+Position, colors and canvas dimensions persist in `%APPDATA%\keycast-bridge\appearance.json` on Windows and `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` or `~/.config/keycast-bridge/appearance.json` on Linux. No keystrokes or OBS token are stored. Other options remain session-only. Save failures are shown in the interface.
+
+### Settings and OBS canvas
+
+Open the top-right gear for **Position and colors**, **Canvas and size**, and **Capture**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies are included in packages.

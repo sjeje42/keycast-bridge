@@ -53,7 +53,7 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 Record OS, keyboard model, selected mode, DPI, OBS source dimensions and result. Do not include sensitive captured text.
 
 
-## 0.2.0-alpha.5 — multi-monitor acceptance
+## 0.2.0-alpha.6 — multi-monitor acceptance
 
 - Select DISPLAY2, then DISPLAY3 during capture. Test monitors left of / above the primary (negative coordinates) and a portrait monitor.
 - Align the selected monitor capture and OBS browser viewport exactly, including aspect ratio. Verify clicks at the center and four corners; clicks outside the selected display must show no ring.
@@ -69,3 +69,7 @@ Verify Shift/Ctrl/Alt alone, combinations, both left/right keys, release during 
 ## Appearance (alpha.5)
 
 Drag the schematic preview; test all nine presets and numeric X/Y via keyboard. Change each color, including a three-button mouse test and Windows pointer halo. Change size/duration while using a custom style: position/colors must remain. Reconnect the Browser Source and restart the app: position/colors must return. Light/dark palettes preserve position; reset restores bottom-center/default colors. Verify a failed preference save is reported without interrupting capture. Test landscape/portrait browser viewports and OBS crops; native preview is schematic.
+
+## Settings and canvas (alpha.6)
+
+Check initial main-window fit on 1280×720/1366×768 displays and high-DPI scaling. Open the gear, switch all three tabs, close/reopen Settings and verify capture continues. Choose a portrait preset and a custom canvas, align OBS width/height, then restart and confirm dimensions persist. With mismatched browser dimensions, verify centered transparent margins and no distortion. Check the main dimension hint, preview aspect and pointer ring. Open the complete guide in each language with the network disconnected; also open the bundled HTML directly.

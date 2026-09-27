@@ -55,6 +55,13 @@ impl Bridge {
     pub fn url(&self) -> String {
         format!("http://127.0.0.1:{PORT}/overlay/{}", self.token)
     }
+    pub fn help_url(&self, french: bool) -> String {
+        format!(
+            "http://127.0.0.1:{PORT}/help/{}/{}.html",
+            self.token,
+            if french { "fr" } else { "en" }
+        )
+    }
     pub fn stop(&self) {
         let mut inner = self.inner.lock().unwrap();
         inner.session += 1;
@@ -158,10 +165,30 @@ async fn socket(
         }
     })
 }
+async fn help(
+    State(state): State<Arc<Bridge>>,
+    Path((token, language)): Path<(String, String)>,
+    headers: HeaderMap,
+) -> Response {
+    if !authorized(&headers, &token, &state) {
+        return StatusCode::FORBIDDEN.into_response();
+    }
+    let html = match language.as_str() {
+        "en.html" => include_str!("../docs/guide/en.html"),
+        "fr.html" => include_str!("../docs/guide/fr.html"),
+        _ => return StatusCode::NOT_FOUND.into_response(),
+    };
+    ([
+        ("Cache-Control", "no-store"),
+        ("Referrer-Policy", "no-referrer"),
+        ("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'"),
+    ], Html(html)).into_response()
+}
 pub fn router(state: Arc<Bridge>) -> Router {
     Router::new()
         .route("/overlay/{token}", get(overlay))
         .route("/ws/{token}", get(socket))
+        .route("/help/{token}/{language}", get(help))
         .route(
             "/assets/overlay.js",
             get(|| async {

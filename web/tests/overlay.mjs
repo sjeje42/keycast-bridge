@@ -67,8 +67,24 @@ try {
   assert.equal(await page.locator('svg path').nth(0).getAttribute('fill'), appearance.accent);
   assert.equal(await page.locator('svg path').nth(1).getAttribute('fill'), appearance.right_click);
   assert.equal(await page.locator('svg rect').nth(1).getAttribute('fill'), appearance.middle_click);
-  const ringStyle = await page.locator('.ring').evaluate(el => ({x:parseFloat(getComputedStyle(el).left),y:parseFloat(getComputedStyle(el).top),color:getComputedStyle(el).borderTopColor}));
-  assert.deepEqual(ringStyle, {x:896,y:432,color:'rgb(17, 170, 51)'}, 'pointer ring independent of keyboard position');
+  const ringStyle = await page.locator('.ring').evaluate(el => { const rect=el.getBoundingClientRect(); return {x:rect.x+rect.width/2,y:rect.y+rect.height/2,color:getComputedStyle(el).borderTopColor}; });
+  assert.ok(Math.abs(ringStyle.x-896)<1 && Math.abs(ringStyle.y-432)<1, 'pointer ring independent of keyboard position');
+  assert.equal(ringStyle.color, 'rgb(17, 170, 51)');
+  for (const [canvas_width,canvas_height] of [[1280,720],[1080,1920],[1080,1080],[3840,2160]]) {
+    await send({...config, appearance:{...appearance,canvas_width,canvas_height}});
+    const box = await page.locator('.canvas').boundingBox();
+    const scale = Math.min(1280/canvas_width,720/canvas_height);
+    assert.ok(Math.abs(box.width-canvas_width*scale)<1 && Math.abs(box.height-canvas_height*scale)<1, 'canvas fits without distortion');
+    assert.ok(Math.abs(box.x-(1280-box.width)/2)<1 && Math.abs(box.y-(720-box.height)/2)<1, 'canvas centered in mismatched viewport');
+    const style = await page.locator('.canvas').evaluate(el => ({width:el.style.width,height:el.style.height}));
+    assert.deepEqual(style, {width:`${canvas_width}px`,height:`${canvas_height}px`});
+  }
+  await page.setViewportSize({width:1080,height:1920});
+  await send({...config, appearance:{...appearance,canvas_width:1080,canvas_height:1920}});
+  assert.equal((await page.locator('.canvas').boundingBox()).width,1080);
+  await send({type:'mouse',button:1,pressed:true,x:0.7,y:0.6});
+  const portraitRing = await page.locator('.ring').evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};});
+  assert.ok(Math.abs(portraitRing.x-756)<1 && Math.abs(portraitRing.y-1152)<1, 'portrait ring alignment');
   await send({...config, appearance:{x:-50,y:900,accent:'url(https://invalid.test)'}});
   assert.equal(await page.locator('.overlay').evaluate(el => el.style.left), '0%');
   assert.equal(await page.locator('.overlay').evaluate(el => el.style.top), '100%');

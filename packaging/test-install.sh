@@ -19,6 +19,7 @@ runuser -u tester -- timeout 8s dbus-run-session -- xvfb-run -a /usr/bin/keycast
 result=$?
 set -e
 [ "$result" -eq 124 ] || { echo "GUI exited unexpectedly: $result"; exit 1; }
+runuser -u tester -- env KEYCAST_SMOKE_TEST=1 dbus-run-session -- xvfb-run -a /usr/bin/keycast-bridge
 apt-get remove -y keycast-bridge
 test ! -e /usr/bin/keycast-bridge
 test ! -e /usr/libexec/keycast-bridge-capture

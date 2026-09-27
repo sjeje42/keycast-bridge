@@ -211,22 +211,75 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     let window = ApplicationWindow::builder()
         .application(app)
         .title("Keycast Bridge")
-        .default_width(680)
-        .default_height(650)
+        .default_width(640)
+        .default_height(520)
         .build();
-    let root = GtkBox::new(Orientation::Vertical, 14);
+    fit_window(&window, 640, 520);
+    let settings = gtk4::Window::builder()
+        .transient_for(&window)
+        .destroy_with_parent(true)
+        .hide_on_close(true)
+        .build();
+    fit_window(&settings, 720, 640);
+    let settings_root = GtkBox::new(Orientation::Vertical, 8);
+    let tabs = gtk4::Notebook::new();
+    tabs.set_vexpand(true);
+    let style_page = GtkBox::new(Orientation::Vertical, 8);
+    let format_page = GtkBox::new(Orientation::Vertical, 10);
+    let capture_page = GtkBox::new(Orientation::Vertical, 8);
+    let style_tab = Label::new(None);
+    let format_tab = Label::new(None);
+    let capture_tab = Label::new(None);
+    for (page, label) in [
+        (&style_page, &style_tab),
+        (&format_page, &format_tab),
+        (&capture_page, &capture_tab),
+    ] {
+        for set in [
+            GtkBox::set_margin_top,
+            GtkBox::set_margin_bottom,
+            GtkBox::set_margin_start,
+            GtkBox::set_margin_end,
+        ] {
+            set(page, 16);
+        }
+        let scroll = ScrolledWindow::builder()
+            .child(page)
+            .hscrollbar_policy(gtk4::PolicyType::Automatic)
+            .build();
+        tabs.append_page(&scroll, Some(label));
+    }
+    settings_root.append(&tabs);
+    let settings_footer = GtkBox::new(Orientation::Horizontal, 8);
+    settings_footer.set_margin_start(16);
+    settings_footer.set_margin_end(16);
+    settings_footer.set_margin_bottom(12);
+    let guide = Button::new();
+    let close_settings = Button::new();
+    settings_footer.append(&guide);
+    settings_footer.append(&close_settings);
+    settings_root.append(&settings_footer);
+    settings.set_child(Some(&settings_root));
+    {
+        let settings = settings.clone();
+        close_settings.connect_clicked(move |_| settings.hide());
+    }
+    let root = GtkBox::new(Orientation::Vertical, 10);
     for set in [
         GtkBox::set_margin_top,
         GtkBox::set_margin_bottom,
         GtkBox::set_margin_start,
         GtkBox::set_margin_end,
     ] {
-        set(&root, 24);
+        set(&root, 16);
     }
     let title = Label::new(Some("Keycast Bridge"));
     title.add_css_class("title-1");
     title.set_xalign(0.0);
-    root.append(&title);
+    title.set_hexpand(true);
+    title.set_ellipsize(gtk4::pango::EllipsizeMode::End);
+    let header = GtkBox::new(Orientation::Horizontal, 8);
+    header.append(&title);
     let language = ComboBoxText::new();
     language.append(Some("fr"), "Français");
     language.append(Some("en"), "English");
@@ -237,22 +290,47 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             "en"
         },
     ));
-    root.append(&language);
+    header.append(&language);
+    let gear = Button::from_icon_name("preferences-system-symbolic");
+    header.append(&gear);
+    root.append(&header);
+    {
+        let settings = settings.clone();
+        gear.connect_clicked(move |_| settings.present());
+    }
+    {
+        let state = state.clone();
+        let language = language.clone();
+        guide.connect_clicked(move |_| {
+            let fr = language.active_id().is_some_and(|id| id == "fr");
+            let _ = gtk4::gio::AppInfo::launch_default_for_uri(
+                &state.help_url(fr),
+                None::<&gtk4::gio::AppLaunchContext>,
+            );
+        });
+    }
     let status = Label::new(None);
     status.set_xalign(0.0);
     status.add_css_class("heading");
     root.append(&status);
     let keyboard_label = Label::new(None);
     keyboard_label.set_xalign(0.0);
+    keyboard_label.set_wrap(true);
     root.append(&keyboard_label);
     let devices = ComboBoxText::new();
     let choices: Choices = Default::default();
     let device_list = GtkBox::new(Orientation::Vertical, 4);
     populate(&devices, &device_list, &choices);
-    root.append(&devices);
-    root.append(&device_list);
+    capture_page.append(&devices);
+    let device_scroll = ScrolledWindow::builder()
+        .child(&device_list)
+        .max_content_height(130)
+        .propagate_natural_height(true)
+        .hscrollbar_policy(gtk4::PolicyType::Never)
+        .build();
+    capture_page.append(&device_scroll);
     let refresh = Button::new();
-    root.append(&refresh);
+    capture_page.append(&refresh);
     {
         let devices = devices.clone();
         let list = device_list.clone();
@@ -261,7 +339,7 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     }
     let layout_label = Label::new(None);
     layout_label.set_xalign(0.0);
-    root.append(&layout_label);
+    capture_page.append(&layout_label);
     let layout = ComboBoxText::new();
     for (id, label) in [
         ("fr", "AZERTY — France"),
@@ -277,21 +355,27 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         layout.append(Some("auto"), "Automatique / Automatic — Windows");
     }
     layout.set_active(Some(0));
-    root.append(&layout);
+    capture_page.append(&layout);
     let all = CheckButton::new();
-    root.append(&all);
+    capture_page.append(&all);
     let mouse = CheckButton::new();
-    root.append(&mouse);
+    let mouse_row = GtkBox::new(Orientation::Horizontal, 8);
+    mouse_row.append(&mouse);
     let halo = CheckButton::new();
     halo.set_visible(cfg!(windows));
-    root.append(&halo);
+    mouse_row.append(&halo);
+    root.append(&mouse_row);
+    let screen_summary = Label::new(None);
+    screen_summary.set_xalign(0.0);
+    screen_summary.set_wrap(true);
+    root.append(&screen_summary);
     {
         let s = state.clone();
         halo.connect_toggled(move |v| s.halo(v.is_active()));
     }
     #[cfg(windows)]
     display_controls(
-        &root,
+        &capture_page,
         state.clone(),
         language.clone(),
         mouse.clone(),
@@ -362,13 +446,15 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     url.set_text(&state.url());
     root.append(&url);
     let copy = Button::new();
-    root.append(&copy);
+    let obs_actions = GtkBox::new(Orientation::Horizontal, 8);
+    obs_actions.append(&copy);
     {
         let s = state.clone();
         copy.connect_clicked(move |b| b.clipboard().set_text(&s.url()));
     }
     let preview = Button::new();
-    root.append(&preview);
+    obs_actions.append(&preview);
+    root.append(&obs_actions);
     {
         let s = state.clone();
         preview.connect_clicked(move |_| {
@@ -389,7 +475,7 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     appearance.append(&size);
     appearance.append(&duration_label);
     appearance.append(&duration);
-    root.append(&appearance);
+    format_page.append(&appearance);
     {
         let (s, d) = (state.clone(), duration.clone());
         size.connect_value_changed(move |v| {
@@ -402,19 +488,39 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             s.config(z.value_as_int() as u32, v.value_as_int() as u32)
         });
     }
-    appearance_controls::build(&root, state.clone(), language.clone());
+    appearance_controls::build(&style_page, state.clone(), language.clone());
+    appearance_controls::canvas_controls(&format_page, state.clone(), language.clone());
     let notice = Label::new(None);
     notice.set_wrap(true);
     notice.set_xalign(0.0);
     root.append(&notice);
     let weak = window.downgrade();
     let s = state.clone();
+    let settings_for_smoke = settings.clone();
+    let gear_for_smoke = gear.clone();
+    let close_for_smoke = close_settings.clone();
     glib::timeout_add_local(Duration::from_millis(150), move || {
         if weak.upgrade().is_none() {
             return glib::ControlFlow::Break;
         }
         let fr = language.active_id().is_some_and(|s| s == "fr");
         let current = s.inner.lock().unwrap().status;
+        settings.set_title(Some(tr(
+            fr,
+            "Paramètres — Keycast Bridge",
+            "Settings — Keycast Bridge",
+        )));
+        gear.set_tooltip_text(Some(tr(fr, "Paramètres", "Settings")));
+        gear.update_property(&[gtk4::accessible::Property::Label(tr(
+            fr,
+            "Paramètres",
+            "Settings",
+        ))]);
+        style_tab.set_text(tr(fr, "Position et couleurs", "Position and colors"));
+        format_tab.set_text(tr(fr, "Format et taille", "Canvas and size"));
+        capture_tab.set_text(tr(fr, "Capture", "Capture"));
+        guide.set_label(tr(fr, "Guide complet", "Complete guide"));
+        close_settings.set_label(tr(fr, "Fermer", "Close"));
         let active = matches!(current, "authorizing" | "capturing");
         status.set_text(match current {
             "capturing" => tr(fr, "● Capture active", "● Capture active"),
@@ -437,14 +543,14 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         keyboard_label.set_text(tr(
             fr,
             if cfg!(windows) {
-                "Claviers de la session Windows"
+                "Claviers Windows — disposition automatique"
             } else {
-                "Clavier (les périphériques non clavier seront refusés)"
+                "Claviers — sélection et disposition dans les Paramètres"
             },
             if cfg!(windows) {
-                "Keyboards in the Windows session"
+                "Windows keyboards — automatic layout"
             } else {
-                "Keyboard (non-keyboard devices will be rejected)"
+                "Keyboards — selection and layout in Settings"
             },
         ));
         refresh.set_label(tr(fr, "Actualiser les périphériques", "Refresh devices"));
@@ -470,7 +576,7 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         stop_button.set_label(tr(fr, "Arrêter", "Stop"));
         demo.set_label(tr(fr, "Tester le rendu", "Test overlay"));
         let custom = devices.active_id().is_some_and(|id| id == "selected");
-        device_list.set_visible(custom);
+        device_scroll.set_visible(custom);
         device_list.set_sensitive(!active);
         start_button.set_sensitive(
             !active && (!custom || choices.borrow().iter().any(|(_, c)| c.is_active())),
@@ -496,12 +602,39 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             "Click ring — selected monitor",
         )));
         halo.set_sensitive(mouse.is_active());
-        device_status.set_text(&s.inner.lock().unwrap().device_status);
+        let message = s.inner.lock().unwrap().device_status.clone();
+        device_status.set_text(&message);
+        device_status.set_visible(!message.is_empty());
+        screen_summary.set_visible(mouse.is_active() && halo.is_active() && cfg!(windows));
+        let display = s
+            .inner
+            .lock()
+            .unwrap()
+            .halo_display
+            .clone()
+            .unwrap_or_default();
+        screen_summary.set_text(&format!(
+            "{} {} — {}",
+            tr(fr, "Cercle :", "Ring:"),
+            display.trim_start_matches(r"\\.\"),
+            tr(
+                fr,
+                "changer dans Paramètres → Capture",
+                "change in Settings → Capture"
+            )
+        ));
         refresh.set_sensitive(!active);
-        obs.set_text(tr(
-            fr,
-            "OBS → Source Navigateur → URL (1920 × 1080)",
-            "OBS → Browser source → URL (1920 × 1080)",
+        let canvas = s.appearance();
+        obs.set_wrap(true);
+        obs.set_text(&format!(
+            "{} — {} × {}",
+            tr(
+                fr,
+                "OBS → Source Navigateur → URL",
+                "OBS → Browser source → URL"
+            ),
+            canvas.canvas_width,
+            canvas.canvas_height
         ));
         copy.set_label(tr(fr, "Copier l’URL OBS", "Copy OBS URL"));
         preview.set_label(tr(fr, "Ouvrir l’aperçu", "Open preview"));
@@ -516,6 +649,48 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         .build();
     window.set_child(Some(&scroll));
     window.present();
+    if std::env::var("KEYCAST_SMOKE_TEST").as_deref() == Ok("1") {
+        let window = window.clone();
+        glib::timeout_add_local_once(Duration::from_millis(650), move || {
+            if window.height() >= 480 {
+                let adjustment = scroll.vadjustment();
+                assert!(
+                    adjustment.upper() <= adjustment.page_size() + 1.0,
+                    "Main controls require scrolling at normal window size"
+                );
+            }
+            gear_for_smoke.emit_clicked();
+            assert!(
+                settings_for_smoke.is_visible(),
+                "Settings gear did not open the window"
+            );
+            glib::timeout_add_local_once(Duration::from_millis(250), move || {
+                close_for_smoke.emit_clicked();
+                assert!(!settings_for_smoke.is_visible(), "Settings did not close");
+                assert!(
+                    window.is_visible(),
+                    "Closing Settings closed the main window"
+                );
+            });
+        });
+    }
+}
+
+fn fit_window(window: &impl IsA<gtk4::Window>, width: i32, height: i32) {
+    let mut bounds = (width, height);
+    if let Some(display) = gtk4::gdk::Display::default() {
+        let monitors = display.monitors();
+        for index in 0..monitors.n_items() {
+            if let Some(monitor) = monitors.item(index).and_downcast::<gtk4::gdk::Monitor>() {
+                let rect = monitor.geometry();
+                if rect.width() > 0 && rect.height() > 0 {
+                    bounds.0 = bounds.0.min((rect.width() - 64).max(320));
+                    bounds.1 = bounds.1.min((rect.height() - 96).max(300));
+                }
+            }
+        }
+    }
+    window.set_default_size(bounds.0, bounds.1);
 }
 
 #[cfg(windows)]

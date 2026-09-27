@@ -1,10 +1,10 @@
-# Windows — 0.2.0-alpha.5
+# Windows — 0.2.0-alpha.6
 
 ## Français
 
 Cible : Windows 10 1703 ou plus récent / Windows 11, Intel/AMD 64 bits.
 
-1. Télécharger l’archive `keycast-bridge_0.2.0-alpha.5_windows-x64.zip` depuis les Releases ou les artifacts du workflow **Windows portable**.
+1. Télécharger l’archive `keycast-bridge_0.2.0-alpha.6_windows-x64.zip` depuis les Releases ou les artifacts du workflow **Windows portable**.
 2. Extraire **tout** le dossier. Conserver les DLL, `lib/`, `share/` et `licenses/` avec les exécutables.
 3. Lancer `keycast-bridge.exe` avec son utilisateur habituel, sans administrateur. Aucun Rust, GTK ou MSYS2 à installer.
 4. Choisir Français si nécessaire, copier l’URL OBS et créer une source **Navigateur** transparente aux dimensions de la scène.
@@ -16,7 +16,7 @@ Le **cercle au clic** est optionnel : il correspond à l’**écran sélectionn�
 
 Le halo est dessiné dans OBS, pas sur le bureau Windows. Les captures de fenêtres, jeux ou régions recadrées ne sont pas alignées automatiquement.
 
-L’archive n’est pas signée. Aucun historique ni télémétrie. Les champs de mot de passe ne sont pas détectés ; arrêter avant toute saisie sensible. Les bureaux sécurisés/UAC et les applications élevées ne font pas partie de la cible. Relâcher les modificateurs avant de démarrer. Pas de composition IME/accents. La position de l’incrustation et ses couleurs sont mémorisées ; les autres options restent limitées à la session. L’URL change à chaque lancement.
+L’archive n’est pas signée. Aucun historique ni télémétrie. Les champs de mot de passe ne sont pas détectés ; arrêter avant toute saisie sensible. Les bureaux sécurisés/UAC et les applications élevées ne font pas partie de la cible. Relâcher les modificateurs avant de démarrer. Pas de composition IME/accents. La position, les couleurs et le format de l’incrustation sont mémorisés ; les autres options restent limitées à la session. L’URL change à chaque lancement.
 
 Les tests automatiques vérifient la compilation, les traductions clavier, le serveur et le démarrage de l’archive. La capture réelle, le branchement USB, le DPI et l’alignement OBS restent à vérifier sur un poste Windows. Voir `TESTING.md` dans les sources.
 
@@ -47,3 +47,9 @@ The portable directory is `dist/keycast-bridge-windows-x64`. See `.github/workfl
 Le panneau « Position et couleurs » propose un aperçu schématique à glisser, neuf emplacements, des coordonnées X/Y et six couleurs personnalisables. Les changements sont immédiats dans OBS. Position et couleurs sont enregistrées dans `%APPDATA%\keycast-bridge\appearance.json`. Le cercle reste à la position du pointeur.
 
 The “Position and colors” panel provides a draggable schematic preview, nine presets, X/Y coordinates and six customizable colors. Changes apply live in OBS. Position and colors are saved in `%APPDATA%\keycast-bridge\appearance.json`. The click ring stays at the pointer.
+
+## Guide et paramètres / Guide and settings
+
+Ouvrir la roue crantée pour les onglets Position et couleurs, Format et taille, Capture. Le bouton Guide complet ouvre la documentation hors ligne en français ou anglais. Le dossier `guide` du ZIP contient également `en.html` et `fr.html`. Régler les propriétés de la source Navigateur OBS aux dimensions choisies dans l’application.
+
+Open the Settings gear to configure appearance, canvas size or capture. Complete guide opens the offline help in the selected language. The ZIP also includes `guide/en.html` and `guide/fr.html`. Match OBS Browser Source width/height to the chosen canvas.

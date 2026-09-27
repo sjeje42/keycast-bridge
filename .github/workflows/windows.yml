@@ -49,9 +49,9 @@ jobs:
           exit $LASTEXITCODE
       - name: Archive and checksum
         run: |
-          Compress-Archive -Path dist/keycast-bridge-windows-x64 -DestinationPath dist/keycast-bridge_0.2.0-alpha.5_windows-x64.zip
+          Compress-Archive -Path dist/keycast-bridge-windows-x64 -DestinationPath dist/keycast-bridge_0.2.0-alpha.6_windows-x64.zip
           $hash = (Get-FileHash dist/*.zip -Algorithm SHA256).Hash.ToLower()
-          "$hash  keycast-bridge_0.2.0-alpha.5_windows-x64.zip" | Set-Content dist/SHA256SUMS-windows.txt
+          "$hash  keycast-bridge_0.2.0-alpha.6_windows-x64.zip" | Set-Content dist/SHA256SUMS-windows.txt
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: keycast-bridge-windows-x64

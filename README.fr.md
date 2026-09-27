@@ -1,5 +1,7 @@
 # Keycast Bridge
 
+[Guide complet — Français](docs/USER_GUIDE.fr.md) · [English user guide](docs/USER_GUIDE.en.md)
+
 [English](README.md) · **Français**
 
 [![Rust stable](https://img.shields.io/badge/Rust-stable-000000?logo=rust&logoColor=white)](Cargo.toml)
@@ -13,7 +15,7 @@
 
 **Afficher les raccourcis clavier dans OBS, sous Linux/Wayland et Windows.**
 
-Version **0.2.0-alpha.5**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
+Version **0.2.0-alpha.6**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -39,7 +41,7 @@ Extraire entièrement le ZIP fourni par le workflow **Windows portable** ou les 
 Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.5-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.6-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.
@@ -161,7 +163,7 @@ Noms des dépendances et commandes de gestion des paquets : [Ubuntu](https://pac
 ## Premier tutoriel dans OBS
 
 1. Linux : conserver **Tous les claviers (automatique)** ou choisir **Claviers sélectionnés** et cocher les périphériques. Choisir la disposition utilisée sur le bureau. Windows : disposition automatique.
-2. Cliquer sur **Copier l’URL OBS**. Dans OBS : **Sources → + → Navigateur**. Coller l’URL, largeur 1920, hauteur 1080, ou les dimensions de ta scène.
+2. Cliquer sur **Copier l’URL OBS**. Dans OBS : **Sources → + → Navigateur**. Coller l’URL et reporter la largeur/hauteur choisies dans **Paramètres → Format et taille** (1920 × 1080 par défaut).
 3. Cliquer sur **Tester le rendu** : un raccourci fictif s’affiche sans lire ton clavier. **Ouvrir l’aperçu** affiche le rendu dans ton navigateur.
 4. Régler taille, durée et thème. Le fond de la page reste transparent.
 5. Cliquer sur **Démarrer**, donner l’autorisation demandée et vérifier **Capture active**.
@@ -232,4 +234,8 @@ Choisir séparément le fond, les touches, le texte et les trois couleurs de cli
 
 Les changements s’appliquent immédiatement dans OBS, même pendant la capture. L’aperçu GTK est schématique : **Tester le rendu** permet de vérifier le résultat exact dans OBS, mais arrête la capture en cours. Les coordonnées sont relatives à la source Navigateur, pas à une fenêtre d’un autre logiciel ; attention au recadrage de cette source dans OBS. Le cercle de clic reste attaché au pointeur.
 
-Position et couleurs sont enregistrées dans `%APPDATA%\keycast-bridge\appearance.json` sous Windows, et `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` ou `~/.config/keycast-bridge/appearance.json` sous Linux. Ce fichier ne contient aucune frappe ni URL OBS. Les autres options restent limitées à la session. En cas d’échec de sauvegarde, l’interface le signale.
+Position, couleurs et format sont enregistrés dans `%APPDATA%\keycast-bridge\appearance.json` sous Windows, et `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` ou `~/.config/keycast-bridge/appearance.json` sous Linux. Ce fichier ne contient aucune frappe ni URL OBS. Les autres options restent limitées à la session. En cas d’échec de sauvegarde, l’interface le signale.
+
+### Paramètres et format OBS
+
+La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille** et **Capture**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; des versions HTML/Markdown sont aussi incluses dans les paquets.

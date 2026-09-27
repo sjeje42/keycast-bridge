@@ -4,6 +4,8 @@ use std::path::{Path, PathBuf};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Appearance {
+    pub canvas_width: u32,
+    pub canvas_height: u32,
     pub x: f64,
     pub y: f64,
     pub background: String,
@@ -17,6 +19,8 @@ pub struct Appearance {
 impl Default for Appearance {
     fn default() -> Self {
         Self {
+            canvas_width: 1920,
+            canvas_height: 1080,
             x: 50.0,
             y: 100.0,
             background: "#10151f".into(),
@@ -32,6 +36,8 @@ impl Default for Appearance {
 impl Appearance {
     pub fn sanitized(mut self) -> Self {
         let defaults = Self::default();
+        self.canvas_width = self.canvas_width.clamp(160, 7680);
+        self.canvas_height = self.canvas_height.clamp(160, 7680);
         self.x = finite_percent(self.x, defaults.x);
         self.y = finite_percent(self.y, defaults.y);
         for (value, fallback) in [
@@ -121,10 +127,26 @@ mod tests {
         assert_eq!(a.text, "#abcdef");
     }
     #[test]
+    fn old_preferences_gain_default_canvas_and_sizes_are_bounded() {
+        let old: Appearance = serde_json::from_str(r##"{"x":20,"accent":"#123456"}"##).unwrap();
+        assert_eq!((old.canvas_width, old.canvas_height), (1920, 1080));
+        let custom = Appearance {
+            canvas_width: 0,
+            canvas_height: 99999,
+            ..old
+        }
+        .sanitized();
+        assert_eq!((custom.canvas_width, custom.canvas_height), (160, 7680));
+        assert_eq!(custom.x, 20.0);
+        assert_eq!(custom.accent, "#123456");
+    }
+    #[test]
     fn preferences_round_trip_and_invalid_file_fallback() {
         let dir = std::env::temp_dir().join(format!("keycast-style-{}", uuid::Uuid::new_v4()));
         let path = dir.join("appearance.json");
         let a = Appearance {
+            canvas_width: 1080,
+            canvas_height: 1920,
             x: 12.5,
             y: 31.0,
             accent: "#12ab34".into(),

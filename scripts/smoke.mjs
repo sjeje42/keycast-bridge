@@ -16,6 +16,13 @@ try {
   const url = output.match(/http:\/\/127\.0\.0\.1:48732\/overlay\/[a-f0-9]+/)?.[0];
   assert.ok(url, 'Demo failed to start (is the port in use?)');
   assert.equal((await fetch(url)).status, 200);
+  for (const language of ['en', 'fr']) {
+    const help = url.replace('/overlay/', '/help/') + '/' + language + '.html';
+    const response = await fetch(help);
+    assert.equal(response.status, 200);
+    assert.ok((await response.text()).includes('0.2.0-alpha.6'));
+    assert.equal((await fetch(help.replace(/\/help\/[^/]+\//, '/help/wrong/'))).status, 403);
+  }
   assert.equal((await fetch(url.replace(/[^/]+$/, 'wrong'))).status, 403);
   assert.equal((await fetch(url, { headers: { Origin: 'https://foreign.example' } })).status, 403);
   socket = new WebSocket(url.replace('http:', 'ws:').replace('/overlay/', '/ws/'));

@@ -5,13 +5,19 @@
   // A separate live row keeps held keys visible after a shortcut's history expires.
   let size = $state(40);
   let duration = 1800;
-  const defaults = {x:50, y:100, background:'#10151f', key_background:'#273142', text:'#f7f9ff', accent:'#a879ff', right_click:'#ff9e64', middle_click:'#74dfba'};
+  const defaults = {canvas_width:1920, canvas_height:1080, x:50, y:100, background:'#10151f', key_background:'#273142', text:'#f7f9ff', accent:'#a879ff', right_click:'#ff9e64', middle_click:'#74dfba'};
   let appearance = $state({...defaults});
+  let viewportWidth = $state(1920);
+  let viewportHeight = $state(1080);
+  let canvasScale = $derived(Math.min(viewportWidth / appearance.canvas_width, viewportHeight / appearance.canvas_height));
   function readAppearance(value: unknown, dark: boolean) {
     const result = {...defaults};
     if (!dark) Object.assign(result, {background:'#f4f7ff', key_background:'#ffffff', text:'#172033'});
     if (value && typeof value === 'object') {
       const input = value as Record<string, unknown>;
+      for (const dimension of ['canvas_width','canvas_height'] as const) {
+        if (typeof input[dimension] === 'number' && Number.isFinite(input[dimension])) result[dimension] = Math.round(Math.min(7680, Math.max(160, input[dimension])));
+      }
       for (const axis of ['x','y'] as const) {
         if (typeof input[axis] === 'number' && Number.isFinite(input[axis])) result[axis] = Math.min(100, Math.max(0, input[axis]));
       }
@@ -88,6 +94,8 @@
   });
 </script>
 
+<svelte:window bind:innerWidth={viewportWidth} bind:innerHeight={viewportHeight} />
+<div class="canvas" style:width={`${appearance.canvas_width}px`} style:height={`${appearance.canvas_height}px`} style:left={`${(viewportWidth - appearance.canvas_width * canvasScale) / 2}px`} style:top={`${(viewportHeight - appearance.canvas_height * canvasScale) / 2}px`} style:transform={`scale(${canvasScale})`}>
 <div class="theme" style:--background={`${appearance.background}e8`} style:--key-background={appearance.key_background} style:--text={appearance.text} style:--accent={appearance.accent} style:--border={`${appearance.text}38`}>
 <div class="stage" aria-live="polite">
  <div class="overlay" style:left={`${appearance.x}%`} style:top={`${appearance.y}%`} style:transform={`translate(-${appearance.x}%, -${appearance.y}%)`} style:align-items={appearance.x < 34 ? 'flex-start' : appearance.x > 66 ? 'flex-end' : 'center'}>
@@ -120,10 +128,12 @@
   {#key ring.id}<div class="ring" style:left={`${ring.x*100}%`} style:top={`${ring.y*100}%`} style:width={`${size*1.5}px`} style:height={`${size*1.5}px`}></div>{/key}
 {/if}
 </div>
+</div>
 
 <style>
   :global(html), :global(body), :global(#app) { margin:0; width:100%; height:100%; background:transparent !important; overflow:hidden; }
-  .stage { position:fixed; inset:clamp(8px, 3vw, 32px); pointer-events:none; }
+  .canvas { position:fixed; transform-origin:0 0; pointer-events:none; }
+  .stage { position:absolute; inset:32px; pointer-events:none; }
   .overlay { position:absolute; display:flex; flex-direction:column; gap:8px; width:max-content; max-width:100%; }
   .keys { max-width:100%; box-sizing:border-box; }
   kbd { max-width:100%; box-sizing:border-box; overflow-wrap:anywhere; min-width:0; }
@@ -132,6 +142,6 @@
   kbd { font-family:inherit; font-weight:650; background:var(--key-background); border:1px solid var(--border); border-bottom:3px solid var(--border); border-radius:.22em; padding:.18em .42em; }
   .mouse { height:1.5em; width:1.13em; margin:0 .2em; }
   .plus { font-size:.6em; opacity:.65; }
-  .ring { position:fixed; pointer-events:none; border:3px solid var(--accent); border-radius:50%; transform:translate(-50%,-50%); animation:pulse .5s ease-out forwards; }
+  .ring { position:absolute; pointer-events:none; border:3px solid var(--accent); border-radius:50%; transform:translate(-50%,-50%); animation:pulse .5s ease-out forwards; }
   @keyframes pulse { from { opacity:1; scale:.7; } to { opacity:0; scale:1.4; } }
 </style>

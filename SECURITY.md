@@ -24,4 +24,6 @@ Other same-user software, administrators, a compromised GUI or malicious OBS bro
 Report vulnerabilities privately to the maintainer; do not include actual captured secrets.
 
 
-Appearance preferences (position and colors only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.
+Appearance preferences (position, colors and canvas dimensions only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.
+
+The embedded English/French help uses the same localhost token and Host/Origin checks. It is static HTML with no scripts or external assets. Canvas configuration does not control OBS remotely.
