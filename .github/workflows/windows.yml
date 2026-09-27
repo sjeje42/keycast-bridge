@@ -39,6 +39,7 @@ jobs:
           cargo test --locked --release
           cargo build --locked --release
           /usr/bin/python packaging/windows/bundle.py
+          printf '%s\n' "KEYCAST_UCRT_ROOT=$(cygpath -w /ucrt64)" >> "$GITHUB_ENV"
       - name: Launch portable GUI without MSYS2 on PATH
         run: packaging/windows/test-portable.ps1
       - name: HTTP and WebSocket smoke test

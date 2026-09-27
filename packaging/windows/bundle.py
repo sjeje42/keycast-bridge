@@ -17,6 +17,18 @@ loaders=prefix/'lib/gdk-pixbuf-2.0'
 if loaders.exists():
     shutil.copytree(loaders,out/'lib/gdk-pixbuf-2.0',dirs_exist_ok=True)
     queue.extend((out/'lib/gdk-pixbuf-2.0').rglob('*.dll'))
+# Module caches must resolve inside the extracted archive, not the build prefix.
+for cache in (out/'lib/gdk-pixbuf-2.0').rglob('loaders.cache'):
+    lines=[]
+    for line in cache.read_text(encoding='utf-8').splitlines():
+        match=re.fullmatch(r'"([^"]+\.dll)"',line,re.IGNORECASE)
+        if match:
+            name=match.group(1).replace('\\\\','/').split('/')[-1]
+            candidates=list((out/'lib/gdk-pixbuf-2.0').rglob(name))
+            if len(candidates)!=1: raise RuntimeError('Unresolved pixbuf loader: '+name)
+            line='"'+candidates[0].relative_to(out).as_posix()+'"'
+        lines.append(line)
+    cache.write_text('\n'.join(lines)+'\n',encoding='utf-8')
 while queue:
     path=queue.pop()
     imports=subprocess.check_output(['objdump','-p',str(path)],text=True)
