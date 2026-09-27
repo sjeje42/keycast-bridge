@@ -1,5 +1,6 @@
 """Collect the PE dependency closure from MSYS2 UCRT64, not the build toolchain."""
-import json, os, re, shutil, subprocess
+import os, re, shutil, subprocess
+assert os.name == "posix", "Run with /usr/bin/python inside MSYS2 UCRT64"
 from pathlib import Path
 prefix = Path(os.environ.get('MINGW_PREFIX', '/ucrt64'))
 out = Path('dist/keycast-bridge-windows-x64')

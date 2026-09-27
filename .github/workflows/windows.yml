@@ -38,7 +38,7 @@ jobs:
         run: |
           cargo test --locked --release
           cargo build --locked --release
-          python packaging/windows/bundle.py
+          /usr/bin/python packaging/windows/bundle.py
       - name: Launch portable GUI without MSYS2 on PATH
         run: packaging/windows/test-portable.ps1
       - name: HTTP and WebSocket smoke test

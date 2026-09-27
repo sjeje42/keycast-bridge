@@ -34,7 +34,7 @@ Install Node.js 22, then run `npm --prefix web ci` and `npm --prefix web run bui
 pacman -S --needed mingw-w64-ucrt-x86_64-rust mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gtk4 mingw-w64-ucrt-x86_64-pkgconf python
 cargo test --locked --release
 cargo build --locked --release
-python packaging/windows/bundle.py
+/usr/bin/python packaging/windows/bundle.py
 ```
 
 The portable directory is `dist/keycast-bridge-windows-x64`. See `.github/workflows/windows.yml` for the reproducible build steps and clean-PATH launch check. Bundled libraries retain their licenses, listed in `licenses/`; package versions and upstream source locations are recorded in `MSYS2-packages.txt`. MSYS2 package build recipes: https://github.com/msys2/MINGW-packages .

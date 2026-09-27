@@ -3,10 +3,10 @@
 <policyconfig>
   <vendor>Keycast Bridge</vendor>
   <action id="fr.jeromelab.KeycastBridge.capture">
-    <description>Read a selected keyboard for an OBS tutorial</description>
-    <description xml:lang="fr">Lire le clavier choisi pour un tutoriel OBS</description>
-    <message>Authorize Keycast Bridge to open the selected keyboard.</message>
-    <message xml:lang="fr">Autoriser Keycast Bridge à ouvrir le clavier choisi.</message>
+    <description>Read selected keyboards and optional mouse clicks for OBS</description>
+    <description xml:lang="fr">Lire les claviers sélectionnés et les clics de souris optionnels pour OBS</description>
+    <message>Authorize Keycast Bridge to open selected keyboards and, if enabled, mice.</message>
+    <message xml:lang="fr">Autoriser Keycast Bridge à ouvrir les claviers sélectionnés et, si activée, la souris.</message>
     <defaults>
       <allow_any>no</allow_any>
       <allow_inactive>no</allow_inactive>
