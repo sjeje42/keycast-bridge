@@ -1,18 +1,18 @@
-# Validation — 0.2.0-alpha.2
+# Validation — 0.2.0-alpha.3
 
-## Local checks completed
+The previous 0.2.0-alpha.2 passed all three build pipelines and the user confirmed it worked. This update adds Windows monitor selection and refreshes coordinates from the selected monitor.
 
-- Svelte/TypeScript: zero errors and warnings; Vite production build succeeds.
-- Rust Linux tests without GUI: 10 passed, including SCM_RIGHTS descriptor transfer, device identity after event renumbering, keyboard filtering and HTTP authorization.
-- Linux Clippy without GUI: no warnings. GTK4 GUI compilation check succeeds using extracted development libraries.
-- Windows capture backend cross-compilation check succeeds; native Windows linking and execution are checked by the Windows workflow.
+## New verification
 
-## Automated release gates
+- Geometry tests cover secondary monitors to the left or above the primary, portrait layouts, shared boundaries, different resolutions, reordered/disconnected monitors and invalid rectangles.
+- A state test verifies that changing the selected monitor clears the old overlay without stopping capture, and stopping preserves the selection for this application session.
+- The Windows test suite queries the CI runner's real primary monitor using the native enumeration API.
+- Cross-compilation checks cover the Windows backend and GTK interface; native Windows build and execution remain required by CI.
 
-Publication requires successful **Build and test**, **Debian 13 package** and **Windows portable** runs for the same commit. Debian tests package installation, virtual-display GUI launch, removal and reinstall. Windows tests keyboard normalization, native build, portable GUI launch without MSYS2 on PATH and HTTP/WebSocket operation.
+## Publication gates
 
-See the [Actions results](https://github.com/sjeje42/keycast-bridge/actions) for the actual result of each build. Workflow configuration alone is not evidence of passing tests.
+The [Actions pipelines](https://github.com/sjeje42/keycast-bridge/actions) must all succeed for the published commit: Linux Clippy/tests/udev hotplug/HTTP smoke, Debian package install/launch/remove/reinstall, and Windows tests/build/portable launch/HTTP smoke. The portable Windows launch test temporarily hides the build runtime directory to catch external DLL dependencies.
 
-## Manual validation still required
+## Physical validation
 
-Physical USB reconnect, privileged hotplug broker behavior on a desktop, mouse capture, Windows DPI and OBS alignment have not been exercised in this development environment. Follow [TESTING.md](TESTING.md). The user's keyboard/OBS success on the previous 0.1 alpha does not validate these new features. Fedora, Manjaro and other desktops remain unverified.
+A CI runner with one virtual monitor does not validate a real multi-monitor OBS setup. Follow [TESTING.md](TESTING.md), especially mixed DPI, monitor rotation, unplug/replug and matching OBS source geometry. Linux/Wayland still has no pointer-position halo.

@@ -13,7 +13,7 @@ Only normalized labels, mouse buttons (no Linux pointer coordinates), readiness 
 
 ## Windows
 
-The normal-user process uses `WH_KEYBOARD_LL` and optional `WH_MOUSE_LL` hooks on a dedicated thread. Callbacks queue bounded events and always pass input on to other applications. Overflow ends capture. No driver, service or elevation is installed. Mouse click coordinates are sent only to the local overlay to position the optional primary-monitor halo. No movement stream is retained. Secure desktops and elevated applications are outside the supported target.
+The normal-user process uses `WH_KEYBOARD_LL` and optional `WH_MOUSE_LL` hooks on a dedicated thread. Callbacks queue bounded events and always pass input on to other applications. Overflow ends capture. No driver, service or elevation is installed. Mouse click coordinates are sent only to the local overlay to position the optional selected-monitor halo. No movement stream is retained. Secure desktops and elevated applications are outside the supported target.
 
 ## Shared boundaries and residual exposure
 

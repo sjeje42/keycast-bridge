@@ -48,6 +48,15 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 - Test a combined keyboard/mouse device: enabling mouse must not enable that device's keyboard if unselected. Leave mouse disabled and confirm no buttons are transmitted.
 - Mouse on: left/right/middle clicks, quick taps, held buttons, simultaneous keyboard shortcut, disconnect while held. Buttons must light visibly, then clear; stopping must remove everything.
 - Windows: launch extracted ZIP without MSYS2/Rust installed. Test FR AZERTY and US QWERTY foreground layouts, AltGr, Ctrl+Alt+F12, USB unplug/replug and stop/start. Secure/UAC desktops are outside scope.
-- Windows halo: full primary-monitor capture plus Browser Source with matching bounds; test 100%, 150%, 200% DPI and a secondary display. No ring should appear for clicks outside the primary monitor. Cropped/window capture is unsupported.
+- Windows halo: full selected-monitor capture plus Browser Source with matching bounds; test 100%, 150%, 200% DPI and a secondary display. No ring should appear for clicks outside the selected monitor. Cropped/window capture is unsupported.
 
 Record OS, keyboard model, selected mode, DPI, OBS source dimensions and result. Do not include sensitive captured text.
+
+
+## 0.2.0-alpha.3 — multi-monitor acceptance
+
+- Select DISPLAY2, then DISPLAY3 during capture. Test monitors left of / above the primary (negative coordinates) and a portrait monitor.
+- Align the selected monitor capture and OBS browser viewport exactly, including aspect ratio. Verify clicks at the center and four corners; clicks outside the selected display must show no ring.
+- Mix 100%, 150% and 200% display scaling. Change resolution, orientation and primary monitor during capture; the selected device must remain selected and coordinates follow its current geometry.
+- Unplug the selected monitor: the UI must report unavailable and suspend the ring, without affecting keyboard or mouse-button feedback. Reconnect it, or explicitly select another available display.
+- Unit tests cover negative origins, monitor boundaries, changing dimensions, monitor order changes and missing selections. The CI runner's actual monitor enumeration is also tested; it does not replace a physical multi-monitor OBS test.

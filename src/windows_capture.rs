@@ -12,11 +12,11 @@ use windows_sys::Win32::{
         HiDpi::{SetThreadDpiAwarenessContext, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2},
         Input::KeyboardAndMouse::{GetKeyState, GetKeyboardLayout, ToUnicodeEx},
         WindowsAndMessaging::{
-            CallNextHookEx, DispatchMessageW, GetForegroundWindow, GetSystemMetrics,
-            GetWindowThreadProcessId, PeekMessageW, SetWindowsHookExW, TranslateMessage,
-            UnhookWindowsHookEx, HHOOK, KBDLLHOOKSTRUCT, MSG, MSLLHOOKSTRUCT, PM_REMOVE,
-            SM_CXSCREEN, SM_CYSCREEN, WH_KEYBOARD_LL, WH_MOUSE_LL, WM_KEYUP, WM_LBUTTONDOWN,
-            WM_LBUTTONUP, WM_MBUTTONDOWN, WM_MBUTTONUP, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SYSKEYUP,
+            CallNextHookEx, DispatchMessageW, GetForegroundWindow, GetWindowThreadProcessId,
+            PeekMessageW, SetWindowsHookExW, TranslateMessage, UnhookWindowsHookEx, HHOOK,
+            KBDLLHOOKSTRUCT, MSG, MSLLHOOKSTRUCT, PM_REMOVE, WH_KEYBOARD_LL, WH_MOUSE_LL, WM_KEYUP,
+            WM_LBUTTONDOWN, WM_LBUTTONUP, WM_MBUTTONDOWN, WM_MBUTTONUP, WM_RBUTTONDOWN,
+            WM_RBUTTONUP, WM_SYSKEYUP,
         },
     },
 };
@@ -33,8 +33,8 @@ enum Input {
     Mouse {
         button: u8,
         pressed: bool,
-        x: f64,
-        y: f64,
+        x: i32,
+        y: i32,
     },
 }
 thread_local! {
@@ -80,8 +80,8 @@ unsafe extern "system" fn mouse_hook(code: i32, wparam: WPARAM, lparam: LPARAM) 
                     wparam as u32,
                     WM_LBUTTONDOWN | WM_RBUTTONDOWN | WM_MBUTTONDOWN
                 ),
-                x: f64::from(point.pt.x) / f64::from(GetSystemMetrics(SM_CXSCREEN).max(1)),
-                y: f64::from(point.pt.y) / f64::from(GetSystemMetrics(SM_CYSCREEN).max(1)),
+                x: point.pt.x,
+                y: point.pt.y,
             };
             EVENTS.with(|events| {
                 if let Some(sender) = events.borrow().as_ref() {
@@ -324,16 +324,20 @@ fn run(state: &Bridge, generation: u64, all: bool, mouse: bool) -> anyhow::Resul
                     x,
                     y,
                 } => {
+                    // Query current monitor geometry outside the hook callback. This also
+                    // handles resolution, layout and primary-monitor changes during capture.
+                    let displays = crate::windows_displays::enumerate().unwrap_or_default();
                     let inner = state.inner.lock().unwrap();
                     if inner.session != generation {
                         return Ok(());
                     }
-                    let inside = (0.0..=1.0).contains(&x) && (0.0..=1.0).contains(&y);
+                    let point = crate::displays::selected(&displays, inner.halo_display.as_deref())
+                        .and_then(|display| display.project(x, y));
                     let _ = state.tx.send(Event::Mouse {
                         button,
                         pressed,
-                        x: inside.then_some(x),
-                        y: inside.then_some(y),
+                        x: point.map(|p| p.0),
+                        y: point.map(|p| p.1),
                     });
                     continue;
                 }

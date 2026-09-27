@@ -9,3 +9,7 @@ pub mod windows_capture;
 pub mod linux_broker;
 #[cfg(target_os = "linux")]
 pub mod linux_devices;
+
+pub mod displays;
+#[cfg(windows)]
+pub mod windows_displays;

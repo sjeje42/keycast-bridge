@@ -15,7 +15,7 @@
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
-Version **0.2.0-alpha.2**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0-alpha.3**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). Other compositors are an architectural target, not a tested compatibility claim.
 
@@ -23,13 +23,13 @@ Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). 
 
 See the [exact validation status](docs/VALIDATION.md).
 
-## Windows and input improvements in 0.2.0-alpha.2
+## Windows and input improvements in 0.2.0-alpha.3
 
 [Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
 
 Linux now defaults to all keyboards, with optional multiple selection and udev hotplug. A privileged opener passes evdev descriptors over a private Unix socket to a reader that drops privileges. Reconnecting a selected keyboard uses its serial/name or physical USB port/name, never a remembered event number. Without a serial, use the same port. Modifiers are tracked per keyboard: perform a shortcut on one keyboard.
 
-Optional left/right/middle mouse feedback is available on both systems. Windows also offers a click ring for the full primary monitor; align the monitor capture and browser source in OBS. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
+Optional left/right/middle mouse feedback is available on both systems. Windows also offers a click ring for any selected monitor (DISPLAY1, DISPLAY2, etc.); align the monitor capture and browser source in OBS. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
 
 ## Features
 
@@ -46,7 +46,7 @@ Optional left/right/middle mouse feedback is available on both systems. Windows 
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.2-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.3-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.

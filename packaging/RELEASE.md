@@ -1,18 +1,22 @@
-## Français — 0.2.0-alpha.2
+## Français — 0.2.0-alpha.3
 
-- **Windows x64 portable** : extraire entièrement le ZIP puis lancer `keycast-bridge.exe`. GTK et ses DLL sont inclus ; aucun outil de compilation ni droit administrateur nécessaire.
-- **Linux : branchement/débranchement à chaud** via udev, tous les claviers par défaut ou sélection multiple. Un processus privilégié ouvre les périphériques ; le lecteur travaille sans privilèges.
-- **Clics de souris optionnels** : boutons gauche, droit et milieu mis en couleur dans l’incrustation.
-- **Cercle au clic Windows** : écran principal complet, avec les deux sources OBS alignées. Sous Linux/Wayland, seule la visualisation des boutons est fournie.
+**Multi-écran Windows : choisir l’écran utilisé dans OBS pour le cercle au clic.**
 
-Debian 13 amd64 : `sudo apt install ./keycast-bridge_0.2.0.alpha.2-1_amd64.deb`.
+- Nouveau sélecteur d’écran : DISPLAY1, DISPLAY2, DISPLAY3… avec résolution, position et indication du principal.
+- Coordonnées calculées par rapport à l’écran choisi, même à gauche ou au-dessus du principal, en portrait ou avec une résolution différente.
+- Liste actualisée automatiquement, changement d’écran possible pendant la capture et géométrie relue à chaque clic.
+- Si l’écran sélectionné est débranché, le cercle est suspendu sans basculer sur un autre écran. Les raccourcis et les boutons de souris restent actifs.
 
-OBS doit fournir la source **Navigateur**. Sur Debian, utiliser le Flatpak officiel OBS. L’URL change à chaque lancement. Relâcher les modificateurs avant de démarrer ; arrêter avant de saisir des informations sensibles. Aucune détection des mots de passe.
+Windows : extraire entièrement le ZIP, lancer `keycast-bridge.exe`, activer les clics et le cercle, puis choisir l’écran capturé. Dans OBS, aligner la capture de cet écran et la source Navigateur sur le même rectangle, avec les mêmes proportions. Les captures de fenêtres ou les recadrages ne sont pas alignés automatiquement. Le choix d’écran n’est pas enregistré après fermeture.
 
-La publication est conditionnée aux tests Linux, à la construction/installation du paquet Debian et aux tests de l’archive Windows. Les nouveaux comportements USB et souris, le DPI et l’alignement OBS restent à vérifier sur du matériel réel. [Guide Windows](https://github.com/sjeje42/keycast-bridge/blob/main/docs/WINDOWS.md) · [Tests manuels](https://github.com/sjeje42/keycast-bridge/blob/main/docs/TESTING.md).
+Debian 13 amd64 : `sudo apt install ./keycast-bridge_0.2.0.alpha.3-1_amd64.deb`. Sous Linux/Wayland, les touches et les boutons fonctionnent quel que soit l’écran ; le halo à la position du pointeur reste indisponible.
+
+La publication exige la réussite des builds Linux, Debian et Windows. Les tests vérifient les calculs multi-écran et l’énumération Windows ; les configurations physiques avec plusieurs écrans et DPI différents restent à valider dans OBS.
 
 ## English
 
-Portable Windows x64 build, Linux udev hotplug with automatic or multiple keyboard selection, optional colored mouse-button feedback and a Windows primary-monitor click ring. Extract the entire Windows ZIP; run as a normal user. Debian 13 amd64 installation command above.
+**Windows multi-monitor click ring:** choose the monitor captured by OBS using the new display selector. Resolution, desktop position and primary status are shown. Negative coordinates and portrait layouts are supported. The list refreshes automatically; selection can change during capture and geometry is read on each click.
 
-Release publication requires passing Linux CI, Debian package install/launch tests and Windows portable tests. Physical USB/mouse capture, DPI and OBS alignment still require desktop validation. Wayland has button feedback only, no pointer-position ring. No password detection; stop before sensitive input. Overlay URL changes every launch.
+Disconnecting the selected display suspends its ring without silently switching to another display. Keyboard and mouse-button feedback continue. Align the selected monitor capture and Browser Source to the same rectangle and aspect ratio. Window captures and cropping are not mapped automatically. Selection is session-only. Linux/Wayland retains keyboard/button feedback across screens without a pointer-position halo.
+
+All three build pipelines must pass before publication. Geometry and native enumeration tests do not replace physical multi-monitor/DPI testing in OBS.

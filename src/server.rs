@@ -18,6 +18,7 @@ pub struct Inner {
     pub status: &'static str,
     pub config: Event,
     pub device_status: String,
+    pub halo_display: Option<String>,
 }
 pub struct Bridge {
     pub token: String,
@@ -34,6 +35,7 @@ impl Bridge {
                 session: 0,
                 status: "stopped",
                 device_status: String::new(),
+                halo_display: None,
                 config: Event::Config {
                     size: 40,
                     duration: 1800,
@@ -51,6 +53,11 @@ impl Bridge {
         inner.session += 1;
         inner.status = "stopped";
         inner.device_status.clear();
+        let _ = self.tx.send(Event::Clear);
+    }
+    pub fn select_display(&self, id: String) {
+        let mut inner = self.inner.lock().unwrap();
+        inner.halo_display = Some(id);
         let _ = self.tx.send(Event::Clear);
     }
     pub fn halo(&self, enabled: bool) {
@@ -165,6 +172,25 @@ mod tests {
         h.remove("origin");
         h.insert("host", "evil.example:48732".parse().unwrap());
         assert!(!authorized(&h, &b.token, &b));
+    }
+    #[test]
+    fn switching_displays_clears_overlay_without_stopping_capture() {
+        let b = Bridge::new();
+        let mut rx = b.tx.subscribe();
+        b.inner.lock().unwrap().status = "capturing";
+        b.select_display("DISPLAY2".into());
+        {
+            let inner = b.inner.lock().unwrap();
+            assert_eq!(inner.status, "capturing");
+            assert_eq!(inner.session, 0);
+            assert_eq!(inner.halo_display.as_deref(), Some("DISPLAY2"));
+        }
+        assert!(matches!(rx.try_recv().unwrap(), Event::Clear));
+        b.stop();
+        assert_eq!(
+            b.inner.lock().unwrap().halo_display.as_deref(),
+            Some("DISPLAY2")
+        );
     }
     #[test]
     fn stop_invalidates_pending_capture_and_clears_output() {

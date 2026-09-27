@@ -279,6 +279,14 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         let s = state.clone();
         halo.connect_toggled(move |v| s.halo(v.is_active()));
     }
+    #[cfg(windows)]
+    display_controls(
+        &root,
+        state.clone(),
+        language.clone(),
+        mouse.clone(),
+        halo.clone(),
+    );
     let device_status = Label::new(None);
     device_status.set_xalign(0.0);
     device_status.set_wrap(true);
@@ -494,8 +502,8 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         )));
         halo.set_label(Some(tr(
             fr,
-            "Cercle au clic — écran principal complet",
-            "Click ring — full primary monitor",
+            "Cercle au clic — écran choisi",
+            "Click ring — selected monitor",
         )));
         halo.set_sensitive(mouse.is_active());
         device_status.set_text(&s.inner.lock().unwrap().device_status);
@@ -519,4 +527,108 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
         .build();
     window.set_child(Some(&scroll));
     window.present();
+}
+
+#[cfg(windows)]
+fn display_controls(
+    root: &GtkBox,
+    state: Arc<Bridge>,
+    language: ComboBoxText,
+    mouse: CheckButton,
+    halo: CheckButton,
+) {
+    use keycast_bridge::{displays, windows_displays};
+    use std::{cell::Cell, rc::Rc};
+    let heading = Label::new(None);
+    heading.set_xalign(0.0);
+    root.append(&heading);
+    let screens = ComboBoxText::new();
+    root.append(&screens);
+    let hint = Label::new(None);
+    hint.set_xalign(0.0);
+    hint.set_wrap(true);
+    root.append(&hint);
+    let rebuilding = Rc::new(Cell::new(false));
+    {
+        let state = state.clone();
+        let rebuilding = rebuilding.clone();
+        screens.connect_changed(move |combo| {
+            if !rebuilding.get() {
+                if let Some(id) = combo.active_id() {
+                    state.select_display(id.to_string());
+                }
+            }
+        });
+    }
+    let weak = root.downgrade();
+    let mut previous = None;
+    let mut update = move || {
+        if weak.upgrade().is_none() {
+            return glib::ControlFlow::Break;
+        }
+        let fr = language.active_id().is_some_and(|id| id == "fr");
+        heading.set_text(tr(
+            fr,
+            "Écran capturé dans OBS (cercle au clic)",
+            "Monitor captured in OBS (click ring)",
+        ));
+        let result = windows_displays::enumerate();
+        let failed = result.is_err();
+        let list = result.unwrap_or_default();
+        let mut selected = state.inner.lock().unwrap().halo_display.clone();
+        if selected.is_none() {
+            if let Some(display) = displays::selected(&list, None) {
+                selected = Some(display.id.clone());
+                state.select_display(display.id.clone());
+            }
+        }
+        let current = (list.clone(), selected.clone(), fr);
+        if previous.as_ref() != Some(&current) {
+            rebuilding.set(true);
+            screens.remove_all();
+            for display in &list {
+                let marker = if display.primary {
+                    tr(fr, " — principal", " — primary")
+                } else {
+                    ""
+                };
+                screens.append(
+                    Some(&display.id),
+                    &format!(
+                        "{} — {} × {}{}",
+                        display.id.trim_start_matches(r"\\.\"),
+                        display.width(),
+                        display.height(),
+                        marker
+                    ),
+                );
+            }
+            if let Some(id) = &selected {
+                if !list.iter().any(|d| &d.id == id) {
+                    screens.append(
+                        Some(id),
+                        &format!(
+                            "{} — {}",
+                            id.trim_start_matches(r"\\.\"),
+                            tr(fr, "indisponible", "unavailable")
+                        ),
+                    );
+                }
+                screens.set_active_id(Some(id));
+            }
+            rebuilding.set(false);
+            previous = Some(current);
+        }
+        screens.set_sensitive(mouse.is_active() && halo.is_active() && !list.is_empty());
+        if failed {
+            hint.set_text(tr(fr, "Impossible de détecter les écrans. Le cercle est suspendu ; nouvelle tentative automatique.", "Cannot detect monitors. The ring is suspended; detection retries automatically."));
+        } else if let Some(display) = displays::selected(&list, selected.as_deref()) {
+            hint.set_text(&format!("{} × {} — {} ({}, {}). {}", display.width(), display.height(), tr(fr, "origine", "origin"), display.left, display.top, tr(fr, "Dans OBS, superposer la capture de cet écran et la source Navigateur avec les mêmes dimensions et proportions. Liste actualisée automatiquement.", "In OBS, align this monitor capture and the Browser Source with matching size and proportions. Monitor list refreshes automatically.")));
+        } else {
+            hint.set_text(tr(fr, "Écran indisponible : cercle suspendu. Choisir un écran connecté ou rebrancher celui-ci. Clavier et boutons restent actifs.", "Monitor unavailable: ring suspended. Choose a connected monitor or reconnect this one. Keys and mouse buttons remain active."));
+        }
+        glib::ControlFlow::Continue
+    };
+    let _ = update();
+    glib::timeout_add_local(Duration::from_secs(1), update);
 }
