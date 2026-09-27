@@ -143,5 +143,5 @@
   .mouse { height:1.5em; width:1.13em; margin:0 .2em; }
   .plus { font-size:.6em; opacity:.65; }
   .ring { position:absolute; pointer-events:none; border:3px solid var(--accent); border-radius:50%; transform:translate(-50%,-50%); animation:pulse .5s ease-out forwards; }
-  @keyframes pulse { from { opacity:1; scale:.7; } to { opacity:0; scale:1.4; } }
+  @keyframes pulse { from { opacity:1; transform:translate(-50%,-50%) scale(.7); } to { opacity:0; transform:translate(-50%,-50%) scale(1.4); } }
 </style>
