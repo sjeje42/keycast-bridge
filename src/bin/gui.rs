@@ -80,8 +80,13 @@ fn start(state: Arc<Bridge>, device: String, layout: String, all: bool, mouse: b
                     Event::Key { .. } | Event::Mouse { .. } => {
                         let _ = state.tx.send(event);
                     }
+                    Event::Modifiers { keys } => {
+                        inner.modifiers = keys.clone();
+                        let _ = state.tx.send(Event::Modifiers { keys });
+                    }
                     Event::DeviceStatus { message } => inner.device_status = message,
                     Event::Clear => {
+                        inner.modifiers.clear();
                         let _ = state.tx.send(Event::Clear);
                     }
                     _ => (),
@@ -93,6 +98,7 @@ fn start(state: Arc<Bridge>, device: String, layout: String, all: bool, mouse: b
                 if inner.session == generation {
                     inner.session += 1;
                     inner.status = if status.success() { "stopped" } else { "error" };
+                    inner.modifiers.clear();
                     let _ = state.tx.send(Event::Clear);
                 }
             }
@@ -104,6 +110,7 @@ fn start(state: Arc<Bridge>, device: String, layout: String, all: bool, mouse: b
             if inner.session == generation {
                 inner.session += 1;
                 inner.status = "error";
+                inner.modifiers.clear();
                 let _ = state.tx.send(Event::Clear);
             }
         }

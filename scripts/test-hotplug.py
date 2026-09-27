@@ -70,9 +70,17 @@ try:
     status = Path(f'/proc/{children[0]}/status').read_text()
     assert next(l for l in status.splitlines() if l.startswith('Uid:')).split()[1:] == [str(uid)] * 4
     a = Keyboard('Keycast CI first'); keyboards.append(a); connected('Keycast CI first')
-    a.key(29, 1); a.key(30, 1); label('Ctrl + A')
+    a.key(42, 1)
+    until(lambda e: e['type']=='modifiers' and e['keys']==['Shift'])
+    a.key(54, 1); a.key(42, 0)
+    a.key(54, 0)
+    until(lambda e: e['type']=='modifiers' and e['keys']==[])
+    a.key(29, 1)
+    until(lambda e: e['type']=='modifiers' and e['keys']==['Ctrl'])
+    a.key(30, 1); label('Ctrl + A')
     # Unplug while Ctrl is held, then attach another keyboard.
     a.close()
+    until(lambda e: e['type']=='modifiers' and e['keys']==[])
     until(lambda e: e['type']=='device_status' and e['message'].startswith('Déconnecté'))
     b = Keyboard('Keycast CI second'); keyboards.append(b); connected('Keycast CI second')
     b.key(30, 1); b.key(30, 0)
@@ -93,3 +101,4 @@ finally:
         process.stdin.close()
         try: process.wait(timeout=4)
         except subprocess.TimeoutExpired: process.kill(); process.wait()
+

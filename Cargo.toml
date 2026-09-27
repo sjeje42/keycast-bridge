@@ -1,6 +1,6 @@
 [package]
 name = "keycast-bridge"
-version = "0.2.0-alpha.3"
+version = "0.2.0-alpha.4"
 edition = "2021"
 license = "GPL-3.0-only"
 description = "Local keyboard shortcut overlay for OBS on Linux / Wayland and Windows"
@@ -41,3 +41,4 @@ path = "src/bin/capture.rs"
 [[bin]]
 name = "keycast-bridge-demo"
 path = "src/bin/demo.rs"
+

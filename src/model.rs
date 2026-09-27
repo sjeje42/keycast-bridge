@@ -7,6 +7,9 @@ pub enum Event {
     Key {
         label: String,
     },
+    Modifiers {
+        keys: Vec<String>,
+    },
     Mouse {
         button: u8,
         pressed: bool,

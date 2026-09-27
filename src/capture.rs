@@ -16,6 +16,23 @@ pub enum Action {
 }
 
 impl Normalizer {
+    pub fn modifiers(&self) -> Vec<String> {
+        [
+            ("Ctrl", self.down.contains(&29) || self.down.contains(&97)),
+            ("Alt", self.down.contains(&56)),
+            (
+                "Super",
+                self.down.contains(&125) || self.down.contains(&126),
+            ),
+            ("Shift", self.down.contains(&42) || self.down.contains(&54)),
+            ("AltGr", self.down.contains(&100)),
+        ]
+        .into_iter()
+        .filter(|(_, held)| *held)
+        .map(|(name, _)| name.to_owned())
+        .collect()
+    }
+
     pub fn new(layout: &str, all_keys: bool) -> anyhow::Result<Self> {
         anyhow::ensure!(
             ["fr", "us", "gb", "de"].contains(&layout),
@@ -104,6 +121,24 @@ impl Normalizer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn held_modifiers_follow_both_sides_and_release_without_text() {
+        let mut n = Normalizer::new("us", false).unwrap();
+        for code in [29, 42, 54, 56] {
+            assert!(matches!(n.event(code, 1), Action::Ignore));
+        }
+        assert_eq!(n.modifiers(), ["Ctrl", "Alt", "Shift"]);
+        n.event(42, 0);
+        assert_eq!(n.modifiers(), ["Ctrl", "Alt", "Shift"]);
+        n.event(54, 0);
+        assert_eq!(n.modifiers(), ["Ctrl", "Alt"]);
+        n.event(29, 0);
+        n.event(56, 0);
+        assert!(n.modifiers().is_empty());
+        n.event(100, 1);
+        assert_eq!(n.modifiers(), ["AltGr"]);
+        assert!(matches!(n.event(18, 1), Action::Ignore));
+    }
     fn chord(layout: &str) -> String {
         let mut n = Normalizer::new(layout, false).unwrap();
         n.event(29, 1);

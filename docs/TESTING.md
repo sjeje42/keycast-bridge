@@ -53,10 +53,15 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 Record OS, keyboard model, selected mode, DPI, OBS source dimensions and result. Do not include sensitive captured text.
 
 
-## 0.2.0-alpha.3 — multi-monitor acceptance
+## 0.2.0-alpha.4 — multi-monitor acceptance
 
 - Select DISPLAY2, then DISPLAY3 during capture. Test monitors left of / above the primary (negative coordinates) and a portrait monitor.
 - Align the selected monitor capture and OBS browser viewport exactly, including aspect ratio. Verify clicks at the center and four corners; clicks outside the selected display must show no ring.
 - Mix 100%, 150% and 200% display scaling. Change resolution, orientation and primary monitor during capture; the selected device must remain selected and coordinates follow its current geometry.
 - Unplug the selected monitor: the UI must report unavailable and suspend the ring, without affecting keyboard or mouse-button feedback. Reconnect it, or explicitly select another available display.
 - Unit tests cover negative origins, monitor boundaries, changing dimensions, monitor order changes and missing selections. The CI runner's actual monitor enumeration is also tested; it does not replace a physical multi-monitor OBS test.
+
+
+## Held modifiers (alpha.4)
+
+Verify Shift/Ctrl/Alt alone, combinations, both left/right keys, release during a drag and holds longer than the overlay duration. Repeat with mouse capture disabled. Confirm AltGr is not displayed as Ctrl+Alt. Reconnect the OBS Browser Source while Shift is held; it must recover current state and clear on release. Stop capture while holding keys: both rows clear. Under Linux, unplug a keyboard with Ctrl held while Shift remains held on another: only Shift remains. Physical Photoshop/Affinity Pen-tool validation is manual.

@@ -19,6 +19,7 @@ pub struct Inner {
     pub config: Event,
     pub device_status: String,
     pub halo_display: Option<String>,
+    pub modifiers: Vec<String>,
 }
 pub struct Bridge {
     pub token: String,
@@ -36,6 +37,7 @@ impl Bridge {
                 status: "stopped",
                 device_status: String::new(),
                 halo_display: None,
+                modifiers: Vec::new(),
                 config: Event::Config {
                     size: 40,
                     duration: 1800,
@@ -53,12 +55,16 @@ impl Bridge {
         inner.session += 1;
         inner.status = "stopped";
         inner.device_status.clear();
+        inner.modifiers.clear();
         let _ = self.tx.send(Event::Clear);
     }
     pub fn select_display(&self, id: String) {
         let mut inner = self.inner.lock().unwrap();
         inner.halo_display = Some(id);
         let _ = self.tx.send(Event::Clear);
+        let _ = self.tx.send(Event::Modifiers {
+            keys: inner.modifiers.clone(),
+        });
     }
     pub fn halo(&self, enabled: bool) {
         let mut inner = self.inner.lock().unwrap();
@@ -112,9 +118,12 @@ async fn socket(
         return StatusCode::FORBIDDEN.into_response();
     }
     ws.on_upgrade(move |mut socket| async move {
-        let mut rx = state.tx.subscribe();
-        let config = state.inner.lock().unwrap().config.clone();
+        let (mut rx, config, modifiers) = {
+            let inner = state.inner.lock().unwrap();
+            (state.tx.subscribe(), inner.config.clone(), Event::Modifiers { keys: inner.modifiers.clone() })
+        };
         if socket.send(Message::Text(serde_json::to_string(&config).unwrap().into())).await.is_err() { return; }
+        if socket.send(Message::Text(serde_json::to_string(&modifiers).unwrap().into())).await.is_err() { return; }
         loop {
             tokio::select! {
                 event = rx.recv() => match event {
@@ -178,6 +187,7 @@ mod tests {
         let b = Bridge::new();
         let mut rx = b.tx.subscribe();
         b.inner.lock().unwrap().status = "capturing";
+        b.inner.lock().unwrap().modifiers = vec!["Shift".into()];
         b.select_display("DISPLAY2".into());
         {
             let inner = b.inner.lock().unwrap();
@@ -186,7 +196,9 @@ mod tests {
             assert_eq!(inner.halo_display.as_deref(), Some("DISPLAY2"));
         }
         assert!(matches!(rx.try_recv().unwrap(), Event::Clear));
+        assert!(matches!(rx.try_recv().unwrap(), Event::Modifiers { keys } if keys == ["Shift"]));
         b.stop();
+        assert!(b.inner.lock().unwrap().modifiers.is_empty());
         assert_eq!(
             b.inner.lock().unwrap().halo_display.as_deref(),
             Some("DISPLAY2")

@@ -1,4 +1,4 @@
-# Validation — 0.2.0-alpha.3
+# Validation — 0.2.0-alpha.4
 
 The previous 0.2.0-alpha.2 passed all three build pipelines and the user confirmed it worked. This update adds Windows monitor selection and refreshes coordinates from the selected monitor.
 
@@ -16,3 +16,4 @@ The [Actions pipelines](https://github.com/sjeje42/keycast-bridge/actions) must 
 ## Physical validation
 
 A CI runner with one virtual monitor does not validate a real multi-monitor OBS setup. Follow [TESTING.md](TESTING.md), especially mixed DPI, monitor rotation, unplug/replug and matching OBS source geometry. Linux/Wayland still has no pointer-position halo.
+

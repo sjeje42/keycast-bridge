@@ -1,10 +1,10 @@
-# Windows — 0.2.0-alpha.3
+# Windows — 0.2.0-alpha.4
 
 ## Français
 
 Cible : Windows 10 1703 ou plus récent / Windows 11, Intel/AMD 64 bits.
 
-1. Télécharger l’archive `keycast-bridge_0.2.0-alpha.3_windows-x64.zip` depuis les Releases ou les artifacts du workflow **Windows portable**.
+1. Télécharger l’archive `keycast-bridge_0.2.0-alpha.4_windows-x64.zip` depuis les Releases ou les artifacts du workflow **Windows portable**.
 2. Extraire **tout** le dossier. Conserver les DLL, `lib/`, `share/` et `licenses/` avec les exécutables.
 3. Lancer `keycast-bridge.exe` avec son utilisateur habituel, sans administrateur. Aucun Rust, GTK ou MSYS2 à installer.
 4. Choisir Français si nécessaire, copier l’URL OBS et créer une source **Navigateur** transparente aux dimensions de la scène.
@@ -40,3 +40,4 @@ cargo build --locked --release
 ```
 
 The portable directory is `dist/keycast-bridge-windows-x64`. See `.github/workflows/windows.yml` for the reproducible build steps and clean-PATH launch check. Bundled libraries retain their licenses, listed in `licenses/`; package versions and upstream source locations are recorded in `MSYS2-packages.txt`. MSYS2 package build recipes: https://github.com/msys2/MINGW-packages .
+

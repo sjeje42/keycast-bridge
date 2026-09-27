@@ -117,6 +117,21 @@ struct Normalizer {
     all: bool,
 }
 impl Normalizer {
+    fn modifiers(&self) -> Vec<String> {
+        let altgr = self.down[0xa5];
+        [
+            ("Ctrl", (self.down[0xa2] || self.down[0xa3]) && !altgr),
+            ("Alt", self.down[0xa4] && !altgr),
+            ("Win", self.down[0x5b] || self.down[0x5c]),
+            ("Shift", self.down[0xa0] || self.down[0xa1]),
+            ("AltGr", altgr),
+        ]
+        .into_iter()
+        .filter(|(_, held)| *held)
+        .map(|(name, _)| name.to_owned())
+        .collect()
+    }
+
     fn new(all: bool) -> Self {
         Self {
             down: [false; 256],
@@ -249,6 +264,7 @@ pub fn start(state: Arc<Bridge>, all: bool, mouse: bool) {
         if inner.session == generation {
             inner.session += 1;
             inner.status = if result.is_ok() { "stopped" } else { "error" };
+            inner.modifiers.clear();
             let _ = state.tx.send(Event::Clear);
         }
     });
@@ -342,7 +358,18 @@ fn run(state: &Bridge, generation: u64, all: bool, mouse: bool) -> anyhow::Resul
                     continue;
                 }
             };
-            match normalizer.event(raw) {
+            let before = normalizer.modifiers();
+            let action = normalizer.event(raw);
+            let keys = normalizer.modifiers();
+            if keys != before {
+                let mut inner = state.inner.lock().unwrap();
+                if inner.session != generation {
+                    return Ok(());
+                }
+                inner.modifiers = keys.clone();
+                let _ = state.tx.send(Event::Modifiers { keys });
+            }
+            match action {
                 Action::Stop => return Ok(()),
                 Action::Label(label) => {
                     let inner = state.inner.lock().unwrap();
@@ -371,6 +398,33 @@ mod tests {
             up: false,
             layout,
         }
+    }
+    #[test]
+    fn held_modifiers_follow_both_sides_release_and_altgr() {
+        let mut n = Normalizer::new(false);
+        for vk in [0xa2, 0xa0, 0xa1, 0xa4] {
+            assert_eq!(n.event(raw(vk, 0)), Action::Ignore);
+        }
+        assert_eq!(n.modifiers(), ["Ctrl", "Alt", "Shift"]);
+        n.event(Raw {
+            up: true,
+            ..raw(0xa0, 0)
+        });
+        assert_eq!(n.modifiers(), ["Ctrl", "Alt", "Shift"]);
+        n.event(Raw {
+            up: true,
+            ..raw(0xa1, 0)
+        });
+        assert_eq!(n.modifiers(), ["Ctrl", "Alt"]);
+        n.event(raw(0xa5, 0));
+        assert_eq!(n.modifiers(), ["AltGr"]);
+        for vk in [0xa5, 0xa2, 0xa4] {
+            n.event(Raw {
+                up: true,
+                ..raw(vk, 0)
+            });
+        }
+        assert!(n.modifiers().is_empty());
     }
     #[test]
     fn text_repeat_release_and_emergency_stop() {

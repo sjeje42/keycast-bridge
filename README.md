@@ -15,7 +15,7 @@
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
-Version **0.2.0-alpha.3**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0-alpha.4**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). Other compositors are an architectural target, not a tested compatibility claim.
 
@@ -23,7 +23,7 @@ Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). 
 
 See the [exact validation status](docs/VALIDATION.md).
 
-## Windows and input improvements in 0.2.0-alpha.3
+## Windows and input improvements in 0.2.0-alpha.4
 
 [Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
 
@@ -46,7 +46,7 @@ Optional left/right/middle mouse feedback is available on both systems. Windows 
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.3-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.4-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.
@@ -203,3 +203,8 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 ## License and acknowledgments
 
 Copyright © 2026 Jérôme Stavrianos. Licensed under **GPL-3.0-only**, see [LICENSE](LICENSE). No Screenkey source code or assets are included. Screenkey inspired the use case. Dependencies retain their own licenses.
+
+
+### Held modifiers and mouse drawing
+
+Shift, Ctrl, Alt and combinations stay visible in a live row while held, including during Pen tool clicks and drags. A purple outline distinguishes held keys from the timed last-shortcut row above. Works on Linux and Windows without enabling text keys. Enable mouse clicks to display buttons alongside held modifiers.

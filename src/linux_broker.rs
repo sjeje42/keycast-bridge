@@ -315,6 +315,7 @@ fn read_devices(socket: UnixDatagram, layout: &str, all: bool) -> Result<()> {
     anyhow::ensure!(epoll_fd >= 0, "Cannot create epoll");
     let epoll = unsafe { OwnedFd::from_raw_fd(epoll_fd) };
     let mut inputs: HashMap<i32, Input> = HashMap::new();
+    let mut held: HashMap<i32, Vec<String>> = HashMap::new();
     let mut socket_event = libc::epoll_event {
         events: libc::EPOLLIN as u32,
         u64: socket.as_raw_fd() as u64,
@@ -385,7 +386,7 @@ fn read_devices(socket: UnixDatagram, layout: &str, all: bool) -> Result<()> {
                                 .find(|(_, i)| i.info.id == id)
                                 .map(|(fd, _)| *fd)
                             {
-                                remove(&mut inputs, fd, epoll.as_raw_fd())?;
+                                remove(&mut inputs, &mut held, fd, epoll.as_raw_fd())?;
                             }
                         }
                     }
@@ -411,7 +412,14 @@ fn read_devices(socket: UnixDatagram, layout: &str, all: bool) -> Result<()> {
                                         y: None,
                                     })?;
                                 } else if input.info.keyboard {
-                                    match input.normalizer.event(code, event.value()) {
+                                    let before = input.normalizer.modifiers();
+                                    let action = input.normalizer.event(code, event.value());
+                                    let keys = input.normalizer.modifiers();
+                                    if keys != before {
+                                        held.insert(fd, keys);
+                                        emit(held_modifiers(&held))?;
+                                    }
+                                    match action {
                                         Action::Label(label) => emit(Event::Key { label })?,
                                         Action::Stop => {
                                             emit(Event::Clear)?;
@@ -424,7 +432,7 @@ fn read_devices(socket: UnixDatagram, layout: &str, all: bool) -> Result<()> {
                         }
                     }
                     Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => (),
-                    Err(_) => remove(&mut inputs, fd, epoll.as_raw_fd())?,
+                    Err(_) => remove(&mut inputs, &mut held, fd, epoll.as_raw_fd())?,
                 }
             }
         }
@@ -432,13 +440,30 @@ fn read_devices(socket: UnixDatagram, layout: &str, all: bool) -> Result<()> {
     emit(Event::Clear)?;
     Ok(())
 }
-fn remove(inputs: &mut HashMap<i32, Input>, fd: i32, epoll: i32) -> Result<()> {
+fn held_modifiers(held: &HashMap<i32, Vec<String>>) -> Event {
+    Event::Modifiers {
+        keys: ["Ctrl", "Alt", "Super", "Shift", "AltGr"]
+            .into_iter()
+            .filter(|name| held.values().any(|keys| keys.iter().any(|key| key == name)))
+            .map(str::to_owned)
+            .collect(),
+    }
+}
+
+fn remove(
+    inputs: &mut HashMap<i32, Input>,
+    held: &mut HashMap<i32, Vec<String>>,
+    fd: i32,
+    epoll: i32,
+) -> Result<()> {
     unsafe {
         libc::epoll_ctl(epoll, libc::EPOLL_CTL_DEL, fd, std::ptr::null_mut());
     }
     if let Some(input) = inputs.remove(&fd) {
         // Drop per-device modifier state, including keys held while unplugging.
+        held.remove(&fd);
         emit(Event::Clear)?;
+        emit(held_modifiers(held))?;
         emit(Event::DeviceStatus {
             message: format!(
                 "Déconnecté / Disconnected: {} — {} actif(s) / active",
@@ -453,6 +478,22 @@ fn remove(inputs: &mut HashMap<i32, Input>, fd: i32, epoll: i32) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn removal_preserves_modifiers_held_on_another_keyboard() {
+        let mut held = HashMap::from([
+            (1, vec!["Ctrl".into()]),
+            (2, vec!["Ctrl".into(), "Shift".into()]),
+        ]);
+        let keys = |held: &HashMap<i32, Vec<String>>| match held_modifiers(held) {
+            Event::Modifiers { keys } => keys,
+            _ => unreachable!(),
+        };
+        assert_eq!(keys(&held), ["Ctrl", "Shift"]);
+        held.remove(&1);
+        assert_eq!(keys(&held), ["Ctrl", "Shift"]);
+        held.remove(&2);
+        assert!(keys(&held).is_empty());
+    }
     fn info() -> Info {
         Info {
             id: "/sys/input/event4".into(),

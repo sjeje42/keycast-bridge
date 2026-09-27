@@ -13,7 +13,7 @@
 
 **Afficher les raccourcis clavier dans OBS, sous Linux/Wayland et Windows.**
 
-Version **0.2.0-alpha.3**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
+Version **0.2.0-alpha.4**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -39,7 +39,7 @@ Extraire entièrement le ZIP fourni par le workflow **Windows portable** ou les 
 Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.3-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.4-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.
@@ -218,3 +218,8 @@ Le frontend doit être compilé avant Rust : ses fichiers sont intégrés aux ex
 Copyright © 2026 Jérôme Stavrianos. Projet sous **GPL-3.0-only** : voir [LICENSE](LICENSE).
 
 Keycast Bridge est une nouvelle implémentation inspirée du besoin couvert par Screenkey. Aucun code ni élément graphique de Screenkey n’est inclus. Les dépendances conservent leurs licences respectives.
+
+
+### Touches maintenues et dessin à la souris
+
+Maj (`Shift`), Ctrl, Alt et leurs combinaisons restent affichés dans une ligne en direct tant qu’ils sont enfoncés, y compris pendant un clic ou un glisser avec la Plume. Un contour violet distingue les touches maintenues du dernier raccourci, affiché temporairement au-dessus. Disponible sous Linux et Windows, sans activer les touches de texte. Activez « Afficher les clics de souris » pour voir aussi les boutons.

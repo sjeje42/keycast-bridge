@@ -1,22 +1,21 @@
-## Français — 0.2.0-alpha.3
+## Français — 0.2.0-alpha.4
 
-**Multi-écran Windows : choisir l’écran utilisé dans OBS pour le cercle au clic.**
+**Touches maintenues : Maj, Ctrl, Alt et leurs combinaisons restent visibles pendant les clics et les glissers.**
 
-- Nouveau sélecteur d’écran : DISPLAY1, DISPLAY2, DISPLAY3… avec résolution, position et indication du principal.
-- Coordonnées calculées par rapport à l’écran choisi, même à gauche ou au-dessus du principal, en portrait ou avec une résolution différente.
-- Liste actualisée automatiquement, changement d’écran possible pendant la capture et géométrie relue à chaque clic.
-- Si l’écran sélectionné est débranché, le cercle est suspendu sans basculer sur un autre écran. Les raccourcis et les boutons de souris restent actifs.
+- Une ligne en direct affiche les modificateurs dès l’appui et les retire au relâchement, sans expiration pendant le maintien.
+- Le dernier raccourci garde son affichage temporaire sur une ligne distincte.
+- Fonctionne sous Windows et Linux, avec ou sans affichage de la souris. Aucun besoin d’activer les touches de texte.
+- AltGr reste identifié séparément. Les côtés gauche/droit et plusieurs claviers Linux sont pris en compte.
+- Débranchement, arrêt et perte de connexion effacent les états obsolètes. Une reconnexion OBS récupère les modificateurs encore maintenus.
+- Le choix multi-écran Windows de l’alpha.3 est conservé.
 
-Windows : extraire entièrement le ZIP, lancer `keycast-bridge.exe`, activer les clics et le cercle, puis choisir l’écran capturé. Dans OBS, aligner la capture de cet écran et la source Navigateur sur le même rectangle, avec les mêmes proportions. Les captures de fenêtres ou les recadrages ne sont pas alignés automatiquement. Le choix d’écran n’est pas enregistré après fermeture.
+Pour Photoshop/Affinity : activer « Afficher les clics de souris », démarrer, maintenir Maj/Ctrl/Alt puis cliquer ou glisser. La touche apparaît avec un contour violet tant qu’elle reste enfoncée. Le cercle à la position du pointeur reste réservé à Windows.
 
-Debian 13 amd64 : `sudo apt install ./keycast-bridge_0.2.0.alpha.3-1_amd64.deb`. Sous Linux/Wayland, les touches et les boutons fonctionnent quel que soit l’écran ; le halo à la position du pointeur reste indisponible.
-
-La publication exige la réussite des builds Linux, Debian et Windows. Les tests vérifient les calculs multi-écran et l’énumération Windows ; les configurations physiques avec plusieurs écrans et DPI différents restent à valider dans OBS.
+Windows : extraire entièrement le ZIP et lancer `keycast-bridge.exe`.
+Debian 13 : `sudo apt install ./keycast-bridge_0.2.0.alpha.4-1_amd64.deb`.
 
 ## English
 
-**Windows multi-monitor click ring:** choose the monitor captured by OBS using the new display selector. Resolution, desktop position and primary status are shown. Negative coordinates and portrait layouts are supported. The list refreshes automatically; selection can change during capture and geometry is read on each click.
+Held Shift, Ctrl, Alt and combinations now remain visible through mouse clicks and drags. A live row follows press/release independently of the timed shortcut row. Available on Windows and Linux without enabling text capture. Includes left/right modifier handling, Linux keyboard aggregation, AltGr, disconnection cleanup and OBS reconnect state. Windows monitor selection remains available.
 
-Disconnecting the selected display suspends its ring without silently switching to another display. Keyboard and mouse-button feedback continue. Align the selected monitor capture and Browser Source to the same rectangle and aspect ratio. Window captures and cropping are not mapped automatically. Selection is session-only. Linux/Wayland retains keyboard/button feedback across screens without a pointer-position halo.
-
-All three build pipelines must pass before publication. Geometry and native enumeration tests do not replace physical multi-monitor/DPI testing in OBS.
+Automated tests cover modifier state, hotplug and overlay behavior; real Photoshop/Affinity workflows still need user validation.

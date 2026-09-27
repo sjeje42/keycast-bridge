@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   let label = $state('');
+  let modifiers = $state<string[]>([]);
+  // A separate live row keeps held keys visible after a shortcut's history expires.
   let size = $state(40);
   let duration = 1800;
   let dark = $state(true);
@@ -14,7 +16,7 @@
   let expiry: ReturnType<typeof setTimeout>;
   let mouseExpiry: ReturnType<typeof setTimeout>;
   let ringExpiry: ReturnType<typeof setTimeout>;
-  function clear() { releaseTimers.forEach(clearTimeout); releaseTimers.clear(); pressedAt.clear(); clearTimeout(expiry); clearTimeout(mouseExpiry); clearTimeout(ringExpiry); label = ''; buttons = []; mouseVisible = false; ring = null; }
+  function clear() { releaseTimers.forEach(clearTimeout); releaseTimers.clear(); pressedAt.clear(); clearTimeout(expiry); clearTimeout(mouseExpiry); clearTimeout(ringExpiry); label = ''; modifiers = []; buttons = []; mouseVisible = false; ring = null; }
   onMount(() => {
     let alive = true;
     let socket: WebSocket;
@@ -26,6 +28,9 @@
         try {
           const event = JSON.parse(data);
           if (event.type === 'clear') clear();
+          if (event.type === 'modifiers' && Array.isArray(event.keys)) {
+            modifiers = [...new Set<string>(event.keys.filter((key: unknown): key is string => typeof key === 'string' && ['Ctrl', 'Alt', 'Shift', 'Super', 'Win', 'AltGr'].includes(key)))];
+          }
           if (event.type === 'config') {
             size = Math.min(96, Math.max(20, Number(event.size) || 40));
             duration = Math.min(5000, Math.max(300, Number(event.duration) || 1800));
@@ -69,8 +74,18 @@
 </script>
 
 <div class="stage" aria-live="polite">
-  {#if label || mouseVisible}
+  {#if label}
+    <div class:light={!dark} class="keys history" style:font-size={`${size}px`}>
+      {#each label.split(' + ') as key, i}
+        {#if i}<span class="plus">+</span>{/if}<kbd>{key}</kbd>
+      {/each}
+    </div>
+  {/if}
+  {#if modifiers.length || mouseVisible}
     <div class:light={!dark} class="keys" style:font-size={`${size}px`}>
+      {#each modifiers as key, i}
+        {#if i}<span class="plus">+</span>{/if}<kbd class="held">{key}</kbd>
+      {/each}
       {#if mouseVisible}
         <svg class="mouse" viewBox="0 0 48 64" role="img" aria-label="Mouse buttons">
           <rect x="3" y="3" width="42" height="58" rx="20" fill="none" stroke="currentColor" stroke-width="3" />
@@ -79,11 +94,6 @@
           <path d="M24 3V30M4 30H44" fill="none" stroke="currentColor" stroke-width="2" />
           <rect x="20" y="11" width="8" height="15" rx="4" fill={buttons.includes(3) ? '#74dfba' : 'currentColor'} />
         </svg>
-      {/if}
-      {#if label}
-        {#each label.split(' + ') as key, i}
-          {#if i}<span class="plus">+</span>{/if}<kbd>{key}</kbd>
-        {/each}
       {/if}
     </div>
   {/if}
@@ -94,7 +104,8 @@
 
 <style>
   :global(html), :global(body), :global(#app) { margin:0; width:100%; height:100%; background:transparent !important; overflow:hidden; }
-  .stage { position:fixed; inset:0; display:flex; align-items:flex-end; justify-content:center; padding:32px; box-sizing:border-box; pointer-events:none; }
+  .stage { position:fixed; inset:0; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:flex-end; padding:32px; box-sizing:border-box; pointer-events:none; }
+  .held { outline:2px solid #a879ff; }
   .keys { display:flex; flex-wrap:wrap; gap:.24em; align-items:center; justify-content:center; font-family:system-ui,sans-serif; color:#f7f9ff; padding:.3em; border-radius:.4em; background:#10151fe8; box-shadow:0 8px 32px #0004; }
   kbd { font-family:inherit; font-weight:650; background:#273142; border:1px solid #ffffff26; border-bottom:3px solid #ffffff38; border-radius:.22em; padding:.18em .42em; }
   .mouse { height:1.5em; width:1.13em; margin:0 .2em; }
