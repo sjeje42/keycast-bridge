@@ -23,6 +23,8 @@ try {
   await page.waitForFunction(() => window.overlaySocket);
   const send = async event => {
     await page.evaluate(event => window.overlaySocket.onmessage({data: JSON.stringify(event)}), event);
+    // Viewport resize and Svelte's bound window dimensions settle on animation frames.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   };
   await send({type:'config', size:40, duration:300, dark:true, halo:false});
   await send({type:'modifiers', keys:['Ctrl','Shift']});
@@ -54,10 +56,10 @@ try {
     await page.setViewportSize(viewport);
     for (const [x,y] of [[0,0],[100,0],[0,100],[100,100],[50,50],[23,61]]) {
       await send({...config, appearance:{...appearance,x,y}});
-      const stage = await page.locator('.stage').boundingBox();
-      const box = await page.locator('.overlay').boundingBox();
-      assert.ok(Math.abs(box.x - (stage.x + (stage.width-box.width)*x/100)) < 1, 'horizontal free placement');
-      assert.ok(Math.abs(box.y - (stage.y + (stage.height-box.height)*y/100)) < 1, 'vertical free placement');
+      // Take both rectangles in the same browser frame, never across a resize.
+      const {stage,box} = await page.evaluate(() => ({stage:document.querySelector('.stage').getBoundingClientRect().toJSON(),box:document.querySelector('.overlay').getBoundingClientRect().toJSON()}));
+      assert.ok(Math.abs(box.x - (stage.x + (stage.width-box.width)*x/100)) < 1, `horizontal free placement: ${JSON.stringify({viewport,x,y,stage,box})}`);
+      assert.ok(Math.abs(box.y - (stage.y + (stage.height-box.height)*y/100)) < 1, `vertical free placement: ${JSON.stringify({viewport,x,y,stage,box})}`);
       assert.ok(box.x >= stage.x-1 && box.y >= stage.y-1 && box.x+box.width <= stage.x+stage.width+1 && box.y+box.height <= stage.y+stage.height+1, 'overlay remains in frame');
     }
   }
