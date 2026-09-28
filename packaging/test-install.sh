@@ -2,6 +2,9 @@
 # Run in a fresh Debian container: dependencies must come only from APT.
 set -eu
 export DEBIAN_FRONTEND=noninteractive
+# debian:13-slim excludes /usr/share/doc by default. Include this package's
+# documentation so the install check validates the files shipped to desktops.
+printf '%s\n' 'path-include /usr/share/doc/keycast-bridge/*' > /etc/dpkg/dpkg.cfg.d/zz-keycast-test-docs
 apt-get update
 apt-get install -y --no-install-recommends /work/dist/*.deb xvfb xauth dbus-x11 binutils
 # Check runtime linking, packaged paths and authorization policy.
@@ -13,10 +16,10 @@ strings /usr/bin/keycast-bridge | grep -q /usr/libexec/keycast-bridge-capture
 grep -q 'Exec=/usr/bin/keycast-bridge' /usr/share/applications/fr.jeromelab.KeycastBridge.desktop
 grep -q /usr/libexec/keycast-bridge-capture /usr/share/polkit-1/actions/fr.jeromelab.KeycastBridge.policy
 for name in Keycast_Bridge_Guide_Utilisateur_FR Keycast_Bridge_User_Guide_EN; do
-    test -s "/usr/share/doc/keycast-bridge/pdf/$name.pdf"
+    cmp "/work/docs/pdf/$name.pdf" "/usr/share/doc/keycast-bridge/pdf/$name.pdf"
 done
 for language in en fr; do
-    test -s "/usr/share/doc/keycast-bridge/guide/$language.html"
+    cmp "/work/docs/guide/$language.html" "/usr/share/doc/keycast-bridge/guide/$language.html"
 done
 # A non-root GUI must stay alive under a virtual display, without capturing.
 useradd -m tester
