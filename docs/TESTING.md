@@ -58,9 +58,16 @@ Record OS, keyboard model, selected mode, DPI, OBS source dimensions and result.
 - Select DISPLAY2, then DISPLAY3 during capture. Test monitors left of / above the primary (negative coordinates) and a portrait monitor.
 - Align the selected monitor capture and OBS browser viewport exactly, including aspect ratio. Verify clicks at the center and four corners; clicks outside the selected display must show no ring.
 - Mix 100%, 150% and 200% display scaling. Change resolution, orientation and primary monitor during capture; the selected device must remain selected and coordinates follow its current geometry.
-- Unplug the selected monitor: the UI must report unavailable and suspend the ring, without affecting keyboard or mouse-button feedback. Reconnect it, or explicitly select another available display.
+- With three monitors, unplug the selected monitor: report unavailable and suspend its ring while two monitors remain. With two monitors, unplug either one: automatically map clicks to the sole remaining monitor. Keyboard and mouse-button feedback must continue. Leave the single-monitor scene running and verify periodic display refresh does not clear held buttons or shortcuts.
 - Unit tests cover negative origins, monitor boundaries, changing dimensions, monitor order changes and missing selections. The CI runner's actual monitor enumeration is also tested; it does not replace a physical multi-monitor OBS test.
 
+
+## Windows help and single-monitor ring (alpha.7)
+
+- Open Complete guide in both languages and Preview with the Windows default browser, from the extracted portable ZIP without MSYS2 installed.
+- If no HTTP browser handler is configured, verify the visible failure dialog and Copy link fallback. Keep the app open when pasting the link.
+- Start with one monitor and mouse capture unchecked. Enable Click ring: mouse capture must become checked. Start capture and check the ring at the center and corners of the aligned OBS scene.
+- Disable mouse capture while stopped: the ring checkbox must clear. During capture without mouse capture, stop before enabling it.
 
 ## Held modifiers (alpha.4)
 
