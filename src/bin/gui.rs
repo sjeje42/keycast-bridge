@@ -765,7 +765,9 @@ fn display_controls(
         let failed = result.is_err();
         let list = result.unwrap_or_default();
         let mut selected = state.inner.lock().unwrap().halo_display.clone();
-        if selected.is_none() || list.len() == 1 {
+        if selected.is_none()
+            || (list.len() == 1 && selected.as_deref() != Some(list[0].id.as_str()))
+        {
             if let Some(display) = displays::selected(&list, selected.as_deref()) {
                 selected = Some(display.id.clone());
                 state.select_display(display.id.clone());
