@@ -1,6 +1,10 @@
 # Keycast Bridge
 
-[Complete user guide — English](docs/USER_GUIDE.en.md) · [Guide français](docs/USER_GUIDE.fr.md)
+Online guides: [English](docs/USER_GUIDE.en.md) · [Français](docs/USER_GUIDE.fr.md)
+
+PDF guides: [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf) · [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf)
+
+[Download Windows x64 and Debian 13 packages](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
 
 **English** · [Français](README.fr.md)
 
@@ -13,7 +17,7 @@
 [![Build and test](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml)
 [![License GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 
-**A local keyboard shortcut overlay for OBS on Linux / Wayland.**
+**Display keyboard shortcuts, held modifiers and mouse clicks in OBS on Linux / Wayland and Windows.**
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
@@ -25,21 +29,21 @@ Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). 
 
 See the [exact validation status](docs/VALIDATION.md).
 
-## Windows and input improvements in 0.2.0-alpha.7
+## Windows portable (x64)
 
 [Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
 
 Linux now defaults to all keyboards, with optional multiple selection and udev hotplug. A privileged opener passes evdev descriptors over a private Unix socket to a reader that drops privileges. Reconnecting a selected keyboard uses its serial/name or physical USB port/name, never a remembered event number. Without a serial, use the same port. Modifiers are tracked per keyboard: perform a shortcut on one keyboard.
 
-Optional left/right/middle mouse feedback is available on both systems. Windows also offers a click ring for any selected monitor (DISPLAY1, DISPLAY2, etc.); align the monitor capture and browser source in OBS. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
+Optional left/right/middle mouse feedback is available on both systems. On Windows, enable **Click ring** before starting; this also enables mouse capture. A sole monitor is selected automatically, including after another monitor is unplugged. With multiple monitors, choose the one captured in OBS under **Settings → Capture**. Align the monitor capture and browser source in OBS. The ring is drawn in OBS, not on the desktop. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
 
 ## Features
 
-- Explicit start, administrator authorization for selected keyboards, stop button and **Ctrl+Alt+F12** stop shortcut.
+- Explicit start and stop, with **Ctrl+Alt+F12** as an emergency stop shortcut. Linux requests Polkit authorization; Windows runs as a normal user.
 - Linux capture uses udev hotplug, multiple keyboards, a privileged descriptor broker and an unprivileged reader.
-- AZERTY FR, QWERTY US / UK and QWERTZ DE using libxkbcommon. Select the same layout as your desktop.
-- Default shortcuts mode: Ctrl / left Alt / Super combinations, function and navigation keys. Shift alone and AltGr text are excluded. Single-letter app shortcuts need the optional all-keys mode.
-- Transparent OBS Browser Source, light/dark keycaps, adjustable size and lifetime, preview and copy-URL buttons.
+- Linux: AZERTY FR, QWERTY US / UK and QWERTZ DE using libxkbcommon. Select the same layout as your desktop. Windows follows the foreground window’s layout.
+- Default shortcuts mode: Ctrl / left Alt / Super combinations, function and navigation keys. Held Shift, Ctrl, Alt, Win/Super and AltGr are shown even without another key. Ordinary text and text entered with AltGr remain filtered by default. Single-letter app shortcuts need the optional all-keys mode.
+- Transparent OBS Browser Source, freely positioned overlay, custom colors, adjustable key size/lifetime and configurable canvas dimensions. Position, colors and canvas dimensions persist between launches.
 - No key logs, analytics, remote resources, auto-start or background capture after closing the app.
 - Read-only overlay URL with a fresh random token per launch, bound to `127.0.0.1:48732` only.
 
@@ -135,7 +139,7 @@ RUSTUP_TOOLCHAIN=stable sh scripts/build.sh
 sudo sh scripts/install.sh
 ```
 
-While the repository is private, cloning requires an authorized GitHub account. Alternatively, download **Code → Download ZIP**, extract it and open a terminal in the directory containing `Cargo.toml`. The source archive contains `scripts/` and `data/`; the older archive containing only three executables is not sufficient for this procedure.
+Alternatively, download **Code → Download ZIP**, extract it and open a terminal in the directory containing `Cargo.toml`. Use the complete source archive, including `scripts/` and `data/`.
 
 Build **without sudo**. The installation script places executables in `/usr/local/bin`, the capture helper in `/usr/local/libexec`, and installs the launcher and Polkit policy. Installation is required: running the compiled GUI alone does not install the capture helper.
 
@@ -169,15 +173,36 @@ Dependency names and package-manager commands: [Ubuntu](https://packages.ubuntu.
 
 ## OBS setup
 
-1. Select your keyboard and layout in Keycast Bridge. The device list includes non-keyboards; the capture helper rejects them.
+1. In **Settings → Capture**, Linux users can keep **All keyboards (automatic)** or select specific keyboards and a matching layout. Windows captures all session keyboards and chooses the layout automatically. Enable optional mouse feedback before starting.
 2. Copy the OBS URL. In OBS, add **Browser** as a source; match the dimensions chosen in **Settings → Canvas and size** (default **1920 × 1080**). Paste the URL. Keep the page background transparent.
 3. Click **Test overlay** to display a synthetic shortcut; no keyboard access is needed. **Open preview** opens the same overlay in your browser.
-4. Click **Start** and authorize the selected keyboard. Check that the status says **Capture active** before recording.
-5. Click **Stop**, or press **Ctrl+Alt+F12** on the selected keyboard. The shortcut itself is not displayed.
+4. Click **Start** and approve the authorization request on Linux. Check that the status says **Capture active** before recording.
+5. Click **Stop**, or press **Ctrl+Alt+F12** on a captured keyboard. The shortcut itself is not displayed.
 
 The URL changes after every app launch. Update it in OBS. This deliberately avoids storing a long-lived token. OBS does not need administrator privileges.
 
 **If Browser is absent from your OBS source list**, that OBS build has no Browser Source support. Install an OBS build/package providing that feature; this alpha does not implement an alternative window overlay.
+
+
+## Appearance and settings
+
+### Held modifiers and mouse drawing
+
+Shift, Ctrl, Alt and combinations stay visible in a live row while held, including during Pen tool clicks and drags. An outline in the chosen accent color distinguishes held keys from the timed last-shortcut row above. Works on Linux and Windows without enabling text keys. Enable mouse clicks to display buttons alongside held modifiers.
+
+### Position and colors
+
+Open the top-right gear → **Position and colors**, then drag the block in the schematic preview. Nine presets and **X/Y (%)** fields also support keyboard adjustment. 0% means the left/top edge and 100% the right/bottom edge of the available space, with a safety margin. Both rows and the mouse icon move together.
+
+Customize background, key background, text and all three click colors. The accent also colors held-key outlines and the click ring. Light/dark palettes preserve position; **Reset all** restores default position and colors.
+
+Changes apply live in OBS during capture. The GTK preview is schematic; **Test overlay** shows exact output in OBS but stops active capture. Positions are relative to the Browser Source; cropping that source can hide content. The click ring remains at the pointer.
+
+Position, colors and canvas dimensions persist in `%APPDATA%\keycast-bridge\appearance.json` on Windows and `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` or `~/.config/keycast-bridge/appearance.json` on Linux. No keystrokes or OBS token are stored. Other options remain session-only. Save failures are shown in the interface.
+
+### Settings and OBS canvas
+
+Open the top-right gear for **Position and colors**, **Canvas and size**, and **Capture**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; future package builds include them alongside the HTML guides.
 
 ## Development and demo
 
@@ -197,7 +222,7 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 - No automatic password-field detection: stop capture before entering secrets, even in shortcuts-only mode.
 - Linux hotplug continues without restarting. A selected keyboard without a serial number must return to the same USB port.
 - Layout changes in GNOME are not automatically tracked; stop, choose the new layout, then restart.
-- No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization, persistent preferences yet.
+- No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization. Appearance and canvas settings persist; size, duration, capture options, monitor selection and language remain session-only.
 - Key-repeat events are intentionally ignored. Modifiers held before Start must be released and pressed again. Caps Lock / Num Lock state already active at startup is not synchronized with GNOME.
 - System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; lock-screen auto-pause is not implemented.
 - This alpha needs real-device acceptance tests before it should be used for live broadcasts.
@@ -205,22 +230,3 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 ## License and acknowledgments
 
 Copyright © 2026 Jérôme Stavrianos. Licensed under **GPL-3.0-only**, see [LICENSE](LICENSE). No Screenkey source code or assets are included. Screenkey inspired the use case. Dependencies retain their own licenses.
-
-
-### Held modifiers and mouse drawing
-
-Shift, Ctrl, Alt and combinations stay visible in a live row while held, including during Pen tool clicks and drags. A purple outline distinguishes held keys from the timed last-shortcut row above. Works on Linux and Windows without enabling text keys. Enable mouse clicks to display buttons alongside held modifiers.
-
-### Position and colors
-
-Open **Position and colors**, then drag the block in the schematic preview. Nine presets and **X/Y (%)** fields also support keyboard adjustment. 0% means the left/top edge and 100% the right/bottom edge of the available space, with a safety margin. Both rows and the mouse icon move together.
-
-Customize background, key background, text and all three click colors. The accent also colors held-key outlines and the click ring. Light/dark palettes preserve position; **Reset all** restores default position and colors.
-
-Changes apply live in OBS during capture. The GTK preview is schematic; **Test overlay** shows exact output in OBS but stops active capture. Positions are relative to the Browser Source; cropping that source can hide content. The click ring remains at the pointer.
-
-Position, colors and canvas dimensions persist in `%APPDATA%\keycast-bridge\appearance.json` on Windows and `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` or `~/.config/keycast-bridge/appearance.json` on Linux. No keystrokes or OBS token are stored. Other options remain session-only. Save failures are shown in the interface.
-
-### Settings and OBS canvas
-
-Open the top-right gear for **Position and colors**, **Canvas and size**, and **Capture**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies are included in packages.

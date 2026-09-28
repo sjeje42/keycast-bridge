@@ -1,5 +1,11 @@
 $ErrorActionPreference = 'Stop'
 $bundle = (Resolve-Path 'dist/keycast-bridge-windows-x64').Path
+foreach ($name in @('Keycast_Bridge_Guide_Utilisateur_FR', 'Keycast_Bridge_User_Guide_EN')) {
+    if (-not (Test-Path "$bundle\guide\pdf\$name.pdf")) { throw "Missing PDF guide: $name" }
+}
+foreach ($language in @('en', 'fr')) {
+    if (-not (Test-Path "$bundle\guide\$language.html")) { throw "Missing HTML guide: $language" }
+}
 $originalPath = $env:PATH
 $runtime = $env:KEYCAST_UCRT_ROOT
 if (-not $runtime -or -not (Test-Path -LiteralPath $runtime)) { throw 'Missing build runtime path' }
@@ -18,3 +24,4 @@ try {
     Remove-Item Env:KEYCAST_SMOKE_TEST -ErrorAction SilentlyContinue
 }
 Write-Host 'PASS: portable GTK GUI launched without MSYS2 on PATH.'
+

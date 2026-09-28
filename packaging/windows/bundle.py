@@ -60,6 +60,7 @@ for package in sorted(packages):
 (licenses/'MSYS2-packages.txt').write_text('\n'.join(manifest),encoding='utf-8')
 shutil.copy2('docs/WINDOWS.md',out/'README.md')
 shutil.copytree('docs/guide',out/'guide',dirs_exist_ok=True)
+shutil.copytree('docs/pdf',out/'guide/pdf',dirs_exist_ok=True)
 for language in ['en', 'fr']:
     shutil.copy2(f'docs/USER_GUIDE.{language}.md',out/f'USER_GUIDE.{language}.md')
 print('Portable DLL closure:',len(seen),'dependencies')

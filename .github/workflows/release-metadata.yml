@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['packaging/RELEASE.md']
+    paths: ['packaging/RELEASE.md', 'docs/pdf/**', '.github/workflows/release-metadata.yml']
 permissions:
   contents: write
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7.0.1
-      - name: Refresh release notes and checksums using downloaded asset names
+      - name: Attach PDF guides and refresh release notes and checksums
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -23,7 +23,19 @@ jobs:
             exit 0
           fi
           mkdir -p release-assets
+          gh release view "$tag" --json assets --jq '.assets[].name' > /tmp/keycast-release-asset-names.txt
+          for pdf in docs/pdf/*.pdf; do
+            name=$(basename "$pdf")
+            if grep -Fxq "$name" /tmp/keycast-release-asset-names.txt; then
+              gh release download "$tag" --pattern "$name" --dir release-assets
+              cmp "$pdf" "release-assets/$name" || { echo "Existing PDF differs; refusing to overwrite $name"; exit 1; }
+            else
+              gh release upload "$tag" "$pdf"
+              cp "$pdf" release-assets/
+            fi
+          done
           gh release download "$tag" --pattern '*.deb' --pattern '*.zip' --dir release-assets
-          (cd release-assets && sha256sum *.deb *.zip > SHA256SUMS)
+          (cd release-assets && sha256sum *.deb *.zip *.pdf > SHA256SUMS)
           gh release upload "$tag" release-assets/SHA256SUMS --clobber
           gh release edit "$tag" --notes-file packaging/RELEASE.md
+

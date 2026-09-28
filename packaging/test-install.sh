@@ -12,6 +12,12 @@ done
 strings /usr/bin/keycast-bridge | grep -q /usr/libexec/keycast-bridge-capture
 grep -q 'Exec=/usr/bin/keycast-bridge' /usr/share/applications/fr.jeromelab.KeycastBridge.desktop
 grep -q /usr/libexec/keycast-bridge-capture /usr/share/polkit-1/actions/fr.jeromelab.KeycastBridge.policy
+for name in Keycast_Bridge_Guide_Utilisateur_FR Keycast_Bridge_User_Guide_EN; do
+    test -s "/usr/share/doc/keycast-bridge/pdf/$name.pdf"
+done
+for language in en fr; do
+    test -s "/usr/share/doc/keycast-bridge/guide/$language.html"
+done
 # A non-root GUI must stay alive under a virtual display, without capturing.
 useradd -m tester
 set +e

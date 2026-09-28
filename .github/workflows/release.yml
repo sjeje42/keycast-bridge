@@ -63,7 +63,9 @@ jobs:
           fi
           gh run download "$DEBIAN_RUN" -n keycast-bridge-debian13-amd64 -D dist
           gh run download "$WINDOWS_RUN" -n keycast-bridge-windows-x64 -D dist
+          cp docs/pdf/*.pdf dist/
           cd dist
-          sha256sum *.deb *.zip > SHA256SUMS
+          sha256sum *.deb *.zip *.pdf > SHA256SUMS
           cd ..
-          gh release create "$tag" dist/*.deb dist/*.zip dist/SHA256SUMS --target "$SHA" --prerelease --title "Keycast Bridge $version — Linux & Windows" --notes-file packaging/RELEASE.md
+          gh release create "$tag" dist/*.deb dist/*.zip dist/*.pdf dist/SHA256SUMS --target "$SHA" --prerelease --title "Keycast Bridge $version — Linux & Windows" --notes-file packaging/RELEASE.md
+

@@ -1,6 +1,10 @@
 # Keycast Bridge
 
-[Guide complet — Français](docs/USER_GUIDE.fr.md) · [English user guide](docs/USER_GUIDE.en.md)
+Guides en ligne : [Français](docs/USER_GUIDE.fr.md) · [English](docs/USER_GUIDE.en.md)
+
+Guides PDF : [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf) · [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf)
+
+[Télécharger les versions Windows x64 et Debian 13](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
 
 [English](README.md) · **Français**
 
@@ -26,15 +30,15 @@ Version **0.2.0-alpha.7**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-onl
 - Interface native GTK4 en français et en anglais ; moteur de capture et serveur local en Rust ; overlay Svelte et TypeScript.
 - Linux : tous les claviers automatiquement ou sélection multiple, branchement/débranchement via udev sans redémarrer ; autorisation Polkit, ouverture privilégiée et lecteur sans privilèges.
 - Windows : capture native de tous les claviers, sans administrateur, avec disposition de la fenêtre active.
-- Clics gauche/droit/milieu optionnels, avec bouton coloré ; cercle au clic sous Windows sur l’écran choisi (DISPLAY1, DISPLAY2…).
-- Dispositions AZERTY France, QWERTY US / Royaume-Uni et QWERTZ Allemagne, interprétées avec libxkbcommon.
-- Raccourcis clavier dans une source Navigateur OBS transparente ; taille, durée et thème clair/sombre réglables.
+- Clics gauche/droit/milieu optionnels, avec bouton coloré ; cercle au clic sous Windows, en mono-écran ou sur le moniteur choisi en multi-écran. Cocher **Cercle au clic** avant de démarrer active aussi la capture souris. L’unique écran est sélectionné automatiquement, même après débranchement d’un autre écran.
+- Sous Linux : dispositions AZERTY France, QWERTY US / Royaume-Uni et QWERTZ Allemagne, interprétées avec libxkbcommon. Sous Windows : disposition de la fenêtre active.
+- Raccourcis et modificateurs maintenus dans une source Navigateur OBS transparente ; position libre, couleurs personnalisables, taille/durée des touches et dimensions du format réglables. Position, couleurs et format sont mémorisés.
 - Arrêt par bouton ou **Ctrl+Alt+F12**, aperçu et démonstration sans accès au clavier.
 - Aucun historique des frappes ni télémétrie ; accès à l’overlay limité à la machine locale avec une URL aléatoire par lancement.
 
 ## Windows portable (x64)
 
-Extraire entièrement le ZIP fourni par le workflow **Windows portable** ou les Releases, puis lancer `keycast-bridge.exe`. Aucun outil de compilation à installer. [Installation, halo et limites Windows](docs/WINDOWS.md).
+Télécharger le ZIP depuis les [Releases](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7), l’extraire entièrement, puis lancer `keycast-bridge.exe`. Aucun outil de compilation à installer. [Installation, halo et limites Windows](docs/WINDOWS.md).
 
 ## Paquet Debian 13 (amd64)
 
@@ -128,7 +132,7 @@ RUSTUP_TOOLCHAIN=stable sh scripts/build.sh
 sudo sh scripts/install.sh
 ```
 
-Tant que le dépôt est privé, utiliser un compte GitHub autorisé pour le clonage, ou télécharger **Code → Download ZIP**, extraire l’archive et ouvrir un terminal dans le dossier contenant `Cargo.toml`. L’archive de sources comprend `scripts/` et `data/` ; l’ancienne archive des trois exécutables seuls ne suffit pas pour cette procédure.
+Autre possibilité : télécharger **Code → Download ZIP**, extraire l’archive et ouvrir un terminal dans le dossier contenant `Cargo.toml`. Utiliser l’archive complète des sources, comprenant `scripts/` et `data/`.
 
 La compilation s’effectue **sans sudo**. Le script d’installation place les exécutables dans `/usr/local/bin`, le composant de capture dans `/usr/local/libexec`, et installe le lanceur et la règle Polkit. Cette étape est indispensable : lancer seulement l’exécutable compilé n’installe pas le composant de capture.
 
@@ -166,7 +170,7 @@ Noms des dépendances et commandes de gestion des paquets : [Ubuntu](https://pac
 2. Cliquer sur **Copier l’URL OBS**. Dans OBS : **Sources → + → Navigateur**. Coller l’URL et reporter la largeur/hauteur choisies dans **Paramètres → Format et taille** (1920 × 1080 par défaut).
 3. Cliquer sur **Tester le rendu** : un raccourci fictif s’affiche sans lire ton clavier. **Ouvrir l’aperçu** affiche le rendu dans ton navigateur.
 4. Régler taille, durée et thème. Le fond de la page reste transparent.
-5. Cliquer sur **Démarrer**, donner l’autorisation demandée et vérifier **Capture active**.
+5. Cliquer sur **Démarrer**, donner l’autorisation demandée sous Linux et vérifier **Capture active**.
 6. **Arrêter**, ou **Ctrl+Alt+F12**, met fin à la capture et efface l’affichage.
 
 **L’URL change à chaque lancement** : il faut la remettre dans OBS. Aucun jeton permanent n’est enregistré. Ne pas partager l’URL pendant la capture.
@@ -175,9 +179,30 @@ Si **Navigateur** est absent des sources OBS, ton paquet OBS ne fournit pas cett
 
 ## Quelles touches sont affichées ?
 
-Par défaut : combinaisons avec Ctrl, Alt gauche ou Super ; touches de fonction ; navigation, Entrée, Tabulation, Échap et effacement. Les lettres seules et la saisie AltGr ne sont pas diffusées. Les répétitions lors d’un appui long sont ignorées.
+Par défaut : combinaisons avec Ctrl, Alt gauche ou Super ; touches de fonction ; navigation, Entrée, Tabulation, Échap et effacement. Les lettres seules et le texte saisi avec AltGr ne sont pas diffusés. Maj, Ctrl, Alt, Win/Super et AltGr restent visibles tant qu’ils sont maintenus, même sans autre touche. Les répétitions lors d’un appui long sont ignorées.
 
 L’option **Afficher aussi les touches de texte** permet les raccourcis à une seule lettre de certains logiciels. Elle peut révéler du texte privé : à activer seulement pour les démonstrations qui le nécessitent. Le programme n’est pas un outil de transcription de phrases.
+
+
+## Apparence et paramètres
+
+### Touches maintenues et dessin à la souris
+
+Maj (`Shift`), Ctrl, Alt et leurs combinaisons restent affichés dans une ligne en direct tant qu’ils sont enfoncés, y compris pendant un clic ou un glisser avec la Plume. Un contour de la couleur d’accent choisie distingue les touches maintenues du dernier raccourci, affiché temporairement au-dessus. Disponible sous Linux et Windows, sans activer les touches de texte. Activez « Afficher les clics de souris » pour voir aussi les boutons.
+
+### Position et couleurs
+
+Ouvrir la roue crantée en haut à droite → **Position et couleurs**, puis glisser le bloc dans l’aperçu schématique. Les neuf emplacements prédéfinis et les champs **X/Y (%)** permettent aussi de le positionner au clavier. 0 % correspond au bord gauche/haut et 100 % au bord droit/bas de l’espace disponible, avec une marge pour garder les touches visibles. Les deux lignes et l’icône souris se déplacent ensemble.
+
+Choisir séparément le fond, les touches, le texte et les trois couleurs de clic. L’accent sert aussi au contour des modificateurs et au cercle au clic. Les boutons de palette claire/sombre conservent la position ; **Tout réinitialiser** remet position et couleurs par défaut.
+
+Les changements s’appliquent immédiatement dans OBS, même pendant la capture. L’aperçu GTK est schématique : **Tester le rendu** permet de vérifier le résultat exact dans OBS, mais arrête la capture en cours. Les coordonnées sont relatives à la source Navigateur, pas à une fenêtre d’un autre logiciel ; attention au recadrage de cette source dans OBS. Le cercle de clic reste attaché au pointeur.
+
+Position, couleurs et format sont enregistrés dans `%APPDATA%\keycast-bridge\appearance.json` sous Windows, et `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` ou `~/.config/keycast-bridge/appearance.json` sous Linux. Ce fichier ne contient aucune frappe ni URL OBS. Les autres options restent limitées à la session. En cas d’échec de sauvegarde, l’interface le signale.
+
+### Paramètres et format OBS
+
+La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille** et **Capture**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; les versions HTML/Markdown restent incluses dans les paquets. Sous Windows, le guide et l’aperçu utilisent le navigateur par défaut ; en cas d’échec, une boîte de dialogue propose **Copier le lien**. Garder Keycast Bridge ouvert pour consulter cette aide locale. Les PDF illustrés sont également téléchargeables séparément dans les Releases et dans `docs/pdf/` ; les prochaines constructions des paquets les incluent à côté des guides HTML.
 
 ## Confidentialité et limites
 
@@ -188,7 +213,8 @@ L’option **Afficher aussi les touches de texte** permet les raccourcis à une 
 - Linux : les nouveaux claviers rejoignent automatiquement la capture en mode tous. En sélection, un clavier reconnu revient après rebranchement ; sans numéro de série, conserver le même port USB. Les modificateurs sont suivis séparément par clavier : effectuer une combinaison sur un même clavier.
 - Les clics sont affichés dans l’incrustation sur les deux systèmes. Sous Wayland, aucun halo à la position du pointeur : evdev ne fournit pas les coordonnées globales du compositeur. Sous Windows, voir les contraintes d’alignement de l’écran sélectionné dans [WINDOWS.md](docs/WINDOWS.md).
 - Changement de disposition dans GNOME : arrêter, choisir la nouvelle disposition, redémarrer.
-- Pas encore de molette/déplacement du pointeur, de composition des accents/Compose/IME, de préférences persistantes ou de synchronisation initiale Verr. Maj/Verr. Num.
+- Pas encore de molette/déplacement du pointeur, de composition des accents/Compose/IME, de synchronisation initiale Verr. Maj/Verr. Num.
+- La position, les couleurs et le format sont mémorisés. La taille, la durée, les options de capture, le moniteur choisi et la langue restent limités à la session.
 - Relâcher les modificateurs avant de lancer la capture.
 
 C’est une version alpha : les essais sur un véritable clavier sous GNOME et dans OBS restent indispensables avant une diffusion publique. Voir [la procédure de test](docs/TESTING.md).
@@ -220,22 +246,3 @@ Le frontend doit être compilé avant Rust : ses fichiers sont intégrés aux ex
 Copyright © 2026 Jérôme Stavrianos. Projet sous **GPL-3.0-only** : voir [LICENSE](LICENSE).
 
 Keycast Bridge est une nouvelle implémentation inspirée du besoin couvert par Screenkey. Aucun code ni élément graphique de Screenkey n’est inclus. Les dépendances conservent leurs licences respectives.
-
-
-### Touches maintenues et dessin à la souris
-
-Maj (`Shift`), Ctrl, Alt et leurs combinaisons restent affichés dans une ligne en direct tant qu’ils sont enfoncés, y compris pendant un clic ou un glisser avec la Plume. Un contour violet distingue les touches maintenues du dernier raccourci, affiché temporairement au-dessus. Disponible sous Linux et Windows, sans activer les touches de texte. Activez « Afficher les clics de souris » pour voir aussi les boutons.
-
-### Position et couleurs
-
-Ouvrir **Position et couleurs**, puis glisser le bloc dans l’aperçu schématique. Les neuf emplacements prédéfinis et les champs **X/Y (%)** permettent aussi de le positionner au clavier. 0 % correspond au bord gauche/haut et 100 % au bord droit/bas de l’espace disponible, avec une marge pour garder les touches visibles. Les deux lignes et l’icône souris se déplacent ensemble.
-
-Choisir séparément le fond, les touches, le texte et les trois couleurs de clic. L’accent sert aussi au contour des modificateurs et au cercle au clic. Les boutons de palette claire/sombre conservent la position ; **Tout réinitialiser** remet position et couleurs par défaut.
-
-Les changements s’appliquent immédiatement dans OBS, même pendant la capture. L’aperçu GTK est schématique : **Tester le rendu** permet de vérifier le résultat exact dans OBS, mais arrête la capture en cours. Les coordonnées sont relatives à la source Navigateur, pas à une fenêtre d’un autre logiciel ; attention au recadrage de cette source dans OBS. Le cercle de clic reste attaché au pointeur.
-
-Position, couleurs et format sont enregistrés dans `%APPDATA%\keycast-bridge\appearance.json` sous Windows, et `$XDG_CONFIG_HOME/keycast-bridge/appearance.json` ou `~/.config/keycast-bridge/appearance.json` sous Linux. Ce fichier ne contient aucune frappe ni URL OBS. Les autres options restent limitées à la session. En cas d’échec de sauvegarde, l’interface le signale.
-
-### Paramètres et format OBS
-
-La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille** et **Capture**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; des versions HTML/Markdown sont aussi incluses dans les paquets.
