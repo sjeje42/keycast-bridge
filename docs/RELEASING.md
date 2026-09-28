@@ -28,3 +28,7 @@ The Debian filename is not the package metadata version. Do not replace the tild
 Private vulnerability reporting is enabled for this public repository. Keep it enabled under **Settings → Advanced Security → Private vulnerability reporting**, and retain the working report link in [SECURITY.md](../SECURITY.md). Verify **Security → Advisories → Report a vulnerability** after repository configuration changes. Never use a GitHub `noreply` address for reports.
 
 GitHub documentation: https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository
+
+## Planned Windows signing
+
+See the [Code signing policy](../CODE_SIGNING_POLICY.md) for the proposed scope and pending preparation. The current workflows do not sign artifacts and still publish unsigned builds after the three CI gates pass. Before offering signed builds, add the signing approval and signature-verification stages before packaging/checksumming/publication. Do not label an unsigned fallback as a signed release. Signing changes file hashes: publish a new version with new checksums instead of overwriting the existing alpha ZIP.

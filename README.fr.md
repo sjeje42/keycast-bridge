@@ -22,6 +22,8 @@ Guides PDF : [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf) · [E
 
 [Télécharger la version 0.2.0-alpha.7](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
 
+[Code signing policy — politique de signature](CODE_SIGNING_POLICY.md) : candidature SignPath Foundation en préparation ; les versions Windows actuelles restent non signées.
+
 - **Windows 10/11 x64 :** télécharger le ZIP, l’extraire entièrement et lancer `keycast-bridge.exe`.
 - **Debian 13 amd64 :** télécharger le `.deb`, exécuter `sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb`, puis ouvrir **Keycast Bridge** dans le menu des applications.
 

@@ -1,0 +1,51 @@
+# Code signing policy
+
+## Status
+
+Keycast Bridge is preparing an application to [SignPath Foundation](https://signpath.org). This policy does not claim acceptance, an issued certificate, or an active signing service. Current Windows releases are unsigned; see [Windows download verification](docs/WINDOWS.md#sha256).
+
+After acceptance and activation, the attribution will be:
+
+> Free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+## Purpose
+
+Keycast Bridge is an open-source visual aid for OBS tutorials, screencasts, presentations and streams. It displays shortcuts, held modifiers and optional mouse clicks in an overlay controlled by the person running it.
+
+On Windows it uses global keyboard and optional mouse hooks so feedback continues while the user works in another application. Capture requires pressing **Start** in the visible application; it does not start automatically with the application or operating system. **Stop**, **Ctrl+Alt+F12**, or closing the application ends capture. It provides no covert recording, credential collection, remote-control or security-exploitation feature. Global input access remains sensitive: see the [security model and limitations](SECURITY.md).
+
+## Roles
+
+| Role | Maintainer |
+| --- | --- |
+| Author / Committer | [@sjeje42](https://github.com/sjeje42) — Jérôme Stavrianos |
+| Reviewer | [@sjeje42](https://github.com/sjeje42) |
+| Proposed signing approver | [@sjeje42](https://github.com/sjeje42) |
+
+This is currently a single-maintainer project; these roles do not imply independent review. External contributions must be reviewed before inclusion in a signing candidate. Signing will require explicit human approval for each release, not just successful CI. MFA is required for repository and SignPath access before signing is enabled; account configuration has not been verified by this document.
+
+## Intended signing scope
+
+The initial candidate is **`keycast-bridge.exe` (Windows x64)**, built from this repository by [GitHub Actions](.github/workflows/windows.yml) and distributed through [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases).
+
+The portable ZIP also contains `keycast-bridge-demo.exe`, which generates synthetic events. It is outside the initial signing scope and must not be described as signed. GTK/MSYS2 DLLs and other third-party binaries are not re-signed with the project's certificate; upstream signatures, where present, remain unchanged. A signed application executable does not mean every file in the ZIP is signed. Dependency information is collected by [the bundler](packaging/windows/bundle.py).
+
+Before enabling signing, configure an explicit file allowlist and a verifiable association between the source commit, successful build and signing request. Validate the returned executable's signature, then package it and calculate checksums from the final download. Existing unsigned release files will not be silently replaced.
+
+## Privacy
+
+Keycast Bridge does not persist captured keystrokes or mouse events and sends no telemetry. It processes input transiently in memory and serves its overlay and embedded help only on IPv4 loopback, `127.0.0.1`, with a per-launch token. It does not upload captured input to a remote service. Saved appearance preferences contain position, colors and canvas dimensions, not captured input.
+
+The user may choose to record or broadcast the overlay with OBS. That output is controlled by OBS and the user's recording/streaming settings, outside Keycast Bridge. The application does not detect password fields or automatically pause on session lock; stop capture before entering secrets. Optional all-keys mode can display ordinary text.
+
+See [SECURITY.md](SECURITY.md) for the full model and private vulnerability-reporting channel.
+
+## Preparation still required
+
+- Confirm account MFA and the signing-approval process with the maintainer.
+- Add and verify Windows PE product/version metadata; the current build has no dedicated resource-generation step.
+- Configure and test SignPath artifact provenance and the executable allowlist after acceptance.
+- Review bundled component licenses and preserve their notices.
+- Provide release history, successful CI runs and real-use feedback for the application review.
+
+These are pending tasks, not claims of completed SignPath integration. Eligibility is determined by SignPath Foundation under its [published conditions](https://signpath.org/terms.html).

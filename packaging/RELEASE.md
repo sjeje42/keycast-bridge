@@ -20,3 +20,9 @@ Les guides illustrés PDF français et anglais sont désormais disponibles dans 
 - Updated English and French guides.
 
 Illustrated English and French PDF guides are now available as release assets. Online guides and embedded HTML help remain available. The alpha.7 ZIP/DEB binaries are unchanged; download the PDFs separately.
+
+## Code signing policy
+
+[Code signing policy](https://github.com/sjeje42/keycast-bridge/blob/main/CODE_SIGNING_POLICY.md) — SignPath Foundation application in preparation. This release remains unsigned; no SignPath acceptance or signing is claimed.
+
+Candidature SignPath Foundation en préparation. Cette release reste non signée ; aucune acceptation ni signature SignPath n’est annoncée.

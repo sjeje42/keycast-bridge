@@ -19,6 +19,8 @@ Notable changes, newest first. Dates refer to GitHub release publication. All ve
 
 ### Added
 
+- Preparatory code signing policy with maintainer roles, the intended Windows executable scope, privacy details and pending SignPath integration tasks; current releases remain unsigned.
+
 - Illustrated French and English PDFs in the repository and as separate alpha.7 release downloads; preserve online and embedded HTML guides. New package builds bundle the PDFs. Existing alpha.7 binaries are unchanged.
 - Historical changelog and release-maintenance checklist.
 
