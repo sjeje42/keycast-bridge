@@ -2,6 +2,8 @@
 
 #[path = "gui/appearance.rs"]
 mod appearance_controls;
+#[path = "gui/browser.rs"]
+mod browser;
 
 use gtk4::{
     glib, prelude::*, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton,
@@ -301,12 +303,10 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     {
         let state = state.clone();
         let language = language.clone();
+        let settings = settings.clone();
         guide.connect_clicked(move |_| {
             let fr = language.active_id().is_some_and(|id| id == "fr");
-            let _ = gtk4::gio::AppInfo::launch_default_for_uri(
-                &state.help_url(fr),
-                None::<&gtk4::gio::AppLaunchContext>,
-            );
+            browser::open(&settings, &state.help_url(fr), fr);
         });
     }
     let status = Label::new(None);
@@ -371,7 +371,21 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     root.append(&screen_summary);
     {
         let s = state.clone();
-        halo.connect_toggled(move |v| s.halo(v.is_active()));
+        let mouse = mouse.clone();
+        halo.connect_toggled(move |v| {
+            if v.is_active() {
+                mouse.set_active(true);
+            }
+            s.halo(v.is_active());
+        });
+    }
+    {
+        let halo = halo.clone();
+        mouse.connect_toggled(move |v| {
+            if !v.is_active() {
+                halo.set_active(false);
+            }
+        });
     }
     #[cfg(windows)]
     display_controls(
@@ -457,11 +471,11 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     root.append(&obs_actions);
     {
         let s = state.clone();
+        let window = window.clone();
+        let language = language.clone();
         preview.connect_clicked(move |_| {
-            let _ = gtk4::gio::AppInfo::launch_default_for_uri(
-                &s.url(),
-                None::<&gtk4::gio::AppLaunchContext>,
-            );
+            let fr = language.active_id().is_some_and(|id| id == "fr");
+            browser::open(&window, &s.url(), fr);
         });
     }
     let appearance = GtkBox::new(Orientation::Horizontal, 8);
@@ -499,6 +513,8 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     let settings_for_smoke = settings.clone();
     let gear_for_smoke = gear.clone();
     let close_for_smoke = close_settings.clone();
+    let mouse_for_smoke = mouse.clone();
+    let halo_for_smoke = halo.clone();
     glib::timeout_add_local(Duration::from_millis(150), move || {
         if weak.upgrade().is_none() {
             return glib::ControlFlow::Break;
@@ -596,12 +612,8 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             "Afficher les clics de souris",
             "Show mouse clicks",
         )));
-        halo.set_label(Some(tr(
-            fr,
-            "Cercle au clic — écran choisi",
-            "Click ring — selected monitor",
-        )));
-        halo.set_sensitive(mouse.is_active());
+        halo.set_label(Some(tr(fr, "Cercle au clic", "Click ring")));
+        halo.set_sensitive(!active || mouse.is_active());
         let message = s.inner.lock().unwrap().device_status.clone();
         device_status.set_text(&message);
         device_status.set_visible(!message.is_empty());
@@ -657,6 +669,19 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
                 assert!(
                     adjustment.upper() <= adjustment.page_size() + 1.0,
                     "Main controls require scrolling at normal window size"
+                );
+            }
+            if cfg!(windows) {
+                assert!(halo_for_smoke.is_sensitive());
+                halo_for_smoke.set_active(true);
+                assert!(
+                    mouse_for_smoke.is_active(),
+                    "Ring did not enable mouse capture"
+                );
+                mouse_for_smoke.set_active(false);
+                assert!(
+                    !halo_for_smoke.is_active(),
+                    "Ring left active without mouse capture"
                 );
             }
             gear_for_smoke.emit_clicked();
@@ -740,8 +765,8 @@ fn display_controls(
         let failed = result.is_err();
         let list = result.unwrap_or_default();
         let mut selected = state.inner.lock().unwrap().halo_display.clone();
-        if selected.is_none() {
-            if let Some(display) = displays::selected(&list, None) {
+        if selected.is_none() || list.len() == 1 {
+            if let Some(display) = displays::selected(&list, selected.as_deref()) {
                 selected = Some(display.id.clone());
                 state.select_display(display.id.clone());
             }
@@ -783,7 +808,12 @@ fn display_controls(
             rebuilding.set(false);
             previous = Some(current);
         }
-        screens.set_sensitive(mouse.is_active() && halo.is_active() && !list.is_empty());
+        screens.set_sensitive(mouse.is_active() && halo.is_active() && list.len() > 1);
+        screens.set_tooltip_text(Some(tr(
+            fr,
+            "Avec un seul écran, la sélection est automatique.",
+            "With one monitor, selection is automatic.",
+        )));
         if failed {
             hint.set_text(tr(fr, "Impossible de détecter les écrans. Le cercle est suspendu ; nouvelle tentative automatique.", "Cannot detect monitors. The ring is suspended; detection retries automatically."));
         } else if let Some(display) = displays::selected(&list, selected.as_deref()) {

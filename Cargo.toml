@@ -1,6 +1,6 @@
 [package]
 name = "keycast-bridge"
-version = "0.2.0-alpha.6"
+version = "0.2.0-alpha.7"
 edition = "2021"
 license = "GPL-3.0-only"
 description = "Local keyboard shortcut overlay for OBS on Linux / Wayland and Windows"
@@ -27,7 +27,7 @@ udev = "0.9"
 nix = { version = "0.29", features = ["socket", "uio", "process", "user"] }
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_HiDpi", "Win32_System_LibraryLoader", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_UI_Shell", "Win32_System_Com", "Win32_Graphics_Gdi", "Win32_UI_HiDpi", "Win32_System_LibraryLoader", "Win32_UI_WindowsAndMessaging", "Win32_UI_Input_KeyboardAndMouse"] }
 
 [[bin]]
 name = "keycast-bridge"

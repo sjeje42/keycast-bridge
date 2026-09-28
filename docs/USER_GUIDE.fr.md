@@ -1,6 +1,6 @@
 # Keycast Bridge — Guide d’utilisation
 
-Version **0.2.0-alpha.6** · [English](USER_GUIDE.en.md)
+Version **0.2.0-alpha.7** · [English](USER_GUIDE.en.md)
 
 Keycast Bridge affiche les raccourcis clavier, les modificateurs maintenus et, en option, les clics de souris dans une source Navigateur OBS transparente. L’application contrôle la capture et l’apparence ; OBS superpose le résultat à la capture de votre écran ou logiciel.
 
@@ -15,7 +15,7 @@ Téléchargez le ZIP Windows dans les Releases GitHub du projet. Extrayez **tout
 Téléchargez le paquet Debian depuis les Releases, ouvrez un terminal dans son dossier et lancez :
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.6-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
 ```
 
 Ouvrez Keycast Bridge depuis le menu des applications. **Ne lancez pas l’interface avec sudo.** Le démarrage de la capture demande une autorisation administrateur via Polkit ; le composant de capture gère ensuite les périphériques. Il n’est pas nécessaire de vous ajouter au groupe `input`.
@@ -115,7 +115,7 @@ Cela permet notamment d’utiliser la Plume de Photoshop/Affinity : maintenez Ma
 
 Activez **Afficher les clics de souris** avant de démarrer. Les boutons gauche, droit et central ont leurs propres couleurs. Un clic très court reste visible au moins 150 ms ; un bouton maintenu reste coloré pendant un glisser. Le défilement de la molette n’est pas affiché.
 
-Sous **Windows**, vous pouvez activer le cercle au clic. Dans **Paramètres → Capture → Écran capturé dans OBS**, choisissez le moniteur utilisé dans OBS. Repérez-le grâce à sa résolution et à sa position sur le bureau ; les numéros DISPLAY ne correspondent pas nécessairement à l’ordre des sources OBS. Le choix peut changer pendant la capture. Déplacer l’incrustation clavier ne déplace pas le cercle du pointeur. Un clic sur un autre moniteur affiche le bouton, mais aucun cercle sur le moniteur choisi. Si celui-ci disparaît, son cercle est suspendu ; clavier et boutons restent actifs.
+Sous **Windows**, activez **Cercle au clic** avant de démarrer : cela active aussi **Afficher les clics de souris**. Le cercle fonctionne avec un seul écran, sélectionné automatiquement. Si vous débranchez les autres écrans, il suit automatiquement le seul écran restant. Avec plusieurs écrans, choisissez celui capturé dans OBS. Dans **Paramètres → Capture → Écran capturé dans OBS**, choisissez le moniteur utilisé dans OBS. Repérez-le grâce à sa résolution et à sa position sur le bureau ; les numéros DISPLAY ne correspondent pas nécessairement à l’ordre des sources OBS. Le choix peut changer pendant la capture. Déplacer l’incrustation clavier ne déplace pas le cercle du pointeur. Un clic sur un autre moniteur affiche le bouton, mais aucun cercle sur le moniteur choisi. Si celui-ci disparaît et que plusieurs écrans restent connectés, son cercle est suspendu jusqu’au choix d’un écran disponible ; clavier et boutons restent actifs.
 
 Le cercle apparaît dans l’incrustation OBS, pas directement sur le bureau Windows. Son alignement exige des proportions et des rectangles identiques pour la capture du moniteur et la source Navigateur. Les captures de fenêtres et les recadrages ne sont pas compensés automatiquement.
 
@@ -150,3 +150,7 @@ Le serveur écoute uniquement sur l’adresse locale IPv4, au port 48732. Il n�
 | L’application se ferme immédiatement | Fermez une autre instance utilisant le port 48732. Si nécessaire, indiquez votre système et la version dans un rapport de bug. |
 
 Pour un signalement utile, précisez la version de l’application, le système, le bureau et sa mise à l’échelle, le format choisi, les dimensions de la source OBS et les étapes de reproduction. Les captures d’écran sont utiles ; masquez l’URL de session et toute information privée affichée.
+
+### Le guide ou l’aperçu ne s’ouvre pas
+
+Sous Windows, le bouton utilise le navigateur par défaut du système. Si Windows refuse l’ouverture, une boîte de dialogue propose **Copier le lien** : collez-le dans votre navigateur et gardez Keycast Bridge ouvert. Vérifiez le navigateur par défaut dans les paramètres Windows. Le guide est aussi disponible hors ligne dans `guide/fr.html` à côté de l’exécutable.

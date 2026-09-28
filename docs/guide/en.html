@@ -10,14 +10,14 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 @media(prefers-color-scheme:dark) { body { background:#111923; color:#e3eaf4; } a { color:#97b8ff; } code,pre,th { background:#213044; } th,td,h2,nav { border-color:#40536e; } }
 @media print { body { color:#000; background:#fff; font-size:11pt; } nav { display:none; } h2,h3 { break-after:avoid; } tr { break-inside:avoid; } }
 </style></head><body><nav><strong>Keycast Bridge</strong><a href="en.html">English</a><a href="fr.html">Français</a></nav><main><h1 id="keycast-bridge-user-guide">Keycast Bridge — User guide</h1>
-<p>Version <strong>0.2.0-alpha.6</strong> · <a href="fr.html">Français</a></p>
+<p>Version <strong>0.2.0-alpha.7</strong> · <a href="fr.html">Français</a></p>
 <p>Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse clicks in a transparent OBS Browser Source. The native application controls capture and appearance; OBS combines the overlay with your screen or application capture.</p>
 <h2 id="1-install-and-launch">1. Install and launch</h2>
 <h3 id="windows-x64">Windows x64</h3>
 <p>Download the Windows ZIP from the project's GitHub Releases. Extract the <strong>entire archive</strong> into a writable folder and open <code>keycast-bridge.exe</code>. Keep the DLLs and subfolders beside the executable. There is no installer, driver or background service. Use the application as a normal user. The alpha is unsigned; secure desktops, UAC prompts and elevated applications are outside its supported capture target.</p>
 <h3 id="debian-13-amd64">Debian 13 amd64</h3>
 <p>Download the Debian package from Releases, open a terminal in its folder and run:</p>
-<pre><code class="language-sh">sudo apt install ./keycast-bridge_0.2.0.alpha.6-1_amd64.deb
+<pre><code class="language-sh">sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
 </code></pre>
 <p>Open Keycast Bridge from the application menu. Do <strong>not</strong> run the graphical application with sudo. Starting keyboard capture requests administrator authorization through Polkit; the capture helper manages the input devices. You do not need to add yourself to the <code>input</code> group.</p>
 <p>OBS must provide a <strong>Browser Source</strong>. If your Linux OBS installation does not have it, the official OBS Flatpak is the documented option for this project. The Keycast Bridge Debian package does not install OBS.</p>
@@ -139,7 +139,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p><strong>Also show text keys</strong> expands capture to ordinary text. It can reveal private information and passwords. The application does not detect password fields; stop capture before entering secrets, including when using shortcut-only mode.</p>
 <h3 id="mouse-and-multiple-monitors">Mouse and multiple monitors</h3>
 <p>Enable <strong>Show mouse clicks</strong> before starting capture. Left, right and middle buttons have independent colors. A very short click is held visually for at least 150 ms; a held button remains highlighted through a drag. There is no scroll-wheel movement display.</p>
-<p>On <strong>Windows</strong>, optionally enable the click ring. In <strong>Settings → Capture → Monitor captured in OBS</strong>, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears, its ring is suspended; keyboard and button feedback continue.</p>
+<p>On <strong>Windows</strong>, enable <strong>Click ring</strong> before starting: this also enables <strong>Show mouse clicks</strong>. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In <strong>Settings → Capture → Monitor captured in OBS</strong>, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.</p>
 <p>The ring is drawn inside the OBS overlay, not directly on the Windows desktop. Accurate alignment requires matching the selected monitor capture and Browser Source rectangles and aspect ratio. Window captures or crops are not mapped automatically.</p>
 <p>On <strong>Linux/Wayland</strong>, keyboard and button feedback work across screens, but pointer-position rings are not available.</p>
 <h2 id="7-saved-settings-and-privacy">7. Saved settings and privacy</h2>
@@ -202,4 +202,6 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tr>
 </tbody>
 </table>
-<p>For a useful report, include the application version, OS, desktop/display scaling, chosen canvas, OBS source dimensions and reproducible steps. Screenshots are useful; hide the session URL and any private captured text.</p></main></body></html>
+<p>For a useful report, include the application version, OS, desktop/display scaling, chosen canvas, OBS source dimensions and reproducible steps. Screenshots are useful; hide the session URL and any private captured text.</p>
+<h3 id="the-guide-or-preview-does-not-open">The guide or preview does not open</h3>
+<p>On Windows, the button uses the system default browser. If Windows rejects the launch, a dialog offers <strong>Copy link</strong>: paste it into your browser and keep Keycast Bridge running. Check the default browser in Windows settings. The offline guide is also available in <code>guide/en.html</code> beside the executable.</p></main></body></html>

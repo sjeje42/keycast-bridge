@@ -53,7 +53,7 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 Record OS, keyboard model, selected mode, DPI, OBS source dimensions and result. Do not include sensitive captured text.
 
 
-## 0.2.0-alpha.6 — multi-monitor acceptance
+## 0.2.0-alpha.7 — multi-monitor acceptance
 
 - Select DISPLAY2, then DISPLAY3 during capture. Test monitors left of / above the primary (negative coordinates) and a portrait monitor.
 - Align the selected monitor capture and OBS browser viewport exactly, including aspect ratio. Verify clicks at the center and four corners; clicks outside the selected display must show no ring.

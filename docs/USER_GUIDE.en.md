@@ -1,6 +1,6 @@
 # Keycast Bridge — User guide
 
-Version **0.2.0-alpha.6** · [Français](USER_GUIDE.fr.md)
+Version **0.2.0-alpha.7** · [Français](USER_GUIDE.fr.md)
 
 Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse clicks in a transparent OBS Browser Source. The native application controls capture and appearance; OBS combines the overlay with your screen or application capture.
 
@@ -15,7 +15,7 @@ Download the Windows ZIP from the project's GitHub Releases. Extract the **entir
 Download the Debian package from Releases, open a terminal in its folder and run:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.6-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
 ```
 
 Open Keycast Bridge from the application menu. Do **not** run the graphical application with sudo. Starting keyboard capture requests administrator authorization through Polkit; the capture helper manages the input devices. You do not need to add yourself to the `input` group.
@@ -115,7 +115,7 @@ This supports workflows such as the Photoshop/Affinity Pen tool: hold Shift, Ctr
 
 Enable **Show mouse clicks** before starting capture. Left, right and middle buttons have independent colors. A very short click is held visually for at least 150 ms; a held button remains highlighted through a drag. There is no scroll-wheel movement display.
 
-On **Windows**, optionally enable the click ring. In **Settings → Capture → Monitor captured in OBS**, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears, its ring is suspended; keyboard and button feedback continue.
+On **Windows**, enable **Click ring** before starting: this also enables **Show mouse clicks**. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In **Settings → Capture → Monitor captured in OBS**, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.
 
 The ring is drawn inside the OBS overlay, not directly on the Windows desktop. Accurate alignment requires matching the selected monitor capture and Browser Source rectangles and aspect ratio. Window captures or crops are not mapped automatically.
 
@@ -150,3 +150,7 @@ The server listens only on IPv4 localhost, port 48732. There is no telemetry, ke
 | Application fails immediately | Close another instance using port 48732. If needed, include the OS and version in a bug report. |
 
 For a useful report, include the application version, OS, desktop/display scaling, chosen canvas, OBS source dimensions and reproducible steps. Screenshots are useful; hide the session URL and any private captured text.
+
+### The guide or preview does not open
+
+On Windows, the button uses the system default browser. If Windows rejects the launch, a dialog offers **Copy link**: paste it into your browser and keep Keycast Bridge running. Check the default browser in Windows settings. The offline guide is also available in `guide/en.html` beside the executable.

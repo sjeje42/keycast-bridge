@@ -17,7 +17,7 @@
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
 
-Version **0.2.0-alpha.6**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0-alpha.7**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). Other compositors are an architectural target, not a tested compatibility claim.
 
@@ -25,7 +25,7 @@ Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). 
 
 See the [exact validation status](docs/VALIDATION.md).
 
-## Windows and input improvements in 0.2.0-alpha.6
+## Windows and input improvements in 0.2.0-alpha.7
 
 [Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
 
@@ -48,7 +48,7 @@ Optional left/right/middle mouse feedback is available on both systems. Windows 
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.6-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.

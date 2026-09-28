@@ -31,8 +31,11 @@ impl Display {
         ))
     }
 }
-/// None means the initial default (primary); an absent explicit ID never falls back.
+/// A single monitor is automatic. With multiple monitors, preserve explicit selection.
 pub fn selected<'a>(displays: &'a [Display], id: Option<&str>) -> Option<&'a Display> {
+    if displays.len() == 1 {
+        return displays.first();
+    }
     match id {
         Some(id) => displays.iter().find(|d| d.id == id),
         None => displays.iter().find(|d| d.primary),
@@ -70,6 +73,21 @@ mod tests {
             assert_eq!(d.project(d.right, d.top), None);
             assert_eq!(d.project(d.left, d.bottom), None);
         }
+    }
+    #[test]
+    fn single_monitor_is_automatic_after_disconnect_and_reconnect() {
+        let a = display("1", 0, 0, 1920, 1080, true);
+        let b = display("2", -2560, 0, 2560, 1440, false);
+        assert_eq!(selected(std::slice::from_ref(&a), None), Some(&a));
+        assert_eq!(selected(std::slice::from_ref(&a), Some("2")), Some(&a));
+        assert_eq!(selected(std::slice::from_ref(&b), Some("1")), Some(&b));
+        assert_eq!(selected(&[], Some("1")), None);
+        assert_eq!(
+            selected(std::slice::from_ref(&a), Some("2"))
+                .unwrap()
+                .project(960, 540),
+            Some((0.5, 0.5))
+        );
     }
     #[test]
     fn shared_edge_belongs_to_only_one_monitor() {

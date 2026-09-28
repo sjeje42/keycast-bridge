@@ -20,7 +20,7 @@ try {
     const help = url.replace('/overlay/', '/help/') + '/' + language + '.html';
     const response = await fetch(help);
     assert.equal(response.status, 200);
-    assert.ok((await response.text()).includes('0.2.0-alpha.6'));
+    assert.ok((await response.text()).includes('0.2.0-alpha.7'));
     assert.equal((await fetch(help.replace(/\/help\/[^/]+\//, '/help/wrong/'))).status, 403);
   }
   assert.equal((await fetch(url.replace(/[^/]+$/, 'wrong'))).status, 403);
