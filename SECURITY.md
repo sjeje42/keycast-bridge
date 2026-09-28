@@ -21,6 +21,10 @@ Only IPv4 localhost is bound. A random per-launch capability token protects the 
 
 Other same-user software, administrators, a compromised GUI or malicious OBS browser extensions are outside the threat model. The token may appear in OBS configuration or browser history: do not share it. Restarting rotates it. The emergency shortcut consumes no keys; other applications receive it too. On Linux, press it on a captured keyboard, with all modifiers on that keyboard. No independent security audit is claimed.
 
+Appearance preferences (position, colors and canvas dimensions only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.
+
+The embedded English/French help uses the same localhost token and Host/Origin checks. It is static HTML with no scripts or external assets. Canvas configuration does not control OBS remotely.
+
 ## Reporting a vulnerability
 
 Do not disclose vulnerabilities in public issues or include actual captured secrets in a report. Include the affected version, OS and minimal reproduction steps with synthetic input.
@@ -28,8 +32,3 @@ Do not disclose vulnerabilities in public issues or include actual captured secr
 Use [GitHub private vulnerability reporting](https://github.com/sjeje42/keycast-bridge/security/advisories/new), or open **Security → Advisories → Report a vulnerability**. Private vulnerability reporting is enabled for this repository; reports are shared privately with the maintainers rather than posted as public issues.
 
 A GitHub account is required. The GitHub `noreply` address in package metadata cannot receive security reports.
-
-
-Appearance preferences (position, colors and canvas dimensions only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.
-
-The embedded English/French help uses the same localhost token and Host/Origin checks. It is static HTML with no scripts or external assets. Canvas configuration does not control OBS remotely.

@@ -20,6 +20,12 @@ L’archive n’est pas signée. Aucun historique ni télémétrie. Les champs d
 
 Les tests automatiques vérifient la compilation, les traductions clavier, le serveur et le démarrage de l’archive. L’utilisation sur poste réel est confirmée sous Windows 10 et 11. Cela ne couvre pas toutes les combinaisons de matériel, branchement USB, DPI et scènes OBS : voir [VALIDATION.md](VALIDATION.md) pour le périmètre et [TESTING.md](TESTING.md) pour les régressions à vérifier.
 
+### SmartScreen, antivirus et intégrité
+
+Les exécutables de cette alpha ne sont pas signés : Microsoft Defender SmartScreen peut afficher « Windows a protégé votre ordinateur » faute de réputation établie. Un antivirus peut aussi signaler ce type d’outil de capture globale ; cela ne suffit pas à conclure à un faux positif. Conserver les protections actives et transmettre le nom exact de la détection au mainteneur avant de poursuivre.
+
+Télécharger depuis la [release officielle](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7) et comparer le SHA256 du ZIP avec [SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.7/SHA256SUMS). Voir la [vérification ci-dessous](#sha256). Une empreinte identique confirme l’intégrité du téléchargement, pas l’absence de vulnérabilités ni l’identité de l’éditeur.
+
 ## English
 
 Target: Windows 10 1703+ / Windows 11, x64 Intel/AMD. Extract the complete ZIP and launch `keycast-bridge.exe` as a normal user. Keep all DLLs and data directories alongside it. No development tools or separate GTK installation are needed. Copy the URL into an OBS Browser Source, enable mouse buttons if desired and press Start. Stop with the button or Ctrl+Alt+F12.
@@ -27,6 +33,32 @@ Target: Windows 10 1703+ / Windows 11, x64 Intel/AMD. Extract the complete ZIP a
 All session keyboards are captured; layout follows the foreground window. Per-device selection is Linux-only. The optional click ring maps the monitor selected under “Monitor captured in OBS” to the full browser viewport: align both OBS sources without cropping. Choose DISPLAY2, DISPLAY3, etc. using the resolution and position shown; these IDs need not match the order of OBS sources. The list refreshes automatically and selection can change during capture. A sole monitor is selected automatically, including after another monitor is unplugged. If the selected display disappears while multiple monitors remain, the ring is suspended. Reconnect it or select another monitor. Geometry refreshes on each click. The selection lasts for the current application session. Other monitors show button feedback only. The ring appears in OBS, not on the Windows desktop.
 
 Unsigned alpha; no history or telemetry, no password detection. Stop before sensitive input or locking. Secure/elevated desktops are outside the target. Manual desktop use is confirmed on Windows 10 and 11. This does not cover every USB device, DPI combination or OBS scene; see [validation scope](VALIDATION.md) and the [regression procedure](TESTING.md). The URL changes every launch.
+
+### SmartScreen, antivirus and integrity
+
+This alpha's executables are unsigned: Microsoft Defender SmartScreen may show “Windows protected your PC” because the download has no established reputation. Antivirus software may also flag global input-capture tools; do not assume a detection is a false positive. Keep protections enabled and report the exact detection name to the maintainer before proceeding.
+
+Download from the [official release](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7) and compare the ZIP's SHA256 with [SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.7/SHA256SUMS). See [verification below](#sha256). A matching hash confirms download integrity, not freedom from vulnerabilities or publisher identity.
+
+## SHA256
+
+File / fichier : `keycast-bridge_0.2.0-alpha.7_windows-x64.zip`
+
+```text
+792c8aeb7d536a8bbb4c5964f446d94bcf3a2a582aae8ca68eccbed53b260659
+```
+
+PowerShell, from the download directory / depuis le dossier de téléchargement :
+
+```powershell
+Get-FileHash -LiteralPath .\keycast-bridge_0.2.0-alpha.7_windows-x64.zip -Algorithm SHA256
+```
+
+Compare all 64 hexadecimal characters (case does not matter). This hash is for the published release ZIP only, not later CI artifacts or a locally rebuilt archive. For a different release, use its own `SHA256SUMS`.
+
+Comparer les 64 caractères hexadécimaux (majuscules/minuscules indifférentes). Cette empreinte concerne uniquement le ZIP de la release publiée, pas les artifacts CI ultérieurs ni une archive recompilée. Pour une autre version, utiliser son propre fichier `SHA256SUMS`.
+
+Microsoft: [SmartScreen reputation](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
 
 ## Building / Compilation (MSYS2 UCRT64)
 

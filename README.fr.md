@@ -4,20 +4,30 @@ Guides en ligne : [Français](docs/USER_GUIDE.fr.md) · [English](docs/USER_GUID
 
 Guides PDF : [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf) · [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf)
 
-[Télécharger les versions Windows x64 et Debian 13](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
-
 [English](README.md) · **Français**
 
 [![Rust stable](https://img.shields.io/badge/Rust-stable-000000?logo=rust&logoColor=white)](Cargo.toml)
 [![GTK4](https://img.shields.io/badge/GTK-4-7FE719?logo=gtk&logoColor=white)](Cargo.toml)
 [![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00?logo=svelte&logoColor=white)](web/package.json)
 [![Linux Debian 13](https://img.shields.io/badge/Linux-Debian_13-A81D33?logo=debian&logoColor=white)](docs/TESTING.md)
+[![Windows 10 / 11 portable x64](https://img.shields.io/badge/Windows-10%20%2F%2011%20portable%20x64-0078D4)](docs/WINDOWS.md)
 [![Wayland](https://img.shields.io/badge/Wayland-native-F0C674)](README.fr.md#fonctionnalités)
 [![OBS Browser Source](https://img.shields.io/badge/OBS-Browser_Source-302E31?logo=obsstudio&logoColor=white)](README.fr.md#premier-tutoriel-dans-obs)
 [![Build and test](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml)
 [![License GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 
 **Afficher les raccourcis clavier dans OBS, sous Linux/Wayland et Windows.**
+
+## Installation rapide
+
+[Télécharger la version 0.2.0-alpha.7](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
+
+- **Windows 10/11 x64 :** télécharger le ZIP, l’extraire entièrement et lancer `keycast-bridge.exe`.
+- **Debian 13 amd64 :** télécharger le `.deb`, exécuter `sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb`, puis ouvrir **Keycast Bridge** dans le menu des applications.
+
+Windows : les exécutables ne sont pas signés ; SmartScreen peut afficher un avertissement. Voir les [informations antivirus et la vérification SHA256](docs/WINDOWS.md#smartscreen-antivirus-et-intégrité).
+
+## Présentation
 
 Version **0.2.0-alpha.7**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Essais manuels confirmés sous Debian 13 (GNOME), Fedora, Windows 10 et Windows 11. La version et le bureau utilisés sous Fedora ne sont pas consignés ; cela ne valide pas tous les compositeurs Wayland. Voir [le périmètre des validations](docs/VALIDATION.md).
 
@@ -188,7 +198,6 @@ Si **Navigateur** est absent des sources OBS, ton paquet OBS ne fournit pas cett
 Par défaut : combinaisons avec Ctrl, Alt gauche ou Super ; touches de fonction ; navigation, Entrée, Tabulation, Échap et effacement. Les lettres seules et le texte saisi avec AltGr ne sont pas diffusés. Maj, Ctrl, Alt, Win/Super et AltGr restent visibles tant qu’ils sont maintenus, même sans autre touche. Les répétitions lors d’un appui long sont ignorées.
 
 L’option **Afficher aussi les touches de texte** permet les raccourcis à une seule lettre de certains logiciels. Elle peut révéler du texte privé : à activer seulement pour les démonstrations qui le nécessitent. Le programme n’est pas un outil de transcription de phrases.
-
 
 ## Apparence et paramètres
 

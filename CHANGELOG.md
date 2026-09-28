@@ -6,6 +6,10 @@ Notable changes, newest first. Dates refer to GitHub release publication. All ve
 
 ### Changed
 
+- Add bilingual quick installation instructions, Windows portable badges, and unsigned-build/SmartScreen guidance with the published ZIP checksum.
+- Update repository description and topics for Windows support; enable Dependabot alerts.
+- Keep appearance/help security details before the private reporting procedure.
+
 - Document reported manual testing on Debian 13, Fedora, Windows 10 and Windows 11 separately from automated CI coverage.
 - Refresh the regression procedure, including persistent preferences and current multi-monitor behavior.
 - Rename the bilingual documentation index to `docs/README.md`.

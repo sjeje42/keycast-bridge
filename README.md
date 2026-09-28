@@ -4,20 +4,30 @@ Online guides: [English](docs/USER_GUIDE.en.md) · [Français](docs/USER_GUIDE.f
 
 PDF guides: [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf) · [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf)
 
-[Download Windows x64 and Debian 13 packages](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
-
 **English** · [Français](README.fr.md)
 
 [![Rust stable](https://img.shields.io/badge/Rust-stable-000000?logo=rust&logoColor=white)](Cargo.toml)
 [![GTK4](https://img.shields.io/badge/GTK-4-7FE719?logo=gtk&logoColor=white)](Cargo.toml)
 [![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00?logo=svelte&logoColor=white)](web/package.json)
 [![Linux Debian 13](https://img.shields.io/badge/Linux-Debian_13-A81D33?logo=debian&logoColor=white)](docs/TESTING.md)
+[![Windows 10 / 11 portable x64](https://img.shields.io/badge/Windows-10%20%2F%2011%20portable%20x64-0078D4)](docs/WINDOWS.md)
 [![Wayland](https://img.shields.io/badge/Wayland-native-F0C674)](README.md#features)
 [![OBS Browser Source](https://img.shields.io/badge/OBS-Browser_Source-302E31?logo=obsstudio&logoColor=white)](README.md#obs-setup)
 [![Build and test](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjeje42/keycast-bridge/actions/workflows/ci.yml)
 [![License GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 
 **Display keyboard shortcuts, held modifiers and mouse clicks in OBS on Linux / Wayland and Windows.**
+
+## Quick install
+
+[Download version 0.2.0-alpha.7](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
+
+- **Windows 10/11 x64:** download the ZIP, extract it completely and launch `keycast-bridge.exe`.
+- **Debian 13 amd64:** download the `.deb`, run `sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb`, then open **Keycast Bridge** from the applications menu.
+
+Windows executables are unsigned; SmartScreen may display a warning. See [antivirus guidance and SHA256 verification](docs/WINDOWS.md#smartscreen-antivirus-and-integrity).
+
+## Overview
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md) · [Documentation index](docs/README.md) · [Changelog](CHANGELOG.md)
 
@@ -33,7 +43,9 @@ See the [exact validation status](docs/VALIDATION.md).
 
 [Windows portable instructions](docs/WINDOWS.md): extract the complete x64 ZIP and launch `keycast-bridge.exe`; no developer tools or administrator rights required. Windows captures all session keyboards and follows the foreground layout.
 
-Linux now defaults to all keyboards, with optional multiple selection and udev hotplug. A privileged opener passes evdev descriptors over a private Unix socket to a reader that drops privileges. Reconnecting a selected keyboard uses its serial/name or physical USB port/name, never a remembered event number. Without a serial, use the same port. Modifiers are tracked per keyboard: perform a shortcut on one keyboard.
+## Capture on Linux and Windows
+
+Linux defaults to all keyboards, with optional multiple selection and udev hotplug. A privileged opener passes evdev descriptors over a private Unix socket to a reader that drops privileges. Reconnecting a selected keyboard uses its serial/name or physical USB port/name, never a remembered event number. Without a serial, use the same port. Modifiers are tracked per keyboard: perform a shortcut on one keyboard.
 
 Optional left/right/middle mouse feedback is available on both systems. On Windows, enable **Click ring** before starting; this also enables mouse capture. A sole monitor is selected automatically, including after another monitor is unplugged. With multiple monitors, choose the one captured in OBS under **Settings → Capture**. Align the monitor capture and browser source in OBS. The ring is drawn in OBS, not on the desktop. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
 
@@ -188,7 +200,6 @@ Dependency names and package-manager commands: [Ubuntu](https://packages.ubuntu.
 The URL changes after every app launch. Update it in OBS. This deliberately avoids storing a long-lived token. OBS does not need administrator privileges.
 
 **If Browser is absent from your OBS source list**, that OBS build has no Browser Source support. Install an OBS build/package providing that feature; this alpha does not implement an alternative window overlay.
-
 
 ## Appearance and settings
 
