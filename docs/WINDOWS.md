@@ -18,7 +18,7 @@ Le halo est dessiné dans OBS, pas sur le bureau Windows. Les captures de fenêt
 
 L’archive n’est pas signée. Aucun historique ni télémétrie. Les champs de mot de passe ne sont pas détectés ; arrêter avant toute saisie sensible. Les bureaux sécurisés/UAC et les applications élevées ne font pas partie de la cible. Relâcher les modificateurs avant de démarrer. Pas de composition IME/accents. La position, les couleurs et le format de l’incrustation sont mémorisés ; les autres options restent limitées à la session. L’URL change à chaque lancement.
 
-Les tests automatiques vérifient la compilation, les traductions clavier, le serveur et le démarrage de l’archive. La capture réelle, le branchement USB, le DPI et l’alignement OBS restent à vérifier sur un poste Windows. Voir `TESTING.md` dans les sources.
+Les tests automatiques vérifient la compilation, les traductions clavier, le serveur et le démarrage de l’archive. L’utilisation sur poste réel est confirmée sous Windows 10 et 11. Cela ne couvre pas toutes les combinaisons de matériel, branchement USB, DPI et scènes OBS : voir [VALIDATION.md](VALIDATION.md) pour le périmètre et [TESTING.md](TESTING.md) pour les régressions à vérifier.
 
 ## English
 
@@ -26,7 +26,7 @@ Target: Windows 10 1703+ / Windows 11, x64 Intel/AMD. Extract the complete ZIP a
 
 All session keyboards are captured; layout follows the foreground window. Per-device selection is Linux-only. The optional click ring maps the monitor selected under “Monitor captured in OBS” to the full browser viewport: align both OBS sources without cropping. Choose DISPLAY2, DISPLAY3, etc. using the resolution and position shown; these IDs need not match the order of OBS sources. The list refreshes automatically and selection can change during capture. A sole monitor is selected automatically, including after another monitor is unplugged. If the selected display disappears while multiple monitors remain, the ring is suspended. Reconnect it or select another monitor. Geometry refreshes on each click. The selection lasts for the current application session. Other monitors show button feedback only. The ring appears in OBS, not on the Windows desktop.
 
-Unsigned alpha; no history or telemetry, no password detection. Stop before sensitive input or locking. Secure/elevated desktops are outside the target. Physical input, USB changes, DPI and OBS alignment still require desktop testing. The URL changes every launch.
+Unsigned alpha; no history or telemetry, no password detection. Stop before sensitive input or locking. Secure/elevated desktops are outside the target. Manual desktop use is confirmed on Windows 10 and 11. This does not cover every USB device, DPI combination or OBS scene; see [validation scope](VALIDATION.md) and the [regression procedure](TESTING.md). The URL changes every launch.
 
 ## Building / Compilation (MSYS2 UCRT64)
 

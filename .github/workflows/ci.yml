@@ -12,6 +12,8 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: web/package-lock.json
+      - name: Version consistency
+        run: python3 scripts/check-version.py
       - name: Native dependencies
         run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libxkbcommon-dev libudev-dev pkg-config
       - name: Rust stable

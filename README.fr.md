@@ -19,7 +19,7 @@ Guides PDF : [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf) · [E
 
 **Afficher les raccourcis clavier dans OBS, sous Linux/Wayland et Windows.**
 
-Version **0.2.0-alpha.7**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Cible prioritaire : Debian 13, GNOME, OBS avec source Navigateur (Flatpak officiel). Le fonctionnement sur d’autres compositeurs reste à tester.
+Version **0.2.0-alpha.7**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Essais manuels confirmés sous Debian 13 (GNOME), Fedora, Windows 10 et Windows 11. La version et le bureau utilisés sous Fedora ne sont pas consignés ; cela ne valide pas tous les compositeurs Wayland. Voir [le périmètre des validations](docs/VALIDATION.md).
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -54,19 +54,25 @@ Cible : **Debian 13, PC Intel/AMD 64 bits**. Ubuntu et les autres versions de De
 
 **OBS :** le paquet Debian ne fournit pas la source Navigateur. Utiliser le [Flatpak officiel d’OBS](https://obsproject.com/kb/linux-installation), qui l’inclut. Keycast Bridge reste installé avec le paquet Debian.
 
-## Installation depuis les sources — autres distributions Linux
+## Plateformes et validation
 
-Cette méthode compile Keycast Bridge sur la machine cible, sans créer de paquet. **GTK 4.8 minimum**, Rust stable récent, Node.js 22 et npm sont nécessaires. Les commandes ci-dessous sont prévues pour Bash.
+Les essais manuels et les tests automatisés sont distingués dans [VALIDATION.md](docs/VALIDATION.md). Voir aussi [l’index de documentation](docs/README.md) et [l’historique des versions](CHANGELOG.md).
 
-| Distribution | Méthode | Validation |
+| Plateforme | Méthode | Validation |
 | --- | --- | --- |
 | Debian 13 | Paquet ci-dessus ou compilation | Capture/OBS confirmés sur GNOME ; installation du paquet testée en conteneur |
 | Ubuntu 24.04 LTS et versions ultérieures | Compilation avec APT | Compilation et tests automatisés sur Ubuntu 24.04 ; capture sur poste réel à valider |
 | Linux Mint 22.x (base Ubuntu 24.04) | Même procédure qu’Ubuntu | À valider sur poste réel |
-| Fedora Workstation, version maintenue | Compilation avec DNF | Procédure proposée, pas encore testée sur Fedora |
+| Fedora | Compilation avec DNF | Utilisation sur poste réel confirmée ; version et environnement de bureau non consignés |
 | Manjaro / Arch Linux à jour | Compilation avec Pacman | Procédure proposée, pas encore testée sur ces distributions |
+| Windows 10 x64 | ZIP portable | Utilisation sur poste réel confirmée ; numéro de build du système non consigné |
+| Windows 11 x64 | ZIP portable | Utilisation sur poste réel confirmée ; numéro de build du système non consigné |
 
 Le paquet `.deb` fourni reste destiné à Debian 13. Pour les autres distributions, suivre les étapes ci-dessous. Le fonctionnement sur tous les compositeurs Wayland n’est pas encore validé.
+
+## Installation depuis les sources — autres distributions Linux
+
+Cette méthode compile Keycast Bridge sur la machine cible, sans créer de paquet. **GTK 4.8 minimum**, Rust stable récent, Node.js 22 et npm sont nécessaires. Les commandes ci-dessous sont prévues pour Bash.
 
 ### 1. Installer les dépendances de sa distribution
 
@@ -217,7 +223,7 @@ La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et t
 - La position, les couleurs et le format sont mémorisés. La taille, la durée, les options de capture, le moniteur choisi et la langue restent limités à la session.
 - Relâcher les modificateurs avant de lancer la capture.
 
-C’est une version alpha : les essais sur un véritable clavier sous GNOME et dans OBS restent indispensables avant une diffusion publique. Voir [la procédure de test](docs/TESTING.md).
+Les essais manuels sont confirmés sous Debian 13, Fedora, Windows 10 et Windows 11. Cette version reste une alpha : vérifier sa propre scène OBS avant une diffusion en direct. Les configurations non couvertes et les contrôles de régression sont décrits dans [VALIDATION.md](docs/VALIDATION.md) et [la procédure de test](docs/TESTING.md).
 
 ## Démonstration sans clavier
 

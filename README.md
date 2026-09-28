@@ -19,11 +19,11 @@ PDF guides: [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf) · [Français](
 
 **Display keyboard shortcuts, held modifiers and mouse clicks in OBS on Linux / Wayland and Windows.**
 
-[Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md)
+[Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md) · [Documentation index](docs/README.md) · [Changelog](CHANGELOG.md)
 
 Version **0.2.0-alpha.7**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
-Primary target: Debian 13 + GNOME + OBS with Browser Source (official Flatpak). Other compositors are an architectural target, not a tested compatibility claim.
+Manually tested on Debian 13 (GNOME), Fedora, Windows 10 and Windows 11. Fedora release and desktop details were not recorded. This does not establish compatibility with every Wayland compositor. See [validation scope and evidence](docs/VALIDATION.md).
 
 ![OBS overlay preview](docs/overlay-preview.png)
 
@@ -61,19 +61,25 @@ Targets **Debian 13 on Intel/AMD 64-bit PCs**. Other Debian versions and Ubuntu 
 
 **OBS:** Debian’s OBS package has no Browser Source. Use the [official OBS Flatpak](https://obsproject.com/kb/linux-installation), which includes it. Keycast Bridge itself remains a Debian package.
 
-## Install from source — other Linux distributions
+## Platform validation
 
-This method compiles Keycast Bridge on the target machine without creating a package. Requires **GTK 4.8 or newer**, current stable Rust, Node.js 22 and npm. Commands below assume Bash.
+Manual desktop tests and automated CI are recorded separately in [VALIDATION.md](docs/VALIDATION.md).
 
-| Distribution | Method | Validation |
+| Platform | Method | Validation |
 | --- | --- | --- |
 | Debian 13 | Package above or source build | Capture/OBS confirmed on GNOME; package installation tested in a container |
 | Ubuntu 24.04 LTS and later | Build with APT dependencies | Automated builds and tests on Ubuntu 24.04; real desktop capture still needs testing |
 | Linux Mint 22.x (Ubuntu 24.04 base) | Same procedure as Ubuntu | Real desktop testing pending |
-| Fedora Workstation, supported release | Build with DNF dependencies | Proposed instructions, not yet tested on Fedora |
+| Fedora | Build with DNF dependencies | Manual desktop use confirmed; release and desktop environment not recorded |
 | Up-to-date Manjaro / Arch Linux | Build with Pacman dependencies | Proposed instructions, not yet tested on these distributions |
+| Windows 10 x64 | Portable ZIP | Manual desktop use confirmed; exact OS build not recorded |
+| Windows 11 x64 | Portable ZIP | Manual desktop use confirmed; exact OS build not recorded |
 
 The provided `.deb` remains intended for Debian 13. Use the source instructions below for other distributions. Compatibility with every Wayland compositor has not yet been validated.
+
+## Install from source — other Linux distributions
+
+This method compiles Keycast Bridge on the target machine without creating a package. Requires **GTK 4.8 or newer**, current stable Rust, Node.js 22 and npm. Commands below assume Bash.
 
 ### 1. Install your distribution’s dependencies
 
@@ -225,7 +231,7 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 - No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization. Appearance and canvas settings persist; size, duration, capture options, monitor selection and language remain session-only.
 - Key-repeat events are intentionally ignored. Modifiers held before Start must be released and pressed again. Caps Lock / Num Lock state already active at startup is not synchronized with GNOME.
 - System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; lock-screen auto-pause is not implemented.
-- This alpha needs real-device acceptance tests before it should be used for live broadcasts.
+- Manual desktop testing is confirmed on Debian 13, Fedora, Windows 10 and Windows 11. This remains an alpha: check your own OBS scene before going live. Untested configurations and regression checks are listed in [VALIDATION.md](docs/VALIDATION.md) and [TESTING.md](docs/TESTING.md).
 
 ## License and acknowledgments
 

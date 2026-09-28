@@ -1,10 +1,12 @@
 // Run after: cargo build --no-default-features --bin keycast-bridge-demo
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 const root = fileURLToPath(new URL('../', import.meta.url));
+const version = JSON.parse(readFileSync(new URL('../web/package.json', import.meta.url), 'utf8')).version;
 const binary = process.env.KEYCAST_DEMO || root + 'target/debug/keycast-bridge-demo' + (process.platform === 'win32' ? '.exe' : '');
 const child = spawn(binary, [], { cwd: root });
 let output = '';
@@ -20,7 +22,7 @@ try {
     const help = url.replace('/overlay/', '/help/') + '/' + language + '.html';
     const response = await fetch(help);
     assert.equal(response.status, 200);
-    assert.ok((await response.text()).includes('0.2.0-alpha.7'));
+    assert.ok((await response.text()).includes(version));
     assert.equal((await fetch(help.replace(/\/help\/[^/]+\//, '/help/wrong/'))).status, 403);
   }
   assert.equal((await fetch(url.replace(/[^/]+$/, 'wrong'))).status, 403);

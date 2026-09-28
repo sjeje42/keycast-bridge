@@ -39,6 +39,8 @@ jobs:
           cargo test --locked --release
           cargo build --locked --release
           /usr/bin/python packaging/windows/bundle.py
+          version=$(/usr/bin/python -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')
+          printf '%s\n' "KEYCAST_VERSION=$version" >> "$GITHUB_ENV"
           printf '%s\n' "KEYCAST_UCRT_ROOT=$(cygpath -w /ucrt64)" >> "$GITHUB_ENV"
       - name: Launch portable GUI without MSYS2 on PATH
         run: packaging/windows/test-portable.ps1
@@ -49,9 +51,12 @@ jobs:
           exit $LASTEXITCODE
       - name: Archive and checksum
         run: |
-          Compress-Archive -Path dist/keycast-bridge-windows-x64 -DestinationPath dist/keycast-bridge_0.2.0-alpha.7_windows-x64.zip
-          $hash = (Get-FileHash dist/*.zip -Algorithm SHA256).Hash.ToLower()
-          "$hash  keycast-bridge_0.2.0-alpha.7_windows-x64.zip" | Set-Content dist/SHA256SUMS-windows.txt
+          if ([string]::IsNullOrWhiteSpace($env:KEYCAST_VERSION)) { throw 'Missing Cargo package version' }
+          $archiveName = "keycast-bridge_$($env:KEYCAST_VERSION)_windows-x64.zip"
+          $archivePath = Join-Path 'dist' $archiveName
+          Compress-Archive -Path dist/keycast-bridge-windows-x64 -DestinationPath $archivePath
+          $hash = (Get-FileHash $archivePath -Algorithm SHA256).Hash.ToLower()
+          "$hash  $archiveName" | Set-Content dist/SHA256SUMS-windows.txt -Encoding utf8
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: keycast-bridge-windows-x64
@@ -59,4 +64,3 @@ jobs:
             dist/*.zip
             dist/SHA256SUMS-windows.txt
           if-no-files-found: error
-
