@@ -12,6 +12,10 @@ pkg="$work/package"
 install -d "$pkg/DEBIAN" "$pkg/usr/bin" "$pkg/usr/libexec" "$pkg/usr/share/applications" "$pkg/usr/share/polkit-1/actions" "$pkg/usr/share/doc/keycast-bridge"
 install -m 0755 target/release/keycast-bridge target/release/keycast-bridge-demo "$pkg/usr/bin/"
 install -m 0755 target/release/keycast-bridge-capture "$pkg/usr/libexec/"
+for icon in data/icons/hicolor/*/apps/*.png; do
+    relative=${icon#data/icons/}
+    install -D -m 0644 "$icon" "$pkg/usr/share/icons/$relative"
+done
 sed 's|/usr/local/bin/|/usr/bin/|g' data/fr.jeromelab.KeycastBridge.desktop > "$pkg/usr/share/applications/fr.jeromelab.KeycastBridge.desktop"
 sed 's|/usr/local/libexec/|/usr/libexec/|g' data/fr.jeromelab.KeycastBridge.policy > "$pkg/usr/share/polkit-1/actions/fr.jeromelab.KeycastBridge.policy"
 install -m 0644 LICENSE "$pkg/usr/share/doc/keycast-bridge/copyright"

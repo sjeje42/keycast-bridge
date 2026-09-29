@@ -51,6 +51,8 @@ for rel in ['share/glib-2.0/schemas','share/icons/Adwaita','share/icons/hicolor'
     src=prefix/rel
     if src.exists(): shutil.copytree(src,out/rel,dirs_exist_ok=True)
 licenses=out/'licenses'
+shutil.copytree('data/icons/hicolor',out/'share/icons/hicolor',dirs_exist_ok=True)
+shutil.copy2('data/icons/keycast-bridge.ico',out/'keycast-bridge.ico')
 licenses.mkdir(exist_ok=True)
 shutil.copy2('LICENSE',licenses/'Keycast-Bridge.txt')
 if (prefix/'share/licenses').exists(): shutil.copytree(prefix/'share/licenses',licenses/'MSYS2',dirs_exist_ok=True)

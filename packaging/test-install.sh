@@ -14,6 +14,11 @@ for binary in /usr/bin/keycast-bridge /usr/bin/keycast-bridge-demo /usr/libexec/
 done
 strings /usr/bin/keycast-bridge | grep -q /usr/libexec/keycast-bridge-capture
 grep -q 'Exec=/usr/bin/keycast-bridge' /usr/share/applications/fr.jeromelab.KeycastBridge.desktop
+grep -q '^Icon=fr.jeromelab.KeycastBridge$' /usr/share/applications/fr.jeromelab.KeycastBridge.desktop
+for size in 16 24 32 48 64 128 256 512 1024; do
+    icon="hicolor/${size}x${size}/apps/fr.jeromelab.KeycastBridge.png"
+    cmp "/work/data/icons/$icon" "/usr/share/icons/$icon"
+done
 grep -q /usr/libexec/keycast-bridge-capture /usr/share/polkit-1/actions/fr.jeromelab.KeycastBridge.policy
 for name in Keycast_Bridge_Guide_Utilisateur_FR Keycast_Bridge_User_Guide_EN; do
     cmp "/work/docs/pdf/$name.pdf" "/usr/share/doc/keycast-bridge/pdf/$name.pdf"
@@ -32,6 +37,7 @@ runuser -u tester -- env KEYCAST_SMOKE_TEST=1 dbus-run-session -- xvfb-run -a /u
 apt-get remove -y keycast-bridge
 test ! -e /usr/bin/keycast-bridge
 test ! -e /usr/libexec/keycast-bridge-capture
+test ! -e /usr/share/icons/hicolor/1024x1024/apps/fr.jeromelab.KeycastBridge.png
 test ! -e /usr/share/polkit-1/actions/fr.jeromelab.KeycastBridge.policy
 # Reinstallation checks the same user-facing install command again.
 apt-get install -y --no-install-recommends /work/dist/*.deb

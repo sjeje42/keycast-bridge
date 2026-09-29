@@ -12,4 +12,11 @@ install -o root -g root -m 0755 target/release/keycast-bridge-demo /usr/local/bi
 install -o root -g root -m 0755 target/release/keycast-bridge-capture /usr/local/libexec/
 install -o root -g root -m 0644 data/fr.jeromelab.KeycastBridge.desktop /usr/local/share/applications/
 install -o root -g root -m 0644 data/fr.jeromelab.KeycastBridge.policy /usr/share/polkit-1/actions/
+for icon in data/icons/hicolor/*/apps/*.png; do
+    relative=${icon#data/icons/}
+    install -D -o root -g root -m 0644 "$icon" "/usr/local/share/icons/$relative"
+done
+if command -v gtk4-update-icon-cache >/dev/null 2>&1; then
+    gtk4-update-icon-cache -f -t /usr/local/share/icons/hicolor
+fi
 echo 'Installed. Launch Keycast Bridge from GNOME / Installation terminée.'

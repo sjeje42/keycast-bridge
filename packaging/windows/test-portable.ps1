@@ -1,5 +1,22 @@
 $ErrorActionPreference = 'Stop'
 $bundle = (Resolve-Path 'dist/keycast-bridge-windows-x64').Path
+$versionInfo = (Get-Item "$bundle\keycast-bridge.exe").VersionInfo
+if ($versionInfo.ProductName -ne 'Keycast Bridge') { throw 'Missing PE product name' }
+if ($versionInfo.FileVersion -ne $env:KEYCAST_VERSION -or $versionInfo.ProductVersion -ne $env:KEYCAST_VERSION) {
+    throw 'PE version does not match Cargo.toml'
+}
+if (-not (Test-Path "$bundle\keycast-bridge.ico")) { throw 'Missing shortcut icon' }
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class KeycastIconCheck {
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+    public static extern uint ExtractIconEx(string file, int index, IntPtr[] large, IntPtr[] small, uint count);
+}
+'@
+if ([KeycastIconCheck]::ExtractIconEx("$bundle\keycast-bridge.exe", -1, $null, $null, 0) -lt 1) {
+    throw 'Executable has no embedded icon'
+}
 foreach ($name in @('Keycast_Bridge_Guide_Utilisateur_FR', 'Keycast_Bridge_User_Guide_EN')) {
     if (-not (Test-Path "$bundle\guide\pdf\$name.pdf")) { throw "Missing PDF guide: $name" }
 }
@@ -24,4 +41,3 @@ try {
     Remove-Item Env:KEYCAST_SMOKE_TEST -ErrorAction SilentlyContinue
 }
 Write-Host 'PASS: portable GTK GUI launched without MSYS2 on PATH.'
-

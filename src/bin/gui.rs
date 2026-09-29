@@ -173,6 +173,11 @@ fn populate(devices: &ComboBoxText, _list: &GtkBox, _choices: &Choices) {
 }
 
 fn main() -> anyhow::Result<()> {
+    let icon_data = glib::Bytes::from_static(include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/icons.gresource"
+    )));
+    gtk4::gio::resources_register(&gtk4::gio::Resource::from_data(&icon_data)?);
     #[cfg(target_os = "linux")]
     anyhow::ensure!(
         unsafe { libc::geteuid() } != 0,
@@ -196,6 +201,15 @@ fn main() -> anyhow::Result<()> {
         .application_id("fr.jeromelab.KeycastBridge")
         .build();
     let ui_state = state.clone();
+    app.connect_startup(|_| {
+        let display = gtk4::gdk::Display::default().expect("GTK display");
+        let theme = gtk4::IconTheme::for_display(&display);
+        theme.add_resource_path("/fr/jeromelab/KeycastBridge/icons");
+        gtk4::Window::set_default_icon_name("fr.jeromelab.KeycastBridge");
+        if std::env::var("KEYCAST_SMOKE_TEST").as_deref() == Ok("1") {
+            assert!(theme.has_icon("fr.jeromelab.KeycastBridge"));
+        }
+    });
     app.connect_activate(move |app| build_ui(app, ui_state.clone()));
     if std::env::var("KEYCAST_SMOKE_TEST").as_deref() == Ok("1") {
         let smoke_app = app.clone();
@@ -281,6 +295,9 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     title.set_hexpand(true);
     title.set_ellipsize(gtk4::pango::EllipsizeMode::End);
     let header = GtkBox::new(Orientation::Horizontal, 8);
+    let app_icon = gtk4::Image::from_icon_name("fr.jeromelab.KeycastBridge");
+    app_icon.set_pixel_size(40);
+    header.append(&app_icon);
     header.append(&title);
     let language = ComboBoxText::new();
     language.append(Some("fr"), "Français");
