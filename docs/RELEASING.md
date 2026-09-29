@@ -4,13 +4,13 @@
 
 ## Version formats
 
-For application version `0.2.0-alpha.7`:
+For application version `0.2.0-alpha.8`:
 
 | Purpose | Value | Reason |
 | --- | --- | --- |
-| Cargo, application, release tag, Windows ZIP | `0.2.0-alpha.7` (tag prefixed with `v`) | Semantic version of the application |
-| Debian package metadata | `0.2.0~alpha.7-1` | The tilde sorts a prerelease before `0.2.0`; `-1` is the package revision |
-| Debian download filename | `0.2.0.alpha.7-1` | The packaging script replaces the tilde with a dot to keep the GitHub asset name stable |
+| Cargo, application, release tag, Windows ZIP | `0.2.0-alpha.8` (tag prefixed with `v`) | Semantic version of the application |
+| Debian package metadata | `0.2.0~alpha.8-1` | The tilde sorts a prerelease before `0.2.0`; `-1` is the package revision |
+| Debian download filename | `0.2.0.alpha.8-1` | The packaging script replaces the tilde with a dot to keep the GitHub asset name stable |
 
 The Debian filename is not the package metadata version. Do not replace the tilde in the package metadata with a dot. These derived forms are intentional, not independent versions to bump.
 

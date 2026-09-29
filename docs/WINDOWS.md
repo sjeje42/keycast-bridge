@@ -1,10 +1,10 @@
-# Windows — 0.2.0-alpha.7
+# Windows — 0.2.0-alpha.8
 
 ## Français
 
 Cible : Windows 10 1703 ou plus récent / Windows 11, Intel/AMD 64 bits.
 
-1. Télécharger l’archive `keycast-bridge_0.2.0-alpha.7_windows-x64.zip` depuis les Releases ou les artifacts du workflow **Windows portable**.
+1. Télécharger l’archive `keycast-bridge_0.2.0-alpha.8_windows-x64.zip` depuis les Releases ou les artifacts du workflow **Windows portable**.
 2. Extraire **tout** le dossier. Conserver les DLL, `lib/`, `share/` et `licenses/` avec les exécutables.
 3. Lancer `keycast-bridge.exe` avec son utilisateur habituel, sans administrateur. Aucun Rust, GTK ou MSYS2 à installer.
 4. Choisir Français si nécessaire, copier l’URL OBS et créer une source **Navigateur** transparente aux dimensions de la scène.
@@ -24,7 +24,7 @@ Les tests automatiques vérifient la compilation, les traductions clavier, le se
 
 Les exécutables de cette alpha ne sont pas signés : Microsoft Defender SmartScreen peut afficher « Windows a protégé votre ordinateur » faute de réputation établie. Un antivirus peut aussi signaler ce type d’outil de capture globale ; cela ne suffit pas à conclure à un faux positif. Conserver les protections actives et transmettre le nom exact de la détection au mainteneur avant de poursuivre.
 
-Télécharger depuis la [release officielle](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7) et comparer le SHA256 du ZIP avec [SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.7/SHA256SUMS). Voir la [vérification ci-dessous](#sha256). Une empreinte identique confirme l’intégrité du téléchargement, pas l’absence de vulnérabilités ni l’identité de l’éditeur.
+Télécharger depuis la [release officielle](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8) et comparer le SHA256 du ZIP avec [SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.8/SHA256SUMS). Voir la [vérification ci-dessous](#sha256). Une empreinte identique confirme l’intégrité du téléchargement, pas l’absence de vulnérabilités ni l’identité de l’éditeur.
 
 ## English
 
@@ -38,25 +38,23 @@ Unsigned alpha; no history or telemetry, no password detection. Stop before sens
 
 This alpha's executables are unsigned: Microsoft Defender SmartScreen may show “Windows protected your PC” because the download has no established reputation. Antivirus software may also flag global input-capture tools; do not assume a detection is a false positive. Keep protections enabled and report the exact detection name to the maintainer before proceeding.
 
-Download from the [official release](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7) and compare the ZIP's SHA256 with [SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.7/SHA256SUMS). See [verification below](#sha256). A matching hash confirms download integrity, not freedom from vulnerabilities or publisher identity.
+Download from the [official release](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8) and compare the ZIP's SHA256 with [SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.8/SHA256SUMS). See [verification below](#sha256). A matching hash confirms download integrity, not freedom from vulnerabilities or publisher identity.
 
 ## SHA256
 
-File / fichier : `keycast-bridge_0.2.0-alpha.7_windows-x64.zip`
+File / fichier : `keycast-bridge_0.2.0-alpha.8_windows-x64.zip`
 
-```text
-792c8aeb7d536a8bbb4c5964f446d94bcf3a2a582aae8ca68eccbed53b260659
-```
+Expected hash / empreinte attendue : the line for this ZIP in [this release's SHA256SUMS](https://github.com/sjeje42/keycast-bridge/releases/download/v0.2.0-alpha.8/SHA256SUMS). Download it alongside the ZIP / télécharger ce fichier avec le ZIP.
 
 PowerShell, from the download directory / depuis le dossier de téléchargement :
 
 ```powershell
-Get-FileHash -LiteralPath .\keycast-bridge_0.2.0-alpha.7_windows-x64.zip -Algorithm SHA256
+Get-FileHash -LiteralPath .\keycast-bridge_0.2.0-alpha.8_windows-x64.zip -Algorithm SHA256
 ```
 
-Compare all 64 hexadecimal characters (case does not matter). This hash is for the published release ZIP only, not later CI artifacts or a locally rebuilt archive. For a different release, use its own `SHA256SUMS`.
+Compare all 64 hexadecimal characters with the matching ZIP entry in `SHA256SUMS` (case does not matter). Release checksums are calculated from the final published files; CI artifacts and locally rebuilt archives can have different hashes.
 
-Comparer les 64 caractères hexadécimaux (majuscules/minuscules indifférentes). Cette empreinte concerne uniquement le ZIP de la release publiée, pas les artifacts CI ultérieurs ni une archive recompilée. Pour une autre version, utiliser son propre fichier `SHA256SUMS`.
+Comparer les 64 caractères hexadécimaux avec la ligne correspondant au ZIP dans `SHA256SUMS` (majuscules/minuscules indifférentes). Les empreintes sont calculées sur les fichiers publiés définitifs ; les artifacts CI et les archives recompilées peuvent avoir des empreintes différentes.
 
 Microsoft: [SmartScreen reputation](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
 

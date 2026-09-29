@@ -20,18 +20,18 @@ Guides PDF : [Français](docs/pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf) · [E
 
 ## Installation rapide
 
-[Télécharger la version 0.2.0-alpha.7](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
+[Télécharger la version 0.2.0-alpha.8](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8)
 
 [Code signing policy — politique de signature](CODE_SIGNING_POLICY.md) : candidature SignPath Foundation en préparation ; les versions Windows actuelles restent non signées.
 
 - **Windows 10/11 x64 :** télécharger le ZIP, l’extraire entièrement et lancer `keycast-bridge.exe`.
-- **Debian 13 amd64 :** télécharger le `.deb`, exécuter `sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb`, puis ouvrir **Keycast Bridge** dans le menu des applications.
+- **Debian 13 amd64 :** télécharger le `.deb`, exécuter `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`, puis ouvrir **Keycast Bridge** dans le menu des applications.
 
 Windows : les exécutables ne sont pas signés ; SmartScreen peut afficher un avertissement. Voir les [informations antivirus et la vérification SHA256](docs/WINDOWS.md#smartscreen-antivirus-et-intégrité).
 
 ## Présentation
 
-Version **0.2.0-alpha.7**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Essais manuels confirmés sous Debian 13 (GNOME), Fedora, Windows 10 et Windows 11. La version et le bureau utilisés sous Fedora ne sont pas consignés ; cela ne valide pas tous les compositeurs Wayland. Voir [le périmètre des validations](docs/VALIDATION.md).
+Version **0.2.0-alpha.8**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-only. Essais manuels confirmés sous Debian 13 (GNOME), Fedora, Windows 10 et Windows 11. La version et le bureau utilisés sous Fedora ne sont pas consignés ; cela ne valide pas tous les compositeurs Wayland. Voir [le périmètre des validations](docs/VALIDATION.md).
 
 ![Aperçu de l’overlay OBS](docs/overlay-preview.png)
 
@@ -50,14 +50,14 @@ Version **0.2.0-alpha.7**. Nouveau projet Rust / GTK4 / Svelte, sous GPL-3.0-onl
 
 ## Windows portable (x64)
 
-Télécharger le ZIP depuis les [Releases](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7), l’extraire entièrement, puis lancer `keycast-bridge.exe`. Aucun outil de compilation à installer. [Installation, halo et limites Windows](docs/WINDOWS.md).
+Télécharger le ZIP depuis les [Releases](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8), l’extraire entièrement, puis lancer `keycast-bridge.exe`. Aucun outil de compilation à installer. [Installation, halo et limites Windows](docs/WINDOWS.md).
 
 ## Paquet Debian 13 (amd64)
 
 Télécharger le `.deb` depuis les [Releases GitHub](https://github.com/sjeje42/keycast-bridge/releases), puis ouvrir un terminal dans le dossier du téléchargement :
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
 ```
 
 Lancer **Keycast Bridge** depuis le menu des applications. Aucune compilation nécessaire. APT installe les dépendances ; le paquet fournit le composant de capture et la règle Polkit. Aucune capture automatique. Désinstallation : `sudo apt remove keycast-bridge`.
@@ -219,7 +219,7 @@ Position, couleurs et format sont enregistrés dans `%APPDATA%\keycast-bridge\ap
 
 ### Paramètres et format OBS
 
-La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille** et **Capture**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; les versions HTML/Markdown restent incluses dans les paquets. Sous Windows, le guide et l’aperçu utilisent le navigateur par défaut ; en cas d’échec, une boîte de dialogue propose **Copier le lien**. Garder Keycast Bridge ouvert pour consulter cette aide locale. Les PDF illustrés sont également téléchargeables séparément dans les Releases et dans `docs/pdf/` ; les prochaines constructions des paquets les incluent à côté des guides HTML.
+La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille** et **Capture**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; les versions HTML/Markdown restent incluses dans les paquets. Sous Windows, le guide et l’aperçu utilisent le navigateur par défaut ; en cas d’échec, une boîte de dialogue propose **Copier le lien**. Garder Keycast Bridge ouvert pour consulter cette aide locale. Les PDF illustrés sont également téléchargeables séparément dans les Releases et dans `docs/pdf/` ; le ZIP Windows et le paquet Debian les incluent à côté des guides HTML.
 
 ## Confidentialité et limites
 

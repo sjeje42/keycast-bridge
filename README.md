@@ -20,12 +20,12 @@ PDF guides: [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf) · [Français](
 
 ## Quick install
 
-[Download version 0.2.0-alpha.7](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.7)
+[Download version 0.2.0-alpha.8](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8)
 
 [Code signing policy](CODE_SIGNING_POLICY.md) — SignPath Foundation application in preparation; current Windows releases remain unsigned.
 
 - **Windows 10/11 x64:** download the ZIP, extract it completely and launch `keycast-bridge.exe`.
-- **Debian 13 amd64:** download the `.deb`, run `sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb`, then open **Keycast Bridge** from the applications menu.
+- **Debian 13 amd64:** download the `.deb`, run `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`, then open **Keycast Bridge** from the applications menu.
 
 Windows executables are unsigned; SmartScreen may display a warning. See [antivirus guidance and SHA256 verification](docs/WINDOWS.md#smartscreen-antivirus-and-integrity).
 
@@ -33,7 +33,7 @@ Windows executables are unsigned; SmartScreen may display a warning. See [antivi
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md) · [Documentation index](docs/README.md) · [Changelog](CHANGELOG.md)
 
-Version **0.2.0-alpha.7**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0-alpha.8**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Manually tested on Debian 13 (GNOME), Fedora, Windows 10 and Windows 11. Fedora release and desktop details were not recorded. This does not establish compatibility with every Wayland compositor. See [validation scope and evidence](docs/VALIDATION.md).
 
@@ -66,7 +66,7 @@ Optional left/right/middle mouse feedback is available on both systems. On Windo
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.
@@ -221,7 +221,7 @@ Position, colors and canvas dimensions persist in `%APPDATA%\keycast-bridge\appe
 
 ### Settings and OBS canvas
 
-Open the top-right gear for **Position and colors**, **Canvas and size**, and **Capture**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; future package builds include them alongside the HTML guides.
+Open the top-right gear for **Position and colors**, **Canvas and size**, and **Capture**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; the Windows ZIP and Debian package include them alongside the HTML guides.
 
 ## Development and demo
 

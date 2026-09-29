@@ -1,6 +1,6 @@
 # Keycast Bridge — User guide
 
-Version **0.2.0-alpha.7** · [Français](USER_GUIDE.fr.md)
+Version **0.2.0-alpha.8** · [Français](USER_GUIDE.fr.md)
 
 Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse clicks in a transparent OBS Browser Source. The native application controls capture and appearance; OBS combines the overlay with your screen or application capture.
 
@@ -15,7 +15,7 @@ Download the Windows ZIP from the project's GitHub Releases. Extract the **entir
 Download the Debian package from Releases, open a terminal in its folder and run:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
 ```
 
 Open Keycast Bridge from the application menu. Do **not** run the graphical application with sudo. Starting keyboard capture requests administrator authorization through Polkit; the capture helper manages the input devices. You do not need to add yourself to the `input` group.

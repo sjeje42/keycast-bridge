@@ -1,4 +1,4 @@
-# Validation — 0.2.0-alpha.7
+# Validation — 0.2.0-alpha.8
 
 This page separates reported manual desktop testing from automated checks. It records the scope of the current alpha; [TESTING.md](TESTING.md) is the reusable regression procedure, not a list of tests already passed.
 
@@ -17,19 +17,19 @@ Development feedback also confirmed multi-monitor use, held modifiers with mouse
 
 ## Automated validation
 
-The following pipelines passed for source commit [`b61678a`](https://github.com/sjeje42/keycast-bridge/commit/b61678a90575dc488450a27dbf4208b95b94c9d8) on 2026-09-28:
+The icon integration was validated before the version bump: the following pipelines passed for source commit [`0af3929`](https://github.com/sjeje42/keycast-bridge/commit/0af3929b8e2c8e7b2152a997a758deb423073b8f) on 2026-09-29. The release commit must pass the same three gates again before publication.
 
 | Pipeline | Environment | Evidence |
 | --- | --- | --- |
-| Build and test | Ubuntu 24.04 | [Successful run](https://github.com/sjeje42/keycast-bridge/actions/runs/36401320404) |
-| Debian 13 package | Debian 13 container | [Successful run](https://github.com/sjeje42/keycast-bridge/actions/runs/36401320377) |
-| Windows portable | Windows Server 2022 CI runner | [Successful run](https://github.com/sjeje42/keycast-bridge/actions/runs/36401320440) |
+| Build and test | Ubuntu 24.04 | [Successful run](https://github.com/sjeje42/keycast-bridge/actions/runs/36534231973) |
+| Debian 13 package | Debian 13 container | [Successful run](https://github.com/sjeje42/keycast-bridge/actions/runs/36534231956) |
+| Windows portable | Windows Server 2022 CI runner | [Successful run](https://github.com/sjeje42/keycast-bridge/actions/runs/36534232011) |
 
 Coverage includes Rust tests and Clippy, browser overlay regressions, HTTP/WebSocket access checks, synthetic Linux hotplug and privilege separation, Debian install/GUI/remove/reinstall, and Windows portable build/GUI/HTTP checks. The Windows launch check hides the build runtime to verify DLL independence. This runner is not a Windows 10/11 desktop acceptance test.
 
-Regression coverage includes monitor mapping and removal, single-monitor selection, mouse/ring settings, held modifiers, persistent position/colors/canvas dimensions, scaling and pointer placement, settings-window behavior and embedded guides. Package checks cover the bundled HTML and PDF documentation.
+Regression coverage includes monitor mapping and removal, single-monitor selection, mouse/ring settings, held modifiers, persistent position/colors/canvas dimensions, scaling and pointer placement, settings-window behavior and embedded guides. Package checks cover the bundled HTML and PDF documentation, installed Linux icons, GTK icon-resource lookup, and the Windows executable's embedded icon and Cargo-derived product/version metadata.
 
-The published alpha.7 binaries remain attached to their original release commit. Later documentation/packaging commits and their CI artifacts do not replace those binaries. PDF guides were added separately to the release; newer package builds also bundle them.
+Alpha.8 packages include the official icon and PDF guides. Earlier releases retain their original binaries. The manual desktop reports above predate this release and are not a new manual acceptance pass for alpha.8.
 
 ## Remaining coverage and operating limits
 

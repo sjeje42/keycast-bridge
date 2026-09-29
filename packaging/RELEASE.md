@@ -1,25 +1,32 @@
-## Français — 0.2.0-alpha.7
+## Français — 0.2.0-alpha.8
 
-- Windows : « Guide complet » et « Aperçu » utilisent désormais l’ouverture native du navigateur par défaut. Un échec affiche un message et un bouton pour copier le lien.
-- « Cercle au clic » est activable directement avant le démarrage et active la capture souris nécessaire.
-- Avec un seul écran, la sélection est automatique, y compris après le débranchement d’un autre écran. Avec plusieurs écrans, le choix manuel reste disponible dans Paramètres → Capture.
-- Le cercle reste dessiné dans l’incrustation OBS ; alignez la source Navigateur avec la capture d’écran.
-- Guides anglais et français actualisés.
+- Icône officielle intégrée à l’application, aux lanceurs Linux et à l’exécutable Windows.
+- Original HD 2048 × 2048 conservé ; icônes Linux/GTK de 16 à 1024 pixels et ICO Windows à sept tailles, de 16 à 256 pixels.
+- Propriétés de l’exécutable Windows : nom du produit et version générée depuis `Cargo.toml`.
+- Guides PDF illustrés français et anglais inclus dans les paquets et disponibles séparément. Les guides en ligne et l’aide HTML intégrée restent disponibles. Les PDF conservent leur édition illustrée existante ; les guides HTML/Markdown sont actualisés pour cette version.
+- Documentation d’installation, historique des versions et périmètre des validations clarifiés ; politique de signature préparée pour une future candidature SignPath Foundation.
+- Contrôles automatiques des icônes installées, des ressources Windows et des métadonnées de version.
 
-Windows : extraire tout le ZIP et ouvrir `keycast-bridge.exe`.
-Debian 13 : `sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb`.
+**Windows x64** : extraire tout `keycast-bridge_0.2.0-alpha.8_windows-x64.zip`, puis ouvrir `keycast-bridge.exe`.
 
-Les guides illustrés PDF français et anglais sont désormais disponibles dans les fichiers de cette release. Les guides en ligne et l’aide HTML intégrée restent disponibles. Les exécutables ZIP/DEB de l’alpha.7 sont inchangés ; les PDF se téléchargent séparément.
+**Debian 13 amd64** : `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`.
 
-## English
+Les empreintes des téléchargements sont regroupées dans `SHA256SUMS`. Cette version reste une alpha ; vérifier sa scène OBS avant une diffusion.
 
-- Windows help and preview use the native default-browser launcher. Failures offer a message and Copy link fallback.
-- Enable Click ring directly before starting; the required mouse capture is enabled automatically.
-- A sole monitor is selected automatically, including after another monitor is unplugged. Multiple monitors retain manual selection in Settings → Capture.
-- The ring is rendered in the OBS overlay. Align the Browser Source with the monitor capture.
-- Updated English and French guides.
+## English — 0.2.0-alpha.8
 
-Illustrated English and French PDF guides are now available as release assets. Online guides and embedded HTML help remain available. The alpha.7 ZIP/DEB binaries are unchanged; download the PDFs separately.
+- Official icon integrated into the application, Linux launchers and Windows executable.
+- Original 2048 × 2048 artwork preserved; Linux/GTK icons from 16 to 1024 pixels and a seven-size Windows ICO from 16 to 256 pixels.
+- Windows executable properties now include the product name and version derived from `Cargo.toml`.
+- Illustrated English and French PDF guides bundled in the packages and available separately. Online guides and embedded HTML help remain available. PDFs retain their existing illustrated edition; HTML/Markdown guides are updated for this version.
+- Clearer installation documentation, changelog and validation scope; preparatory code signing policy for a future SignPath Foundation application.
+- Automated checks cover installed icons, Windows resources and executable version metadata.
+
+**Windows x64**: extract the complete `keycast-bridge_0.2.0-alpha.8_windows-x64.zip`, then open `keycast-bridge.exe`.
+
+**Debian 13 amd64**: `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`.
+
+Download checksums are listed in `SHA256SUMS`. This remains an alpha; check your OBS scene before a live broadcast.
 
 ## Code signing policy
 

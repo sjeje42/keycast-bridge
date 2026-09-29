@@ -10,14 +10,14 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 @media(prefers-color-scheme:dark) { body { background:#111923; color:#e3eaf4; } a { color:#97b8ff; } code,pre,th { background:#213044; } th,td,h2,nav { border-color:#40536e; } }
 @media print { body { color:#000; background:#fff; font-size:11pt; } nav { display:none; } h2,h3 { break-after:avoid; } tr { break-inside:avoid; } }
 </style></head><body><nav><strong>Keycast Bridge</strong><a href="en.html">English</a><a href="fr.html">Français</a></nav><main><h1 id="keycast-bridge-user-guide">Keycast Bridge — User guide</h1>
-<p>Version <strong>0.2.0-alpha.7</strong> · <a href="fr.html">Français</a></p>
+<p>Version <strong>0.2.0-alpha.8</strong> · <a href="fr.html">Français</a></p>
 <p>Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse clicks in a transparent OBS Browser Source. The native application controls capture and appearance; OBS combines the overlay with your screen or application capture.</p>
 <h2 id="1-install-and-launch">1. Install and launch</h2>
 <h3 id="windows-x64">Windows x64</h3>
 <p>Download the Windows ZIP from the project's GitHub Releases. Extract the <strong>entire archive</strong> into a writable folder and open <code>keycast-bridge.exe</code>. Keep the DLLs and subfolders beside the executable. There is no installer, driver or background service. Use the application as a normal user. The alpha is unsigned; secure desktops, UAC prompts and elevated applications are outside its supported capture target.</p>
 <h3 id="debian-13-amd64">Debian 13 amd64</h3>
 <p>Download the Debian package from Releases, open a terminal in its folder and run:</p>
-<pre><code class="language-sh">sudo apt install ./keycast-bridge_0.2.0.alpha.7-1_amd64.deb
+<pre><code class="language-sh">sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
 </code></pre>
 <p>Open Keycast Bridge from the application menu. Do <strong>not</strong> run the graphical application with sudo. Starting keyboard capture requests administrator authorization through Polkit; the capture helper manages the input devices. You do not need to add yourself to the <code>input</code> group.</p>
 <p>OBS must provide a <strong>Browser Source</strong>. If your Linux OBS installation does not have it, the official OBS Flatpak is the documented option for this project. The Keycast Bridge Debian package does not install OBS.</p>

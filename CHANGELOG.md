@@ -4,9 +4,13 @@ Notable changes, newest first. Dates refer to GitHub release publication. All ve
 
 ## Unreleased
 
+No changes yet.
+
+## [0.2.0-alpha.8](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8) — 2026-09-29
+
 ### Changed
 
-- Add bilingual quick installation instructions, Windows portable badges, and unsigned-build/SmartScreen guidance with the published ZIP checksum.
+- Add bilingual quick installation instructions, Windows portable badges, and unsigned-build/SmartScreen guidance with release-specific ZIP checksum verification.
 - Update repository description and topics for Windows support; enable Dependabot alerts.
 - Keep appearance/help security details before the private reporting procedure.
 
@@ -22,7 +26,7 @@ Notable changes, newest first. Dates refer to GitHub release publication. All ve
 - Official application icon: preserved 2048px artwork, multi-resolution Windows ICO and embedded executable resources, GTK icon resources, and Linux launcher icons up to 1024px. Windows product/version metadata follows `Cargo.toml`.
 - Preparatory code signing policy with maintainer roles, the intended Windows executable scope, privacy details and pending SignPath integration tasks; current releases remain unsigned.
 
-- Illustrated French and English PDFs in the repository and as separate alpha.7 release downloads; preserve online and embedded HTML guides. New package builds bundle the PDFs. Existing alpha.7 binaries are unchanged.
+- Illustrated French and English PDFs in the repository and as separate alpha.7 release downloads; preserve online and embedded HTML guides. Alpha.8 packages bundle the PDFs. Existing alpha.7 binaries are unchanged.
 - Historical changelog and release-maintenance checklist.
 
 ### Fixed
