@@ -75,11 +75,21 @@ END
     let object = out.join("keycast-bridge-res.o");
     let compiler = env::var("WINDRES").unwrap_or_else(|_| "windres".into());
     let status = Command::new(compiler)
-        .args(["--input-format=rc", "--output-format=coff", "--codepage=65001"])
+        .args([
+            "--input-format=rc",
+            "--output-format=coff",
+            "--codepage=65001",
+        ])
         .arg(&rc)
         .arg(&object)
         .status()
         .expect("Install MinGW binutils (windres)");
-    assert!(status.success(), "Could not compile Windows icon and metadata");
-    println!("cargo:rustc-link-arg-bin=keycast-bridge={}", object.display());
+    assert!(
+        status.success(),
+        "Could not compile Windows icon and metadata"
+    );
+    println!(
+        "cargo:rustc-link-arg-bin=keycast-bridge={}",
+        object.display()
+    );
 }

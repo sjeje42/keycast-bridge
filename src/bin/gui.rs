@@ -173,10 +173,8 @@ fn populate(devices: &ComboBoxText, _list: &GtkBox, _choices: &Choices) {
 }
 
 fn main() -> anyhow::Result<()> {
-    let icon_data = glib::Bytes::from_static(include_bytes!(concat!(
-        env!("OUT_DIR"),
-        "/icons.gresource"
-    )));
+    let icon_data =
+        glib::Bytes::from_static(include_bytes!(concat!(env!("OUT_DIR"), "/icons.gresource")));
     gtk4::gio::resources_register(&gtk4::gio::Resource::from_data(&icon_data)?);
     #[cfg(target_os = "linux")]
     anyhow::ensure!(
