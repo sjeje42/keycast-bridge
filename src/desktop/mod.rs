@@ -33,7 +33,7 @@ impl Controller {
                 mode: Mode::Normal,
                 serial: 0,
             }),
-            status: Mutex::new(String::new()),
+            status: Mutex::new("stopped".into()),
             shutdown: AtomicBool::new(false),
             finished: AtomicBool::new(false),
             bridge,
@@ -53,6 +53,9 @@ impl Controller {
         r.enabled = enabled;
         r.mode = Mode::Normal;
         r.serial += 1;
+        if !enabled {
+            *self.status.lock().unwrap() = "stopped".into();
+        }
     }
     pub fn mode(&self, mode: Mode) {
         let mut r = self.request.lock().unwrap();
@@ -82,7 +85,7 @@ impl Controller {
         self.shutdown.load(Ordering::Acquire)
     }
     fn fail(&self, message: impl Into<String>) {
-        *self.status.lock().unwrap() = message.into();
         self.enable(false);
+        *self.status.lock().unwrap() = message.into();
     }
 }

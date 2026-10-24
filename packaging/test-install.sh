@@ -26,6 +26,12 @@ done
 for language in en fr; do
     cmp "/work/docs/guide/$language.html" "/usr/share/doc/keycast-bridge/guide/$language.html"
 done
+# The optional GNOME extension is installed but never auto-enabled.
+extension=/usr/share/gnome-shell/extensions/keycast-bridge@jeromelab.fr
+for file in metadata.json extension.js model.js drawing.js; do
+    cmp "/work/data/gnome-extension/$file" "$extension/$file"
+done
+test -s "$extension/schemas/gschemas.compiled"
 # A non-root GUI must stay alive under a virtual display, without capturing.
 useradd -m tester
 set +e
@@ -36,6 +42,7 @@ set -e
 runuser -u tester -- env KEYCAST_SMOKE_TEST=1 dbus-run-session -- xvfb-run -a /usr/bin/keycast-bridge
 apt-get remove -y keycast-bridge
 test ! -e /usr/bin/keycast-bridge
+test ! -e "$extension/extension.js"
 test ! -e /usr/libexec/keycast-bridge-capture
 test ! -e /usr/share/icons/hicolor/1024x1024/apps/fr.jeromelab.KeycastBridge.png
 test ! -e /usr/share/polkit-1/actions/fr.jeromelab.KeycastBridge.policy

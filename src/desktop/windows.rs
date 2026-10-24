@@ -179,6 +179,7 @@ impl Runtime {
         self.snapshot = None;
         self.buffer = None;
         self.scene = Scene::default();
+        *self.controller.status.lock().unwrap() = "stopped".into();
     }
     unsafe fn keys(&mut self) -> anyhow::Result<()> {
         if self.keys {
@@ -366,6 +367,10 @@ unsafe extern "system" fn procedure(
             }
             if queue.len() < 4096 {
                 queue.push_back((msg, wparam, lparam));
+            } else {
+                // Never strand a modal grab by dropping a release or Escape event.
+                queue.clear();
+                queue.push_back((WM_CLOSE, 0, 0));
             }
         });
         return 0;
@@ -381,9 +386,10 @@ unsafe fn handle(r: &mut Runtime, msg: u32, wparam: WPARAM, lparam: LPARAM) -> L
             0
         }
         WM_WTSSESSION_CHANGE => {
-            if wparam == WTS_SESSION_LOCK as usize
-                || wparam == WTS_CONSOLE_DISCONNECT as usize
-                || wparam == WTS_REMOTE_DISCONNECT as usize
+            if r.enabled
+                && (wparam == WTS_SESSION_LOCK as usize
+                    || wparam == WTS_CONSOLE_DISCONNECT as usize
+                    || wparam == WTS_REMOTE_DISCONNECT as usize)
             {
                 r.stop();
                 r.controller.enable(false);

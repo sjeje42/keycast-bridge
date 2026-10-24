@@ -182,12 +182,12 @@ Sous Windows 10/11, aucune installation supplémentaire n’est nécessaire. Sou
 gnome-extensions enable keycast-bridge@jeromelab.fr
 ```
 
-Pour une installation depuis les sources, lancez `./scripts/install-gnome-extension.sh` avec votre utilisateur habituel, puis fermez/rouvrez la session et activez l’extension. Les autres compositeurs et versions de GNOME ne sont pas encore pris en charge pour ces outils du bureau ; l’incrustation du clavier reste indépendante. Désactiver ou désinstaller l’extension supprime immédiatement ses effets.
+Pour une installation depuis les sources, lancez `./scripts/install-gnome-extension.sh` avec votre utilisateur habituel, puis fermez/rouvrez la session et activez l’extension. Les autres compositeurs et versions de GNOME ne sont pas encore pris en charge pour ces outils du bureau ; l’incrustation du clavier reste indépendante. Désactiver l’extension supprime immédiatement ses effets. Fermez Keycast Bridge avant de désinstaller le paquet.
 
 ### Effets du pointeur
 
 - **Anneau :** choisissez la couleur, le rayon (10–200 px), l’épaisseur (1–20 px), le néon et la pulsation dans **Paramètres → Anneau**. Activez l’anneau continu dans **Présentation**. Un anneau bref marque aussi les clics. Les mêmes réglages d’apparence s’appliquent à l’anneau optionnel de la source OBS.
-- **Traînée :** six styles sont proposés : Plein, Tiret, Point, Lueur, Particule et Étoile. La couleur et l’épaisseur suivent celles de l’anneau ; les points disparaissent en 0,65 seconde.
+- **Traînée :** six styles sont proposés : Plein, Tiret, Point, Lueur, Particule et Étoile. La couleur suit celle de l’anneau ; les styles en lignes utilisent aussi son épaisseur ; les points disparaissent en 0,65 seconde.
 - **Secouer pour localiser :** faites rapidement plusieurs allers-retours avec la souris. Un grand anneau apparaît brièvement. Un déplacement rapide en ligne droite ne le déclenche pas.
 - **Spotlight :** assombrissez l’écran courant autour d’une zone éclairée en **cercle ou carré**. Réglez le rayon (40–600 px ; demi-côté pour le carré) et l’assombrissement (0–90 %).
 

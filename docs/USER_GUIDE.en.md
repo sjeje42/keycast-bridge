@@ -182,12 +182,12 @@ On Windows 10/11, no additional installation is needed. On Debian 13 with GNOME 
 gnome-extensions enable keycast-bridge@jeromelab.fr
 ```
 
-For a source installation, run `./scripts/install-gnome-extension.sh` as your ordinary desktop user, then log out/in and enable the extension. Other compositors and GNOME versions are not yet supported for these desktop tools; the existing keyboard overlay still works independently. Disabling/uninstalling the extension immediately removes its effects.
+For a source installation, run `./scripts/install-gnome-extension.sh` as your ordinary desktop user, then log out/in and enable the extension. Other compositors and GNOME versions are not yet supported for these desktop tools; the existing keyboard overlay still works independently. Disabling the extension immediately removes its effects. Close Keycast Bridge before uninstalling the package.
 
 ### Pointer effects
 
 - **Ring:** choose color, radius (10–200 px), thickness (1–20 px), neon and pulse in **Settings → Ring**. Enable the continuous pointer ring in **Presentation**. A short ring also marks clicks. The same appearance settings apply to the optional OBS click ring.
-- **Trail:** choose Solid, Dash, Dot, Glow, Particle or Star. Trail color and width follow the ring settings; samples fade within 0.65 seconds.
+- **Trail:** choose Solid, Dash, Dot, Glow, Particle or Star. Trail color follows the ring settings; line styles also use its thickness; samples fade within 0.65 seconds.
 - **Shake to locate:** rapidly move the pointer back and forth several times. A larger ring appears briefly. Fast movement in a straight line does not trigger it.
 - **Spotlight:** darken the current monitor around an illuminated **circle or square**. Choose the radius (40–600 px; half the side length for a square) and dimming (0–90%).
 

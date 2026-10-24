@@ -244,11 +244,11 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p>Sous Windows 10/11, aucune installation supplémentaire n’est nécessaire. Sous Debian 13 avec GNOME 48/Wayland, activez l’extension GNOME <strong>Keycast Bridge presentation tools</strong> fournie. Après installation du paquet Debian, fermez puis rouvrez votre session, puis exécutez :</p>
 <pre><code class="language-sh">gnome-extensions enable keycast-bridge@jeromelab.fr
 </code></pre>
-<p>Pour une installation depuis les sources, lancez <code>./scripts/install-gnome-extension.sh</code> avec votre utilisateur habituel, puis fermez/rouvrez la session et activez l’extension. Les autres compositeurs et versions de GNOME ne sont pas encore pris en charge pour ces outils du bureau ; l’incrustation du clavier reste indépendante. Désactiver ou désinstaller l’extension supprime immédiatement ses effets.</p>
+<p>Pour une installation depuis les sources, lancez <code>./scripts/install-gnome-extension.sh</code> avec votre utilisateur habituel, puis fermez/rouvrez la session et activez l’extension. Les autres compositeurs et versions de GNOME ne sont pas encore pris en charge pour ces outils du bureau ; l’incrustation du clavier reste indépendante. Désactiver l’extension supprime immédiatement ses effets. Fermez Keycast Bridge avant de désinstaller le paquet.</p>
 <h3 id="effets-du-pointeur">Effets du pointeur</h3>
 <ul>
 <li><strong>Anneau :</strong> choisissez la couleur, le rayon (10–200 px), l’épaisseur (1–20 px), le néon et la pulsation dans <strong>Paramètres → Anneau</strong>. Activez l’anneau continu dans <strong>Présentation</strong>. Un anneau bref marque aussi les clics. Les mêmes réglages d’apparence s’appliquent à l’anneau optionnel de la source OBS.</li>
-<li><strong>Traînée :</strong> six styles sont proposés : Plein, Tiret, Point, Lueur, Particule et Étoile. La couleur et l’épaisseur suivent celles de l’anneau ; les points disparaissent en 0,65 seconde.</li>
+<li><strong>Traînée :</strong> six styles sont proposés : Plein, Tiret, Point, Lueur, Particule et Étoile. La couleur suit celle de l’anneau ; les styles en lignes utilisent aussi son épaisseur ; les points disparaissent en 0,65 seconde.</li>
 <li><strong>Secouer pour localiser :</strong> faites rapidement plusieurs allers-retours avec la souris. Un grand anneau apparaît brièvement. Un déplacement rapide en ligne droite ne le déclenche pas.</li>
 <li><strong>Spotlight :</strong> assombrissez l’écran courant autour d’une zone éclairée en <strong>cercle ou carré</strong>. Réglez le rayon (40–600 px ; demi-côté pour le carré) et l’assombrissement (0–90 %).</li>
 </ul>

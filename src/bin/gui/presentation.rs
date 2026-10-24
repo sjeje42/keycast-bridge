@@ -215,7 +215,27 @@ pub(super) fn build(
         )));
         active.set_active(controller.enabled());
         actions.set_sensitive(controller.enabled());
-        status.set_text(&controller.status());
+        let message = controller.status();
+        status.set_text(match message.as_str() {
+            "Normal" | "normal" => tr(fr, "Effets du bureau actifs", "Desktop effects active"),
+            "Annotate" | "annotate" => tr(
+                fr,
+                "Annotation active — Échap pour quitter",
+                "Annotation active — Esc to exit",
+            ),
+            "Whiteboard" | "whiteboard" => tr(
+                fr,
+                "Tableau blanc actif — Échap pour quitter",
+                "Whiteboard active — Esc to exit",
+            ),
+            "Zoom" | "zoom" => tr(
+                fr,
+                "Zoom figé actif — Échap pour quitter",
+                "Frozen zoom active — Esc to exit",
+            ),
+            "stopped" => tr(fr, "Outils arrêtés", "Tools stopped"),
+            _ => &message,
+        });
         draw.set_label(tr(fr, "Dessiner", "Draw"));
         board.set_label(tr(fr, "Tableau blanc", "Whiteboard"));
         zoom.set_label("Zoom");

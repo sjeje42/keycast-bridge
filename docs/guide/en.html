@@ -244,11 +244,11 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p>On Windows 10/11, no additional installation is needed. On Debian 13 with GNOME 48/Wayland, enable the included <strong>Keycast Bridge presentation tools</strong> GNOME extension. After installing the Debian package, log out and back in, then run:</p>
 <pre><code class="language-sh">gnome-extensions enable keycast-bridge@jeromelab.fr
 </code></pre>
-<p>For a source installation, run <code>./scripts/install-gnome-extension.sh</code> as your ordinary desktop user, then log out/in and enable the extension. Other compositors and GNOME versions are not yet supported for these desktop tools; the existing keyboard overlay still works independently. Disabling/uninstalling the extension immediately removes its effects.</p>
+<p>For a source installation, run <code>./scripts/install-gnome-extension.sh</code> as your ordinary desktop user, then log out/in and enable the extension. Other compositors and GNOME versions are not yet supported for these desktop tools; the existing keyboard overlay still works independently. Disabling the extension immediately removes its effects. Close Keycast Bridge before uninstalling the package.</p>
 <h3 id="pointer-effects">Pointer effects</h3>
 <ul>
 <li><strong>Ring:</strong> choose color, radius (10–200 px), thickness (1–20 px), neon and pulse in <strong>Settings → Ring</strong>. Enable the continuous pointer ring in <strong>Presentation</strong>. A short ring also marks clicks. The same appearance settings apply to the optional OBS click ring.</li>
-<li><strong>Trail:</strong> choose Solid, Dash, Dot, Glow, Particle or Star. Trail color and width follow the ring settings; samples fade within 0.65 seconds.</li>
+<li><strong>Trail:</strong> choose Solid, Dash, Dot, Glow, Particle or Star. Trail color follows the ring settings; line styles also use its thickness; samples fade within 0.65 seconds.</li>
 <li><strong>Shake to locate:</strong> rapidly move the pointer back and forth several times. A larger ring appears briefly. Fast movement in a straight line does not trigger it.</li>
 <li><strong>Spotlight:</strong> darken the current monitor around an illuminated <strong>circle or square</strong>. Choose the radius (40–600 px; half the side length for a square) and dimming (0–90%).</li>
 </ul>
