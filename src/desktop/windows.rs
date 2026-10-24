@@ -330,17 +330,47 @@ impl Runtime {
         self.controller.fail(error.to_string());
     }
 }
+thread_local! {
+    // WndProc only queues events: Win32 may call it reentrantly while rendering or
+    // changing focus. It must never borrow the Runtime already used by that call.
+    static EVENTS: std::cell::RefCell<std::collections::VecDeque<(u32, WPARAM, LPARAM)>> = const { std::cell::RefCell::new(std::collections::VecDeque::new()) };
+}
 unsafe extern "system" fn procedure(
     hwnd: HWND,
     msg: u32,
     wparam: WPARAM,
     lparam: LPARAM,
 ) -> LRESULT {
-    let pointer = GetWindowLongPtrW(hwnd, GWLP_USERDATA) as *mut Runtime;
-    if pointer.is_null() {
-        return DefWindowProcW(hwnd, msg, wparam, lparam);
+    if matches!(
+        msg,
+        WM_CLOSE
+            | WM_WTSSESSION_CHANGE
+            | WM_DISPLAYCHANGE
+            | WM_KILLFOCUS
+            | WM_HOTKEY
+            | WM_KEYDOWN
+            | WM_SYSKEYDOWN
+            | WM_LBUTTONDOWN
+            | WM_LBUTTONUP
+            | WM_CAPTURECHANGED
+            | WM_MOUSEMOVE
+            | WM_MOUSEWHEEL
+    ) {
+        EVENTS.with(|events| {
+            let mut queue = events.borrow_mut();
+            if queue.len() >= 4096 {
+                queue.retain(|(message, _, _)| *message != WM_MOUSEMOVE);
+            }
+            if queue.len() < 4096 {
+                queue.push_back((msg, wparam, lparam));
+            }
+        });
+        return 0;
     }
-    let r = &mut *pointer;
+    DefWindowProcW(hwnd, msg, wparam, lparam)
+}
+unsafe fn handle(r: &mut Runtime, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
+    let hwnd = r.hwnd;
     match msg {
         WM_CLOSE => {
             r.stop();
@@ -364,7 +394,7 @@ unsafe extern "system" fn procedure(
             0
         }
         WM_KILLFOCUS => {
-            if !r.transition && r.mode != Mode::Normal {
+            if !r.transition && r.mode != Mode::Normal && GetForegroundWindow() != hwnd {
                 if let Err(e) = r.mode(Mode::Normal) {
                     r.error(e);
                 }
@@ -424,7 +454,9 @@ unsafe extern "system" fn procedure(
             0
         }
         WM_CAPTURECHANGED => {
-            r.scene.drawing = false;
+            if GetCapture() != hwnd {
+                r.scene.drawing = false;
+            }
             0
         }
         WM_MOUSEMOVE if r.scene.drawing => {
@@ -463,7 +495,7 @@ pub(super) fn run(controller: &Arc<Controller>) {
             return;
         }
         let hwnd = CreateWindowExW(
-            WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT,
+            WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT,
             class.as_ptr(),
             class.as_ptr(),
             WS_POPUP,
@@ -497,14 +529,8 @@ pub(super) fn run(controller: &Arc<Controller>) {
             buttons: 0,
             zoom: 2.0,
         });
-        SetWindowLongPtrW(
-            hwnd,
-            GWLP_USERDATA,
-            (&mut *runtime as *mut Runtime) as isize,
-        );
         if WTSRegisterSessionNotification(hwnd, NOTIFY_FOR_THIS_SESSION) == 0 {
             controller.fail("Cannot monitor session lock");
-            SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
             DestroyWindow(hwnd);
             UnregisterClassW(class.as_ptr(), instance);
             return;
@@ -514,6 +540,10 @@ pub(super) fn run(controller: &Arc<Controller>) {
             while PeekMessageW(&mut message, null_mut(), 0, 0, PM_REMOVE) != 0 {
                 TranslateMessage(&message);
                 DispatchMessageW(&message);
+            }
+            let events = EVENTS.with(|events| std::mem::take(&mut *events.borrow_mut()));
+            for (message, wparam, lparam) in events {
+                handle(&mut runtime, message, wparam, lparam);
             }
             let request = controller.request.lock().unwrap().clone();
             if !request.enabled {
@@ -536,7 +566,6 @@ pub(super) fn run(controller: &Arc<Controller>) {
         }
         runtime.stop();
         WTSUnRegisterSessionNotification(hwnd);
-        SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
         DestroyWindow(hwnd);
         UnregisterClassW(class.as_ptr(), instance);
     }

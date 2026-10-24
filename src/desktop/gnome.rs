@@ -46,6 +46,7 @@ pub(super) fn run(controller: &Controller) {
                     if let Some((message,)) = reply.get::<(String,)>() {
                         if message == "stopped" && request.enabled {
                             controller.enable(false);
+                            controller.bridge.stop();
                         }
                         *controller.status.lock().unwrap() = message;
                     }

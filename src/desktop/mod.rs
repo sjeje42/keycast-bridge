@@ -22,6 +22,7 @@ pub struct Controller {
     request: Mutex<Request>,
     status: Mutex<String>,
     shutdown: AtomicBool,
+    finished: AtomicBool,
     bridge: Arc<Bridge>,
 }
 impl Controller {
@@ -34,6 +35,7 @@ impl Controller {
             }),
             status: Mutex::new(String::new()),
             shutdown: AtomicBool::new(false),
+            finished: AtomicBool::new(false),
             bridge,
         });
         let worker = this.clone();
@@ -42,6 +44,7 @@ impl Controller {
             gnome::run(&worker);
             #[cfg(windows)]
             windows::run(&worker);
+            worker.finished.store(true, Ordering::Release);
         });
         this
     }
@@ -67,6 +70,13 @@ impl Controller {
     pub fn shutdown(&self) {
         self.enable(false);
         self.shutdown.store(true, Ordering::Release);
+        // Give the backend time to release grabs and erase its in-memory snapshot.
+        for _ in 0..100 {
+            if self.finished.load(Ordering::Acquire) {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
     }
     fn stopped(&self) -> bool {
         self.shutdown.load(Ordering::Acquire)

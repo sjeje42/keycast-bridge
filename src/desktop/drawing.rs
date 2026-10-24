@@ -79,8 +79,15 @@ pub(super) fn draw(
             _ => (),
         }
         let points: Vec<_> = scene.trail.iter().collect();
+        let mut distance = 0.0;
         for (i, pair) in points.windows(2).enumerate() {
             let (prev, p) = (pair[0].point, pair[1].point);
+            match s.trail_style {
+                TrailStyle::Dash => c.set_dash(&[12.0, 10.0], distance),
+                TrailStyle::Dot => c.set_dash(&[0.1, 10.0], distance),
+                _ => (),
+            }
+            distance += prev.distance(p);
             let alpha = (1.0 - (t - pair[1].time) / 0.65).clamp(0.0, 1.0);
             color(c, &r.color, alpha * 0.85);
             c.set_line_width(f64::from(r.thickness));

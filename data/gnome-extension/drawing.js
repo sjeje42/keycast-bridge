@@ -21,8 +21,12 @@ export function draw(c,w,h,scene,a,mode,t) {
         const dots = ['particle','star'].includes(s.trail_style);
         if (s.trail_style==='dash') c.setDash([12,10],0);
         if (s.trail_style==='dot') c.setDash([0.1,10],0);
+        let distance=0;
         for(let i=1;i<scene.trail.length;i++) {
             const p=scene.trail[i], prev=scene.trail[i-1], alpha=Math.max(0,1-(t-p[2])/0.65);
+            if(s.trail_style==='dash')c.setDash([12,10],distance);
+            if(s.trail_style==='dot')c.setDash([0.1,10],distance);
+            distance+=Math.hypot(p[0]-prev[0],p[1]-prev[1]);
             color(c,r.color,alpha*0.85); c.setLineWidth(r.thickness);
             if(dots) {
                 if(i%3!==0) continue;

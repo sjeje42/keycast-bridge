@@ -10,7 +10,7 @@ import {Scene, validate, zoomOrigin} from './model.js';
 import {draw} from './drawing.js';
 
 Gio._promisify(Shell.Screenshot.prototype, 'screenshot_stage_to_content');
-const XML = `<node><interface name="fr.jeromelab.KeycastBridge.Presentation"><method name="Update"><arg type="s" direction="in"/><arg type="s" direction="out"/></method></interface></node>`;
+const XML = `<node><interface name="fr.jeromelab.KeycastBridge.Presentation"><method name="Update"><arg type="s" direction="in"/><arg type="s" direction="out"/></method><method name="State"><arg type="s" direction="out"/></method></interface></node>`;
 const now = () => GLib.get_monotonic_time()/1e6;
 
 export default class Presentation extends Extension {
@@ -57,6 +57,9 @@ export default class Presentation extends Extension {
             invocation.return_value(new GLib.Variant('(s)',[this._running?this._mode:'stopped']));
         } catch(e) { invocation.return_dbus_error('fr.jeromelab.KeycastBridge.InvalidRequest',String(e.message)); }
     }
+    State() {
+        return JSON.stringify({enabled:this._running,mode:this._mode,grabbed:!!this._grab,strokes:this._scene.strokes.length,snapshot:!!this._image.get_content(),width:this._monitor?.width??0,height:this._monitor?.height??0});
+    }
     _releaseOwner() {if(this._watch)Gio.bus_unwatch_name(this._watch);this._watch=0;this._owner=null;}
     _setMonitor() {
         const [x,y]=global.get_pointer();
@@ -71,11 +74,11 @@ export default class Presentation extends Extension {
         if(this._keys)return;
         const settings=this.getSettings('org.gnome.shell.extensions.keycast-bridge');
         this._keys=true;
-        for(const [key,mode] of [['draw','annotate'],['whiteboard','whiteboard'],['zoom','zoom'],['stop',null]]) {
+        for(const [key,mode] of [['keycast-draw','annotate'],['keycast-whiteboard','whiteboard'],['keycast-zoom','zoom'],['keycast-stop',null]]) {
             Main.wm.addKeybinding(key,settings,Meta.KeyBindingFlags.NONE,Shell.ActionMode.ALL,()=>{if(mode)this._setMode(mode);else this._stop();});
         }
     }
-    _unbindKeys() {if(this._keys)for(const key of ['draw','whiteboard','zoom','stop'])Main.wm.removeKeybinding(key);this._keys=false;}
+    _unbindKeys() {if(this._keys)for(const key of ['keycast-draw','keycast-whiteboard','keycast-zoom','keycast-stop'])Main.wm.removeKeybinding(key);this._keys=false;}
     _ungrab() {if(this._grab){Main.popModal(this._grab);this._grab=null;}this._actor.reactive=false;}
     _setMode(mode) {
         this._generation++; this._ungrab(); this._image.set_content(null);this._image.hide();this._scene.clear();
