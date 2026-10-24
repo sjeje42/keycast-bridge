@@ -2,12 +2,14 @@
 
 ## English
 
+- [Desktop presentation tools](PRESENTATION.en.md)
 - [Online user guide](USER_GUIDE.en.md)
 - [Illustrated PDF guide](pdf/Keycast_Bridge_User_Guide_EN.pdf)
 - [Installation and project README](../README.md)
 
 ## Français
 
+- [Outils de présentation du bureau](PRESENTATION.fr.md)
 - [Guide d’utilisation en ligne](USER_GUIDE.fr.md)
 - [Guide illustré en PDF](pdf/Keycast_Bridge_Guide_Utilisateur_FR.pdf)
 - [Installation et présentation du projet](../README.fr.md)

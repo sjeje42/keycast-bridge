@@ -25,6 +25,8 @@ jobs:
           cd web
           npx playwright install --with-deps chromium
           node tests/overlay.mjs
+      - name: Presentation model
+        run: node scripts/test-presentation.mjs
       - run: cargo fmt --check
       - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo test --locked

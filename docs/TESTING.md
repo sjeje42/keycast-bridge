@@ -18,7 +18,7 @@ Unit tests cover layout-dependent Ctrl+A/Ctrl+Q, modifier release, ignored repea
 
 The included `scripts/smoke.mjs` exercises a running demo over HTTP and WebSocket (Node.js 22). Build `keycast-bridge-demo` first and ensure port 48732 is free.
 
-See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
+See [VALIDATION.md](VALIDATION.md) for checks actually completed for this version.
 
 ## Linux desktop + OBS regression checklist (Debian 13 / Fedora)
 
@@ -40,7 +40,7 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 - [ ] OBS reconnect / hidden source / slow consumer: no stale key replay.
 - [ ] Long session: no persistent key logs or increasing memory backlog.
 
-**Not guaranteed in this alpha:** initial Caps/Num Lock state, automatic desktop layout tracking, multi-keyboard chords, Compose/IME, lock-screen auto-pause, mouse wheel/motion.
+**Not guaranteed in this version:** initial Caps/Num Lock state, automatic desktop layout tracking, multi-keyboard chords, Compose/IME, lock-screen auto-pause, mouse wheel/motion.
 
 
 ## Keyboard hotplug and mouse buttons (physical hardware)
@@ -82,4 +82,23 @@ Drag the schematic preview; test all nine presets and numeric X/Y via keyboard. 
 
 ## Settings and canvas
 
-Check initial main-window fit on 1280×720/1366×768 displays and high-DPI scaling. Open the gear, switch all three tabs, close/reopen Settings and verify capture continues. Choose a portrait preset and a custom canvas, align OBS width/height, then restart and confirm dimensions persist. With mismatched browser dimensions, verify centered transparent margins and no distortion. Check the main dimension hint, preview aspect and pointer ring. Open the complete guide in each language with the network disconnected; also open the bundled HTML directly.
+Check initial main-window fit on 1280×720/1366×768 displays and high-DPI scaling. Open the gear, switch all settings tabs (including Click ring on Windows), close/reopen Settings and verify capture continues. Choose a portrait preset and a custom canvas, align OBS width/height, then restart and confirm dimensions persist. With mismatched browser dimensions, verify centered transparent margins and no distortion. Check the main dimension hint, preview aspect and pointer ring. Open the complete guide in each language with the network disconnected; also open the bundled HTML directly.
+
+## Custom click ring (Windows)
+
+In Settings → Click ring, change color, base radius and thickness; try all four neon/pulse combinations. Check the reduced preview and OBS output. Verify a 10px radius caps thickness at 10px; a 200px radius accepts 20px thickness. Change key size and palette: ring dimensions and color must remain independent. Confirm each click fades within 0.5s, a rapid second click restarts the effect, and Stop/disconnect/disable clears it. Change style while capture is active: held modifiers and capture must continue. Restart and confirm all five ring settings persist; test an old preference file without a ring section. Reset ring must preserve other appearance settings. Repeat with portrait/4K canvas, a scaled browser source and multiple monitors. Record actual manual results, not just completion of this checklist.
+
+## Desktop presentation acceptance (0.2.0 candidate)
+
+Automated: `node scripts/test-presentation.mjs` checks bounded scene state and settings. Rust/Cairo tests check transparent circle/square spotlight apertures, all six rendered trail styles and annotation/whiteboard backgrounds. Windows tests create a real layered window, enter each modal tool, send Escape and verify input styles/closure. The GNOME 48 workflow runs a nested Wayland compositor on Debian 13 (only logind is mocked in the container; physical lock/unlock remains a manual check) and exercises drawing, undo, clear, Escape, zoom snapshots, competing clients and heartbeat/connection cleanup.
+
+Before approving the stable release, test on physical Windows 10/11 and Debian 13/GNOME 48:
+
+1. Enable tools; confirm all six trails and ring color/radius/width/neon/pulse, both spotlight shapes and dimming extremes. Move normally and shake; straight fast motion must not trigger the locator.
+2. Move between monitors with different resolutions/scaling, including a secondary monitor left of the primary on Windows. Verify normal clicks reach applications under passive effects.
+3. Use Ctrl+Alt+D/B/Z on each monitor. Draw multiple strokes; verify Ctrl+Z removes one, Backspace clears, Escape restores input and clears temporary content. Zoom with wheel/+/- and pan to all edges. Check the displayed image is explicitly frozen.
+4. Alt-Tab from a Windows modal tool; lock/unlock, unplug a monitor, stop/close/terminate the app, and disable the GNOME extension. No invisible input grab or effect may remain; tools must not reactivate after lock.
+5. Record with OBS Display Capture/PipeWire at 1080p and 4K. Confirm cursor alignment, readable neon/trails and no duplicate OBS click ring. Window Capture is not the desktop-effect path.
+6. Reopen the app: styles restored, tools off, no strokes/snapshot retained. Check CPU/GPU load during a long tutorial and shortcut conflicts with the actual training software.
+
+These new tools are not covered by the earlier alpha field-test report. Record OS/GNOME version, scaling, display topology and OBS capture method with acceptance results.

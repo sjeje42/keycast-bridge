@@ -5,13 +5,14 @@
   // A separate live row keeps held keys visible after a shortcut's history expires.
   let size = $state(40);
   let duration = 1800;
-  const defaults = {canvas_width:1920, canvas_height:1080, x:50, y:100, background:'#10151f', key_background:'#273142', text:'#f7f9ff', accent:'#a879ff', right_click:'#ff9e64', middle_click:'#74dfba'};
+  const ringDefaults = {color:'#a879ff', radius:30, thickness:3, neon:false, pulse:true};
+  const defaults = {canvas_width:1920, canvas_height:1080, x:50, y:100, background:'#10151f', key_background:'#273142', text:'#f7f9ff', accent:'#a879ff', right_click:'#ff9e64', middle_click:'#74dfba', ring:ringDefaults};
   let appearance = $state({...defaults});
   let viewportWidth = $state(1920);
   let viewportHeight = $state(1080);
   let canvasScale = $derived(Math.min(viewportWidth / appearance.canvas_width, viewportHeight / appearance.canvas_height));
   function readAppearance(value: unknown, dark: boolean) {
-    const result = {...defaults};
+    const result = {...defaults, ring:{...ringDefaults}};
     if (!dark) Object.assign(result, {background:'#f4f7ff', key_background:'#ffffff', text:'#172033'});
     if (value && typeof value === 'object') {
       const input = value as Record<string, unknown>;
@@ -23,6 +24,16 @@
       }
       for (const key of ['background','key_background','text','accent','right_click','middle_click'] as const) {
         if (typeof input[key] === 'string' && /^#[0-9a-f]{6}$/i.test(input[key])) result[key] = input[key];
+      }
+      if (input.ring && typeof input.ring === 'object') {
+        const ring = input.ring as Record<string, unknown>;
+        if (typeof ring.color === 'string' && /^#[0-9a-f]{6}$/i.test(ring.color)) result.ring.color = ring.color;
+        if (typeof ring.radius === 'number' && Number.isFinite(ring.radius)) result.ring.radius = Math.round(Math.min(200, Math.max(10, ring.radius)));
+        if (typeof ring.thickness === 'number' && Number.isFinite(ring.thickness)) result.ring.thickness = Math.round(Math.min(20, Math.max(1, ring.thickness)));
+        result.ring.thickness = Math.min(result.ring.thickness, result.ring.radius);
+        for (const key of ['neon','pulse'] as const) {
+          if (typeof ring[key] === 'boolean') result.ring[key] = ring[key];
+        }
       }
     }
     return result;
@@ -125,7 +136,7 @@
 </div>
 </div>
 {#if ring}
-  {#key ring.id}<div class="ring" style:left={`${ring.x*100}%`} style:top={`${ring.y*100}%`} style:width={`${size*1.5}px`} style:height={`${size*1.5}px`}></div>{/key}
+  {#key ring.id}<div class="ring" class:neon={appearance.ring.neon} class:pulsing={appearance.ring.pulse} style:--ring-color={appearance.ring.color} style:border-width={`${appearance.ring.thickness}px`} style:left={`${ring.x*100}%`} style:top={`${ring.y*100}%`} style:width={`${appearance.ring.radius*2}px`} style:height={`${appearance.ring.radius*2}px`}></div>{/key}
 {/if}
 </div>
 </div>
@@ -142,6 +153,9 @@
   kbd { font-family:inherit; font-weight:650; background:var(--key-background); border:1px solid var(--border); border-bottom:3px solid var(--border); border-radius:.22em; padding:.18em .42em; }
   .mouse { height:1.5em; width:1.13em; margin:0 .2em; }
   .plus { font-size:.6em; opacity:.65; }
-  .ring { position:absolute; pointer-events:none; border:3px solid var(--accent); border-radius:50%; transform:translate(-50%,-50%); animation:pulse .5s ease-out forwards; }
-  @keyframes pulse { from { opacity:1; transform:translate(-50%,-50%) scale(.7); } to { opacity:0; transform:translate(-50%,-50%) scale(1.4); } }
+  .ring { position:absolute; box-sizing:border-box; pointer-events:none; border:solid var(--ring-color); border-radius:50%; transform:translate(-50%,-50%); animation:ring-fade .5s ease-out forwards; }
+  .ring.neon { box-shadow:0 0 8px 2px var(--ring-color), inset 0 0 8px 2px var(--ring-color); }
+  .ring.pulsing { animation-name:ring-pulse; }
+  @keyframes ring-fade { from { opacity:1; } to { opacity:0; } }
+  @keyframes ring-pulse { from { opacity:1; transform:translate(-50%,-50%) scale(.7); } to { opacity:0; transform:translate(-50%,-50%) scale(1.4); } }
 </style>

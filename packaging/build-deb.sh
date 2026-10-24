@@ -23,6 +23,11 @@ install -m 0644 README.md README.fr.md SECURITY.md "$pkg/usr/share/doc/keycast-b
 install -m 0644 docs/USER_GUIDE.en.md docs/USER_GUIDE.fr.md "$pkg/usr/share/doc/keycast-bridge/"
 cp -R docs/guide "$pkg/usr/share/doc/keycast-bridge/guide"
 cp -R docs/pdf "$pkg/usr/share/doc/keycast-bridge/pdf"
+extension="$pkg/usr/share/gnome-shell/extensions/keycast-bridge@jeromelab.fr"
+install -d "$extension/schemas"
+install -m 0644 data/gnome-extension/*.js data/gnome-extension/metadata.json "$extension/"
+install -m 0644 data/gnome-extension/schemas/*.xml "$extension/schemas/"
+glib-compile-schemas --strict "$extension/schemas"
 strip "$pkg/usr/bin/"* "$pkg/usr/libexec/"*
 mkdir "$work/debian"
 cat > "$work/debian/control" <<'CONTROL'

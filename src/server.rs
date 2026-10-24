@@ -44,10 +44,12 @@ impl Bridge {
                     duration: 1800,
                     dark: true,
                     halo: false,
-                    appearance: preferences_path()
-                        .as_deref()
-                        .and_then(Appearance::load)
-                        .unwrap_or_default(),
+                    appearance: Box::new(
+                        preferences_path()
+                            .as_deref()
+                            .and_then(Appearance::load)
+                            .unwrap_or_default(),
+                    ),
                 },
             }),
         })
@@ -87,14 +89,14 @@ impl Bridge {
     }
     pub fn appearance(&self) -> Appearance {
         match &self.inner.lock().unwrap().config {
-            Event::Config { appearance, .. } => appearance.clone(),
+            Event::Config { appearance, .. } => appearance.as_ref().clone(),
             _ => Appearance::default(),
         }
     }
     pub fn set_appearance(&self, value: Appearance) {
         let mut inner = self.inner.lock().unwrap();
         if let Event::Config { appearance, .. } = &mut inner.config {
-            *appearance = value.sanitized();
+            **appearance = value.sanitized();
         }
         let _ = self.tx.send(inner.config.clone());
     }
@@ -226,6 +228,13 @@ mod tests {
             x: 0.0,
             y: 25.0,
             accent: "#22aa44".into(),
+            ring: crate::appearance::RingAppearance {
+                color: "#44aaff".into(),
+                radius: 80,
+                thickness: 7,
+                neon: true,
+                pulse: false,
+            },
             ..Default::default()
         };
         b.set_appearance(style.clone());
@@ -236,7 +245,7 @@ mod tests {
         assert_eq!(inner.status, "capturing");
         assert_eq!(inner.modifiers, ["Ctrl"]);
         assert!(
-            matches!(&inner.config, Event::Config { size:64, duration:2300, halo:true, appearance, .. } if appearance == &style)
+            matches!(&inner.config, Event::Config { size:64, duration:2300, halo:true, appearance, .. } if appearance.as_ref() == &style)
         );
         while let Ok(event) = rx.try_recv() {
             assert!(matches!(event, Event::Config { .. }));

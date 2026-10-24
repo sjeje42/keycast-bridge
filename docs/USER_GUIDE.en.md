@@ -1,6 +1,6 @@
 # Keycast Bridge — User guide
 
-Version **0.2.0-alpha.8** · [Français](USER_GUIDE.fr.md)
+Version **0.2.0** · [Français](USER_GUIDE.fr.md)
 
 Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse clicks in a transparent OBS Browser Source. The native application controls capture and appearance; OBS combines the overlay with your screen or application capture.
 
@@ -8,14 +8,14 @@ Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse c
 
 ### Windows x64
 
-Download the Windows ZIP from the project's GitHub Releases. Extract the **entire archive** into a writable folder and open `keycast-bridge.exe`. Keep the DLLs and subfolders beside the executable. There is no installer, driver or background service. Use the application as a normal user. The alpha is unsigned; secure desktops, UAC prompts and elevated applications are outside its supported capture target.
+Download the Windows ZIP from the project's GitHub Releases. Extract the **entire archive** into a writable folder and open `keycast-bridge.exe`. Keep the DLLs and subfolders beside the executable. There is no installer, driver or background service. Use the application as a normal user. The Windows executable is unsigned; secure desktops, UAC prompts and elevated applications are outside its supported capture target.
 
 ### Debian 13 amd64
 
 Download the Debian package from Releases, open a terminal in its folder and run:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb
 ```
 
 Open Keycast Bridge from the application menu. Do **not** run the graphical application with sudo. Starting keyboard capture requests administrator authorization through Polkit; the capture helper manages the input devices. You do not need to add yourself to the `input` group.
@@ -50,8 +50,8 @@ The compact main window contains the capture status, mouse options, Start/Stop/T
 | Control | Purpose |
 | --- | --- |
 | Start | Begin capture with the options currently selected. |
-| Stop | End capture and clear the overlay. |
-| Ctrl + Alt + F12 | Emergency stop. The combination is also delivered to the active application. |
+| Stop | End capture, clear the overlay and stop desktop tools. |
+| Ctrl + Alt + F12 | Emergency stop. Desktop tools may consume this registered shortcut while enabled. |
 | Test overlay | Stop capture and display a sample shortcut for checking OBS. |
 | Copy OBS URL | Copy this session's local overlay address. |
 | Open preview | Open the overlay in your browser; it is transparent and can look empty when no input is displayed. |
@@ -79,11 +79,11 @@ The shortcut row and live modifier/mouse row move together. Their alignment foll
 | Background | The translucent background of each row. |
 | Key background | The surface of each key. |
 | Text | Letters, separators and mouse outline. |
-| Accent / left click | Held-key outlines, left mouse button and Windows click ring. |
+| Accent / left click | Held-key outlines and left mouse button. |
 | Right click | Right mouse button highlight. |
 | Middle click | Middle mouse button highlight. |
 
-Click a swatch to open the color chooser. The **Dark palette** and **Light palette** buttons restore coordinated colors while preserving position and canvas dimensions. **Reset all** in this tab resets position and colors only; it does not change canvas size or capture options.
+Click a swatch to open the color chooser. The **Dark palette** and **Light palette** buttons restore coordinated colors while preserving position, canvas dimensions and ring style. **Reset all** in this tab resets position, colors, ring style and presentation styles; it does not change canvas size or capture options.
 
 ## 5. Settings — Canvas and size
 
@@ -101,7 +101,7 @@ Example: for a vertical 1080 × 1920 tutorial, choose that preset in the applica
 
 On **Linux**, the default captures all recognized keyboards, including newly attached keyboards. You can instead select specific keyboards in Settings and refresh the device list. Set the keyboard layout to match your desktop: French AZERTY, US or UK QWERTY, or German QWERTZ. Unplugging a keyboard drops its held-key state. Reconnecting or replacing keyboards in automatic mode does not require restarting OBS.
 
-On **Windows**, all keyboards in the current session are captured and the layout follows the foreground window. Individual keyboard selection is not available in this alpha.
+On **Windows**, all keyboards in the current session are captured and the layout follows the foreground window. Individual keyboard selection is not available in this version.
 
 ### Shortcuts, text and held modifiers
 
@@ -119,11 +119,27 @@ On **Windows**, enable **Click ring** before starting: this also enables **Show 
 
 The ring is drawn inside the OBS overlay, not directly on the Windows desktop. Accurate alignment requires matching the selected monitor capture and Browser Source rectangles and aspect ratio. Window captures or crops are not mapped automatically.
 
-On **Linux/Wayland**, keyboard and button feedback work across screens, but pointer-position rings are not available.
+On **Linux/Wayland**, keyboard and button feedback work across screens. The Browser Source does not receive pointer coordinates; GNOME 48 desktop rings are available separately through **Presentation** and Display Capture.
+
+### Click ring — Windows
+
+Open **Settings → Ring** to configure:
+
+| Setting | Purpose |
+| --- | --- |
+| Color | Dedicated ring color, independent of keys and mouse-button colors. |
+| Base radius | 10–200 OBS canvas pixels, independent of key size. |
+| Thickness | 1–20 pixels, never exceeding the radius. |
+| Neon glow | Adds an inner and outer glow in the selected color. |
+| Pulse effect | Expands the ring from 70 to 140% of its base radius as it disappears. Disabled: fixed radius with a fade. |
+
+Each click displays the ring for 0.5 seconds. Radius and thickness follow canvas scaling. The reduced preview repeats without starting capture. Changes apply live and are saved. **Reset ring** restores purple, a 30px radius, 3px thickness, neon off and pulse on.
+
+Enable **Click ring** in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.
 
 ## 7. Saved settings and privacy
 
-Position, palette and canvas dimensions are saved automatically. Other controls—including size, duration, capture options, selected monitor and language—remain session-only in this alpha. A message in Settings reports a save failure while retaining the live changes for the current session.
+Position, palette, canvas dimensions and ring style are saved automatically. Other controls—including size, duration, capture options, selected monitor and language—remain session-only in this version. A message in Settings reports a save failure while retaining the live changes for the current session.
 
 Preference locations:
 
@@ -132,7 +148,7 @@ Preference locations:
 
 This file contains only appearance/canvas preferences: no keystrokes, mouse history or OBS URL. If it is corrupt, the application falls back to defaults. To reset all saved preferences, close the application and rename this file; restart to use defaults.
 
-The server listens only on IPv4 localhost, port 48732. There is no telemetry, key history or automatic capture at startup. The random session URL and Origin checks limit access but do not protect against malicious software running as the same user. Capture does not stop automatically when locking the session; stop it first. On Linux, use the emergency shortcut on one captured keyboard with all modifiers held on that keyboard.
+The server listens only on IPv4 localhost, port 48732. There is no telemetry, key history or automatic capture at startup. The random session URL and Origin checks limit access but do not protect against malicious software running as the same user. Keyboard capture alone does not stop automatically when locking the session; stop it first. Enabled desktop presentation tools add session-lock cleanup. On Linux, use the emergency shortcut on one captured keyboard with all modifiers held on that keyboard.
 
 ## 8. Troubleshooting
 
@@ -143,7 +159,7 @@ The server listens only on IPv4 localhost, port 48732. There is no telemetry, ke
 | OBS shows an old or failed page | Copy the URL again after restarting Keycast Bridge and refresh the Browser Source. |
 | Position or size differs from the preview | The preview is schematic. Match canvas and OBS dimensions; check OBS crops/transforms and key Size. |
 | Mouse buttons do not appear | Stop, enable Show mouse clicks, then Start again. |
-| Ring is offset or missing | Windows only; enable it, select the correct monitor, match aspect ratios and align uncropped OBS sources. |
+| OBS click ring is offset or missing | Windows Browser Source only; enable it, select the correct monitor, match aspect ratios and align uncropped OBS sources. |
 | Linux capture authorization fails | Check the installed package/helper and Polkit prompt. Do not launch the GUI as root. |
 | Settings disappear after restarting | Only appearance/canvas settings persist. Check the save-failure message and preference-directory permissions. |
 | Windows executable fails to launch | Extract the entire ZIP and keep its DLL/data folders. Do not copy the EXE alone. |
@@ -154,3 +170,55 @@ For a useful report, include the application version, OS, desktop/display scalin
 ### The guide or preview does not open
 
 On Windows, the button uses the system default browser. If Windows rejects the launch, a dialog offers **Copy link**: paste it into your browser and keep Keycast Bridge running. Check the default browser in Windows settings. The offline guide is also available in `guide/en.html` beside the executable.
+
+
+## Desktop presentation tools
+
+Open **Settings → Presentation** and enable **Desktop presentation tools**. They start **off** whenever Keycast Bridge opens. The tools work independently of keyboard capture. **Stop** in the main window also stops the desktop tools.
+
+On Windows 10/11, no additional installation is needed. On Debian 13 with GNOME 48/Wayland, enable the included **Keycast Bridge presentation tools** GNOME extension. After installing the Debian package, log out and back in, then run:
+
+```sh
+gnome-extensions enable keycast-bridge@jeromelab.fr
+```
+
+For a source installation, run `./scripts/install-gnome-extension.sh` as your ordinary desktop user, then log out/in and enable the extension. Other compositors and GNOME versions are not yet supported for these desktop tools; the existing keyboard overlay still works independently. Disabling the extension immediately removes its effects. Close Keycast Bridge before uninstalling the package.
+
+### Pointer effects
+
+- **Ring:** choose color, radius (10–200 px), thickness (1–20 px), neon and pulse in **Settings → Ring**. Enable the continuous pointer ring in **Presentation**. A short ring also marks clicks. The same appearance settings apply to the optional OBS click ring.
+- **Trail:** choose Solid, Dash, Dot, Glow, Particle or Star. Trail color follows the ring settings; line styles also use its thickness; samples fade within 0.65 seconds.
+- **Shake to locate:** rapidly move the pointer back and forth several times. A larger ring appears briefly. Fast movement in a straight line does not trigger it.
+- **Spotlight:** darken the current monitor around an illuminated **circle or square**. Choose the radius (40–600 px; half the side length for a square) and dimming (0–90%).
+
+Passive effects follow the pointer onto each connected monitor and allow normal interaction with applications. Windows uses physical screen pixels; GNOME uses logical desktop pixels, so desktop scaling can change the apparent physical size.
+
+### Drawing and whiteboard
+
+Move the pointer onto the desired monitor, then press **Ctrl+Alt+D** to annotate or **Ctrl+Alt+B** for a white background. The buttons in Settings open these modes on the monitor currently under the pointer. Choose pen color and width (1–40 px) in Presentation.
+
+| Action | Control |
+| --- | --- |
+| Draw | Hold the left mouse button and move |
+| Undo the last stroke | Ctrl+Z |
+| Erase all strokes | Backspace |
+| Exit the mode and erase drawings | Esc |
+| Stop all desktop tools | Ctrl+Alt+F12 |
+
+These modes take mouse and keyboard input while active. The target application does not receive the drawing clicks. The monitor is fixed until you leave the mode. Drawings are temporary: there is no export or automatic saving. At most 128 strokes with bounded point counts are retained; very long strokes are simplified.
+
+### Frozen zoom
+
+Place the pointer on the desired monitor and press **Ctrl+Alt+Z**, or click **Zoom**. Keycast Bridge takes an in-memory snapshot of that monitor and enlarges it. **This is a frozen image, not live magnification**: animations and application updates do not refresh until you exit and enter zoom again.
+
+Move the pointer to pan; use the mouse wheel or **+ / −** to change magnification (1.25×–8×). The initial factor is configurable. **Esc** returns to the desktop and discards the snapshot. Drawing is available in the separate annotation/whiteboard modes.
+
+### OBS, shortcuts and session changes
+
+Use OBS **Display Capture** (Windows) or **Screen Capture / PipeWire** (GNOME) to include these desktop effects. Window Capture and the keyboard Browser Source alone do not include them. If you capture the desktop ring, turn off the separate **Ring** option for the OBS Browser Source to avoid displaying two rings.
+
+The desktop shortcuts are registered only while tools are enabled. If Windows reports a shortcut conflict, close or reconfigure the conflicting utility before enabling them again. GNOME shortcuts can be changed through the extension's GSettings schema. Keys reserved by the compositor or another application may conflict.
+
+Closing the application, disabling the tools, locking the session or changing the monitor layout clears the desktop effects. GNOME also stops them when Overview opens. They must be explicitly enabled again. Losing the controlling application clears the GNOME extension within two seconds; losing Windows focus leaves the active drawing/zoom mode. The underlying keyboard-capture mode retains its existing security limitations when presentation tools are off: stop capture before entering secrets.
+
+Effects are limited to ordinary desktop sessions; protected content, secure desktops and exclusive fullscreen applications may not appear or allow overlays. No cursor history, drawing or zoom image is written to disk or sent to the OBS server. Only appearance preferences are saved.

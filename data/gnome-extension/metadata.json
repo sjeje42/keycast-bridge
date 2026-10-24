@@ -1,0 +1,8 @@
+{
+  "uuid": "keycast-bridge@jeromelab.fr",
+  "name": "Keycast Bridge presentation tools",
+  "description": "Desktop pointer effects, annotation, whiteboard and frozen zoom controlled explicitly by Keycast Bridge. No recording or network transmission.",
+  "shell-version": ["48"],
+  "url": "https://github.com/sjeje42/keycast-bridge",
+  "version": 1
+}

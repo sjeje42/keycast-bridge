@@ -3,6 +3,48 @@ use std::path::{Path, PathBuf};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
+pub struct RingAppearance {
+    pub color: String,
+    pub radius: u32,
+    pub thickness: u32,
+    pub neon: bool,
+    pub pulse: bool,
+}
+
+impl Default for RingAppearance {
+    fn default() -> Self {
+        Self {
+            color: "#a879ff".into(),
+            radius: 30,
+            thickness: 3,
+            neon: false,
+            pulse: true,
+        }
+    }
+}
+
+impl RingAppearance {
+    pub fn sanitized(mut self) -> Self {
+        self.radius = self.radius.clamp(10, 200);
+        self.thickness = self.thickness.clamp(1, 20).min(self.radius);
+        sanitize_color(&mut self.color, Self::default().color);
+        self
+    }
+}
+
+pub(crate) fn sanitize_color(value: &mut String, fallback: String) {
+    if value.len() != 7
+        || !value.starts_with('#')
+        || !value.as_bytes()[1..].iter().all(u8::is_ascii_hexdigit)
+    {
+        *value = fallback;
+    } else {
+        value.make_ascii_lowercase();
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
 pub struct Appearance {
     pub canvas_width: u32,
     pub canvas_height: u32,
@@ -14,6 +56,8 @@ pub struct Appearance {
     pub accent: String,
     pub right_click: String,
     pub middle_click: String,
+    pub ring: RingAppearance,
+    pub presentation: crate::presentation::PresentationSettings,
 }
 
 impl Default for Appearance {
@@ -29,6 +73,8 @@ impl Default for Appearance {
             accent: "#a879ff".into(),
             right_click: "#ff9e64".into(),
             middle_click: "#74dfba".into(),
+            ring: RingAppearance::default(),
+            presentation: crate::presentation::PresentationSettings::default(),
         }
     }
 }
@@ -48,15 +94,10 @@ impl Appearance {
             (&mut self.right_click, defaults.right_click),
             (&mut self.middle_click, defaults.middle_click),
         ] {
-            if value.len() != 7
-                || !value.starts_with('#')
-                || !value.as_bytes()[1..].iter().all(u8::is_ascii_hexdigit)
-            {
-                *value = fallback;
-            } else {
-                value.make_ascii_lowercase();
-            }
+            sanitize_color(value, fallback);
         }
+        self.ring = self.ring.sanitized();
+        self.presentation = self.presentation.sanitized();
         self
     }
 
@@ -130,6 +171,7 @@ mod tests {
     fn old_preferences_gain_default_canvas_and_sizes_are_bounded() {
         let old: Appearance = serde_json::from_str(r##"{"x":20,"accent":"#123456"}"##).unwrap();
         assert_eq!((old.canvas_width, old.canvas_height), (1920, 1080));
+        assert_eq!(old.ring, RingAppearance::default());
         let custom = Appearance {
             canvas_width: 0,
             canvas_height: 99999,
@@ -150,6 +192,13 @@ mod tests {
             x: 12.5,
             y: 31.0,
             accent: "#12ab34".into(),
+            ring: RingAppearance {
+                color: "#12ab34".into(),
+                radius: 90,
+                thickness: 12,
+                neon: true,
+                pulse: false,
+            },
             ..Default::default()
         };
         a.save(&path).unwrap();
@@ -160,5 +209,27 @@ mod tests {
         std::fs::write(&path, "invalid").unwrap();
         assert!(Appearance::load(&path).is_none());
         std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn ring_preferences_are_bounded_and_partial_settings_are_compatible() {
+        let a: Appearance = serde_json::from_str(
+            r##"{"ring":{"color":"url(https://invalid.test)","radius":0,"thickness":999}}"##,
+        )
+        .unwrap();
+        let ring = a.sanitized().ring;
+        assert_eq!(ring.color, "#a879ff");
+        assert_eq!((ring.radius, ring.thickness), (10, 10));
+        assert!(!ring.neon);
+        assert!(ring.pulse);
+        let large = RingAppearance {
+            color: "#ABCDEF".into(),
+            radius: u32::MAX,
+            thickness: 0,
+            ..Default::default()
+        }
+        .sanitized();
+        assert_eq!((large.radius, large.thickness), (200, 1));
+        assert_eq!(large.color, "#abcdef");
     }
 }

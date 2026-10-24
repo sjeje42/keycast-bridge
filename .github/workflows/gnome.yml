@@ -1,0 +1,23 @@
+name: GNOME 48 presentation
+on:
+  push:
+    branches: [main, feature/presentation-tools]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gnome:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: GNOME 48 nested Wayland integration on Debian 13
+        run: |
+          mkdir -p test-artifacts
+          chmod a+rwx test-artifacts
+          docker run --rm -v "$PWD:/work:ro" -v "$PWD/test-artifacts:/artifacts" -w /work debian:13-slim sh scripts/test-gnome-container.sh
+      - uses: actions/upload-artifact@v7.0.1
+        if: always()
+        with:
+          name: keycast-bridge-gnome48-validation
+          path: test-artifacts/*

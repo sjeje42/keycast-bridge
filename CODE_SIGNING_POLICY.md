@@ -34,9 +34,9 @@ Before enabling signing, configure an explicit file allowlist and a verifiable a
 
 ## Privacy
 
-Keycast Bridge does not persist captured keystrokes or mouse events and sends no telemetry. It processes input transiently in memory and serves its overlay and embedded help only on IPv4 loopback, `127.0.0.1`, with a per-launch token. It does not upload captured input to a remote service. Saved appearance preferences contain position, colors and canvas dimensions, not captured input.
+Keycast Bridge does not persist captured keystrokes or mouse events and sends no telemetry. It processes input transiently in memory and serves its overlay and embedded help only on IPv4 loopback, `127.0.0.1`, with a per-launch token. It does not upload captured input to a remote service. Saved appearance preferences contain position, colors, ring effects and canvas dimensions, not captured input.
 
-The user may choose to record or broadcast the overlay with OBS. That output is controlled by OBS and the user's recording/streaming settings, outside Keycast Bridge. The application does not detect password fields or automatically pause on session lock; stop capture before entering secrets. Optional all-keys mode can display ordinary text.
+The user may choose to record or broadcast the overlay with OBS. That output is controlled by OBS and the user's recording/streaming settings, outside Keycast Bridge. The application does not detect password fields. Keyboard capture alone does not automatically pause on session lock; enabled desktop tools add lock cleanup. Stop capture before entering secrets. Optional all-keys mode can display ordinary text.
 
 See [SECURITY.md](SECURITY.md) for the full model and private vulnerability-reporting channel.
 
@@ -49,3 +49,5 @@ See [SECURITY.md](SECURITY.md) for the full model and private vulnerability-repo
 - Provide release history, successful CI runs and real-use feedback for the application review.
 
 These are pending tasks, not claims of completed SignPath integration. Eligibility is determined by SignPath Foundation under its [published conditions](https://signpath.org/terms.html).
+
+Desktop presentation tools run only after explicit activation. Temporary cursor trails, drawings and frozen zoom images stay in memory and are bounded; only style preferences are saved. Windows modal tools receive input while active and release it on Escape or focus loss. GNOME 48 uses a separately enabled Shell extension with a session-bus lease and timeout. See [SECURITY.md](SECURITY.md) for the complete boundaries.
