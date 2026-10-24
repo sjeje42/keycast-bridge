@@ -46,7 +46,7 @@ Activez **Cercle au clic** dans la fenêtre principale pour l’afficher dans OB
 
 Target: Windows 10 1703+ / Windows 11, x64 Intel/AMD. Extract the complete ZIP and launch `keycast-bridge.exe` as a normal user. Keep all DLLs and data directories alongside it. No development tools or separate GTK installation are needed. Copy the URL into an OBS Browser Source, enable mouse buttons if desired and press Start. Stop with the button or Ctrl+Alt+F12.
 
-All session keyboards are captured; layout follows the foreground window. Per-device selection is Linux-only. The optional click ring maps the monitor selected under “Monitor captured in OBS” to the full browser viewport: align both OBS sources without cropping. Choose DISPLAY2, DISPLAY3, etc. using the resolution and position shown; these IDs need not match the order of OBS sources. The list refreshes automatically and selection can change during capture. A sole monitor is selected automatically, including after another monitor is unplugged. If the selected display disappears while multiple monitors remain, the ring is suspended. Reconnect it or select another monitor. Geometry refreshes on each click. The selection lasts for the current application session. Other monitors show button feedback only. The ring appears in OBS, not on the Windows desktop.
+All session keyboards are captured; layout follows the foreground window. Per-device selection is Linux-only. The optional click ring maps the monitor selected under “Monitor captured in OBS” to the full browser viewport: align both OBS sources without cropping. Choose DISPLAY2, DISPLAY3, etc. using the resolution and position shown; these IDs need not match the order of OBS sources. The list refreshes automatically and selection can change during capture. A sole monitor is selected automatically, including after another monitor is unplugged. If the selected display disappears while multiple monitors remain, the ring is suspended. Reconnect it or select another monitor. Geometry refreshes on each click. The selection lasts for the current application session. Other monitors show button feedback only. This Browser Source ring appears in OBS. A separate continuous desktop ring and the new presentation tools are available in Settings → Presentation; see [Desktop presentation tools](PRESENTATION.en.md).
 
 Unsigned release; no history or telemetry, no password detection. Stop before sensitive input or locking. Secure/elevated desktops are outside the target. Manual desktop use is confirmed on Windows 10 and 11. This does not cover every USB device, DPI combination or OBS scene; see [validation scope](VALIDATION.md) and the [regression procedure](TESTING.md). The URL changes every launch.
 
@@ -102,7 +102,7 @@ Open the Settings gear to configure appearance, canvas size or capture. Complete
 
 ### Click ring — Windows
 
-Open **Settings → Click ring** to configure:
+Open **Settings → Ring** to configure:
 
 | Setting | Purpose |
 | --- | --- |

@@ -90,7 +90,7 @@ In Settings → Click ring, change color, base radius and thickness; try all fou
 
 ## Desktop presentation acceptance (0.2.0 candidate)
 
-Automated: `node scripts/test-presentation.mjs` checks bounded scene state and settings. Rust/Cairo tests check transparent circle/square spotlight apertures, all six rendered trail styles and annotation/whiteboard backgrounds. Windows tests create a real layered window, enter each modal tool, send Escape and verify input styles/closure. The GNOME 48 workflow runs a nested Wayland compositor on Debian 13 and exercises drawing, undo, clear, Escape, zoom snapshots, competing clients and heartbeat/connection cleanup.
+Automated: `node scripts/test-presentation.mjs` checks bounded scene state and settings. Rust/Cairo tests check transparent circle/square spotlight apertures, all six rendered trail styles and annotation/whiteboard backgrounds. Windows tests create a real layered window, enter each modal tool, send Escape and verify input styles/closure. The GNOME 48 workflow runs a nested Wayland compositor on Debian 13 (only logind is mocked in the container; physical lock/unlock remains a manual check) and exercises drawing, undo, clear, Escape, zoom snapshots, competing clients and heartbeat/connection cleanup.
 
 Before approving the stable release, test on physical Windows 10/11 and Debian 13/GNOME 48:
 

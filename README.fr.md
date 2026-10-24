@@ -226,7 +226,7 @@ La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et t
 - Capture arrêtée au lancement ; aucun historique des touches, télémétrie ni service distant.
 - Serveur limité à `127.0.0.1`, URL aléatoire et vérification d’origine.
 - **Aucune détection des champs de mot de passe.** Arrêter avant toute saisie sensible.
-- **Pas d’arrêt automatique au verrouillage de GNOME.** Arrêter avant de verrouiller/changer de session.
+- **La capture du clavier seule ne détecte pas le verrouillage de GNOME.** Arrêter avant de verrouiller/changer de session. Les outils de présentation actifs ajoutent un arrêt au verrouillage.
 - Linux : les nouveaux claviers rejoignent automatiquement la capture en mode tous. En sélection, un clavier reconnu revient après rebranchement ; sans numéro de série, conserver le même port USB. Les modificateurs sont suivis séparément par clavier : effectuer une combinaison sur un même clavier.
 - Les clics sont affichés dans l’incrustation sur les deux systèmes. Sous Wayland, aucun halo à la position du pointeur : evdev ne fournit pas les coordonnées globales du compositeur. Sous Windows, voir les contraintes d’alignement de l’écran sélectionné dans [WINDOWS.md](docs/WINDOWS.md).
 - Changement de disposition dans GNOME : arrêter, choisir la nouvelle disposition, redémarrer.

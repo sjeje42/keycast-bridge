@@ -243,7 +243,7 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 - Layout changes in GNOME are not automatically tracked; stop, choose the new layout, then restart.
 - No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization. Appearance and canvas settings persist; size, duration, capture options, monitor selection and language remain session-only.
 - Key-repeat events are intentionally ignored. Modifiers held before Start must be released and pressed again. Caps Lock / Num Lock state already active at startup is not synchronized with GNOME.
-- System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; lock-screen auto-pause is not implemented.
+- System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; keyboard capture alone has no lock-screen auto-pause. Enabled desktop presentation tools additionally stop on session lock.
 - Manual desktop testing is confirmed on Debian 13, Fedora, Windows 10 and Windows 11. Check your own OBS scene before going live. Untested configurations and regression checks are listed in [VALIDATION.md](docs/VALIDATION.md) and [TESTING.md](docs/TESTING.md).
 
 ## License and acknowledgments

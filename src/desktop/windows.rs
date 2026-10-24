@@ -124,7 +124,7 @@ impl Buffer {
         anyhow::ensure!(copied != 0, "Desktop snapshot failed");
         let length = self.width as usize * self.height as usize * 4;
         let mut bytes = std::slice::from_raw_parts(self.bits, length).to_vec();
-        for pixel in bytes.chunks_exact_mut(4) {
+        for pixel in bytes.as_chunks_mut::<4>().0.iter_mut() {
             pixel[3] = 255;
         }
         Ok(ImageSurface::create_for_data(

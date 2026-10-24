@@ -228,7 +228,7 @@ mod tests {
         a.presentation.spotlight = true;
         a.presentation.spotlight_radius = 50;
         let mut scene = Scene::default();
-        scene.pointer = Point { x: 128.0, y: 128.0 };
+        scene.move_to(Point { x: 128.0, y: 128.0 }, 0.0, false);
         let circle = render(&scene, &a, Mode::Normal);
         assert_eq!(alpha(&circle, 128, 128), 0);
         assert!(alpha(&circle, 10, 10) > 150);
@@ -263,7 +263,10 @@ mod tests {
         ] {
             a.presentation.trail_style = style;
             let pixels = render(&scene, &a, Mode::Normal);
-            assert!(pixels.chunks_exact(4).any(|p| p[3] > 0), "{style:?}");
+            assert!(
+                pixels.as_chunks::<4>().0.iter().any(|p| p[3] > 0),
+                "{style:?}"
+            );
             assert_eq!(alpha(&pixels, 0, 0), 0);
         }
         scene.expire(2.0);

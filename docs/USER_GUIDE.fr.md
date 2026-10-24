@@ -119,7 +119,7 @@ Sous **Windows**, activez **Cercle au clic** avant de démarrer : cela active au
 
 Le cercle apparaît dans l’incrustation OBS, pas directement sur le bureau Windows. Son alignement exige des proportions et des rectangles identiques pour la capture du moniteur et la source Navigateur. Les captures de fenêtres et les recadrages ne sont pas compensés automatiquement.
 
-Sous **Linux/Wayland**, les touches et boutons fonctionnent sur plusieurs écrans, mais le cercle à la position du pointeur n’est pas disponible.
+Sous **Linux/Wayland**, les touches et boutons fonctionnent sur plusieurs écrans. La source Navigateur ne reçoit pas de coordonnées du pointeur ; GNOME 48 propose séparément l’anneau du bureau via **Présentation** et la capture d’écran.
 
 ### Anneau au clic — Windows
 
@@ -148,7 +148,7 @@ Emplacements du fichier de préférences :
 
 Ce fichier contient seulement l’apparence et le format : aucune frappe, aucun historique de souris, aucune URL OBS. Un fichier invalide entraîne un retour aux valeurs par défaut. Pour effacer toutes les préférences enregistrées, fermez l’application et renommez ce fichier, puis relancez-la.
 
-Le serveur écoute uniquement sur l’adresse locale IPv4, au port 48732. Il n’y a ni télémétrie, ni historique des frappes, ni capture automatique au démarrage. L’URL aléatoire de session et les contrôles d’origine limitent l’accès, mais ne protègent pas contre un logiciel malveillant exécuté sous le même utilisateur. La capture ne s’arrête pas automatiquement au verrouillage de session : arrêtez-la avant. Sous Linux, effectuez l’arrêt d’urgence sur un clavier capturé, avec tous les modificateurs maintenus sur ce même clavier.
+Le serveur écoute uniquement sur l’adresse locale IPv4, au port 48732. Il n’y a ni télémétrie, ni historique des frappes, ni capture automatique au démarrage. L’URL aléatoire de session et les contrôles d’origine limitent l’accès, mais ne protègent pas contre un logiciel malveillant exécuté sous le même utilisateur. La capture du clavier seule ne s’arrête pas automatiquement au verrouillage de session : arrêtez-la avant. Les outils de présentation actifs ajoutent un arrêt au verrouillage. Sous Linux, effectuez l’arrêt d’urgence sur un clavier capturé, avec tous les modificateurs maintenus sur ce même clavier.
 
 ## 8. Dépannage
 

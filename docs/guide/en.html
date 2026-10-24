@@ -139,9 +139,9 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p><strong>Also show text keys</strong> expands capture to ordinary text. It can reveal private information and passwords. The application does not detect password fields; stop capture before entering secrets, including when using shortcut-only mode.</p>
 <h3 id="mouse-and-multiple-monitors">Mouse and multiple monitors</h3>
 <p>Enable <strong>Show mouse clicks</strong> before starting capture. Left, right and middle buttons have independent colors. A very short click is held visually for at least 150 ms; a held button remains highlighted through a drag. There is no scroll-wheel movement display.</p>
-<p>On <strong>Windows</strong>, enable <strong>Click ring</strong> before starting: this also enables <strong>Show mouse clicks</strong>. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In <strong>Settings → Capture → Monitor captured in OBS</strong>, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.</p>
+<p>On <strong>Windows</strong>, enable <strong>Ring</strong> before starting: this also enables <strong>Show mouse clicks</strong>. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In <strong>Settings → Capture → Monitor captured in OBS</strong>, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.</p>
 <p>The ring is drawn inside the OBS overlay, not directly on the Windows desktop. Accurate alignment requires matching the selected monitor capture and Browser Source rectangles and aspect ratio. Window captures or crops are not mapped automatically.</p>
-<p>On <strong>Linux/Wayland</strong>, keyboard and button feedback work across screens, but pointer-position rings are not available.</p>
+<p>On <strong>Linux/Wayland</strong>, keyboard and button feedback work across screens. The Browser Source does not receive pointer coordinates; GNOME 48 desktop rings are available separately through <strong>Presentation</strong> and Display Capture.</p>
 <h3 id="click-ring-windows">Click ring — Windows</h3>
 <p>Open <strong>Settings → Click ring</strong> to configure:</p>
 <table>
@@ -175,7 +175,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tbody>
 </table>
 <p>Each click displays the ring for 0.5 seconds. Radius and thickness follow canvas scaling. The reduced preview repeats without starting capture. Changes apply live and are saved. <strong>Reset ring</strong> restores purple, a 30px radius, 3px thickness, neon off and pulse on.</p>
-<p>Enable <strong>Click ring</strong> in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.</p>
+<p>Enable <strong>Ring</strong> in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.</p>
 <h2 id="7-saved-settings-and-privacy">7. Saved settings and privacy</h2>
 <p>Position, palette, canvas dimensions and ring style are saved automatically. Other controls—including size, duration, capture options, selected monitor and language—remain session-only in this version. A message in Settings reports a save failure while retaining the live changes for the current session.</p>
 <p>Preference locations:</p>
@@ -184,7 +184,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <li>Linux: <code>$XDG_CONFIG_HOME/keycast-bridge/appearance.json</code>, or <code>~/.config/keycast-bridge/appearance.json</code></li>
 </ul>
 <p>This file contains only appearance/canvas preferences: no keystrokes, mouse history or OBS URL. If it is corrupt, the application falls back to defaults. To reset all saved preferences, close the application and rename this file; restart to use defaults.</p>
-<p>The server listens only on IPv4 localhost, port 48732. There is no telemetry, key history or automatic capture at startup. The random session URL and Origin checks limit access but do not protect against malicious software running as the same user. Capture does not stop automatically when locking the session; stop it first. On Linux, use the emergency shortcut on one captured keyboard with all modifiers held on that keyboard.</p>
+<p>The server listens only on IPv4 localhost, port 48732. There is no telemetry, key history or automatic capture at startup. The random session URL and Origin checks limit access but do not protect against malicious software running as the same user. Keyboard capture alone does not stop automatically when locking the session; stop it first. Enabled desktop presentation tools add session-lock cleanup. On Linux, use the emergency shortcut on one captured keyboard with all modifiers held on that keyboard.</p>
 <h2 id="8-troubleshooting">8. Troubleshooting</h2>
 <table>
 <thead>
@@ -215,8 +215,8 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <td>Stop, enable Show mouse clicks, then Start again.</td>
 </tr>
 <tr>
-<td>Ring is offset or missing</td>
-<td>Windows only; enable it, select the correct monitor, match aspect ratios and align uncropped OBS sources.</td>
+<td>OBS click ring is offset or missing</td>
+<td>Windows Browser Source only; enable it, select the correct monitor, match aspect ratios and align uncropped OBS sources.</td>
 </tr>
 <tr>
 <td>Linux capture authorization fails</td>
@@ -290,7 +290,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p>Place the pointer on the desired monitor and press <strong>Ctrl+Alt+Z</strong>, or click <strong>Zoom</strong>. Keycast Bridge takes an in-memory snapshot of that monitor and enlarges it. <strong>This is a frozen image, not live magnification</strong>: animations and application updates do not refresh until you exit and enter zoom again.</p>
 <p>Move the pointer to pan; use the mouse wheel or <strong>+ / −</strong> to change magnification (1.25×–8×). The initial factor is configurable. <strong>Esc</strong> returns to the desktop and discards the snapshot. Drawing is available in the separate annotation/whiteboard modes.</p>
 <h3 id="obs-shortcuts-and-session-changes">OBS, shortcuts and session changes</h3>
-<p>Use OBS <strong>Display Capture</strong> (Windows) or <strong>Screen Capture / PipeWire</strong> (GNOME) to include these desktop effects. Window Capture and the keyboard Browser Source alone do not include them. If you capture the desktop ring, turn off the separate <strong>Click ring</strong> option for the OBS Browser Source to avoid displaying two rings.</p>
+<p>Use OBS <strong>Display Capture</strong> (Windows) or <strong>Screen Capture / PipeWire</strong> (GNOME) to include these desktop effects. Window Capture and the keyboard Browser Source alone do not include them. If you capture the desktop ring, turn off the separate <strong>Ring</strong> option for the OBS Browser Source to avoid displaying two rings.</p>
 <p>The desktop shortcuts are registered only while tools are enabled. If Windows reports a shortcut conflict, close or reconfigure the conflicting utility before enabling them again. GNOME shortcuts can be changed through the extension's GSettings schema. Keys reserved by the compositor or another application may conflict.</p>
 <p>Closing the application, disabling the tools, locking the session or changing the monitor layout clears the desktop effects. GNOME also stops them when Overview opens. They must be explicitly enabled again. Losing the controlling application clears the GNOME extension within two seconds; losing Windows focus leaves the active drawing/zoom mode. The underlying keyboard-capture mode retains its existing security limitations when presentation tools are off: stop capture before entering secrets.</p>
 <p>Effects are limited to ordinary desktop sessions; protected content, secure desktops and exclusive fullscreen applications may not appear or allow overlays. No cursor history, drawing or zoom image is written to disk or sent to the OBS server. Only appearance preferences are saved.</p></main></body></html>
