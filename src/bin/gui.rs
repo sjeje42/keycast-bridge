@@ -4,6 +4,8 @@
 mod appearance_controls;
 #[path = "gui/browser.rs"]
 mod browser;
+#[path = "gui/presentation.rs"]
+mod presentation_controls;
 #[path = "gui/ring.rs"]
 mod ring_controls;
 
@@ -201,6 +203,8 @@ fn main() -> anyhow::Result<()> {
         .application_id("fr.jeromelab.KeycastBridge")
         .build();
     let ui_state = state.clone();
+    let desktop = keycast_bridge::desktop::Controller::new(state.clone());
+    let ui_desktop = desktop.clone();
     app.connect_startup(|_| {
         let display = gtk4::gdk::Display::default().expect("GTK display");
         let theme = gtk4::IconTheme::for_display(&display);
@@ -210,16 +214,21 @@ fn main() -> anyhow::Result<()> {
             assert!(theme.has_icon("fr.jeromelab.KeycastBridge"));
         }
     });
-    app.connect_activate(move |app| build_ui(app, ui_state.clone()));
+    app.connect_activate(move |app| build_ui(app, ui_state.clone(), ui_desktop.clone()));
     if std::env::var("KEYCAST_SMOKE_TEST").as_deref() == Ok("1") {
         let smoke_app = app.clone();
         glib::timeout_add_local_once(Duration::from_secs(2), move || smoke_app.quit());
     }
     app.run();
+    desktop.shutdown();
     state.stop();
     Ok(())
 }
-fn build_ui(app: &Application, state: Arc<Bridge>) {
+fn build_ui(
+    app: &Application,
+    state: Arc<Bridge>,
+    desktop: Arc<keycast_bridge::desktop::Controller>,
+) {
     if let Some(window) = app.active_window() {
         window.present();
         return;
@@ -267,7 +276,7 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             .build();
         tabs.append_page(&scroll, Some(label));
     }
-    if cfg!(windows) {
+    {
         ring_page.set_margin_top(16);
         ring_page.set_margin_bottom(16);
         ring_page.set_margin_start(16);
@@ -278,6 +287,21 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             .build();
         tabs.append_page(&scroll, Some(&ring_tab));
     }
+    let presentation_page = GtkBox::new(Orientation::Vertical, 10);
+    for set in [
+        GtkBox::set_margin_top,
+        GtkBox::set_margin_bottom,
+        GtkBox::set_margin_start,
+        GtkBox::set_margin_end,
+    ] {
+        set(&presentation_page, 16);
+    }
+    let presentation_tab = Label::new(None);
+    let presentation_scroll = ScrolledWindow::builder()
+        .child(&presentation_page)
+        .hscrollbar_policy(gtk4::PolicyType::Automatic)
+        .build();
+    tabs.append_page(&presentation_scroll, Some(&presentation_tab));
     settings_root.append(&tabs);
     let settings_footer = GtkBox::new(Orientation::Horizontal, 8);
     settings_footer.set_margin_start(16);
@@ -322,9 +346,14 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             "en"
         },
     ));
-    if cfg!(windows) {
-        ring_controls::build(&ring_page, &ring_tab, state.clone(), language.clone());
-    }
+    ring_controls::build(&ring_page, &ring_tab, state.clone(), language.clone());
+    presentation_controls::build(
+        &presentation_page,
+        &presentation_tab,
+        state.clone(),
+        language.clone(),
+        desktop.clone(),
+    );
     header.append(&language);
     let gear = Button::from_icon_name("preferences-system-symbolic");
     header.append(&gear);
@@ -474,7 +503,11 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     }
     {
         let s = state.clone();
-        stop_button.connect_clicked(move |_| s.stop());
+        let desktop = desktop.clone();
+        stop_button.connect_clicked(move |_| {
+            s.stop();
+            desktop.enable(false);
+        });
     }
     {
         let s = state.clone();

@@ -14,3 +14,7 @@ pub mod linux_devices;
 pub mod displays;
 #[cfg(windows)]
 pub mod windows_displays;
+
+#[cfg(feature = "gui")]
+pub mod desktop;
+pub mod presentation;

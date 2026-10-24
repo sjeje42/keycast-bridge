@@ -32,7 +32,7 @@ impl RingAppearance {
     }
 }
 
-fn sanitize_color(value: &mut String, fallback: String) {
+pub(crate) fn sanitize_color(value: &mut String, fallback: String) {
     if value.len() != 7
         || !value.starts_with('#')
         || !value.as_bytes()[1..].iter().all(u8::is_ascii_hexdigit)
@@ -57,6 +57,7 @@ pub struct Appearance {
     pub right_click: String,
     pub middle_click: String,
     pub ring: RingAppearance,
+    pub presentation: crate::presentation::PresentationSettings,
 }
 
 impl Default for Appearance {
@@ -73,6 +74,7 @@ impl Default for Appearance {
             right_click: "#ff9e64".into(),
             middle_click: "#74dfba".into(),
             ring: RingAppearance::default(),
+            presentation: crate::presentation::PresentationSettings::default(),
         }
     }
 }
@@ -95,6 +97,7 @@ impl Appearance {
             sanitize_color(value, fallback);
         }
         self.ring = self.ring.sanitized();
+        self.presentation = self.presentation.sanitized();
         self
     }
 

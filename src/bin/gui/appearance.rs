@@ -127,6 +127,7 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
                 a.x = previous.x;
                 a.y = previous.y;
                 a.ring = previous.ring;
+                a.presentation = previous.presentation;
             }
             if mode == 1 {
                 a.light();

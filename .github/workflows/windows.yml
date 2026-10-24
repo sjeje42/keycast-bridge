@@ -1,7 +1,7 @@
 name: Windows portable
 on:
   push:
-    branches: [main]
+    branches: [main, feature/presentation-tools]
   workflow_dispatch:
 permissions:
   contents: read

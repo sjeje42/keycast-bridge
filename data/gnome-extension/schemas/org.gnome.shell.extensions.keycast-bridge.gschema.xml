@@ -1,0 +1,8 @@
+<schemalist>
+  <schema id="org.gnome.shell.extensions.keycast-bridge" path="/org/gnome/shell/extensions/keycast-bridge/">
+    <key name="draw" type="as"><default>['&lt;Control&gt;&lt;Alt&gt;d']</default></key>
+    <key name="whiteboard" type="as"><default>['&lt;Control&gt;&lt;Alt&gt;b']</default></key>
+    <key name="zoom" type="as"><default>['&lt;Control&gt;&lt;Alt&gt;z']</default></key>
+    <key name="stop" type="as"><default>['&lt;Control&gt;&lt;Alt&gt;F12']</default></key>
+  </schema>
+</schemalist>
