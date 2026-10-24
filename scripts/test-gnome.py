@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Real session-bus ownership, modal input, snapshot and teardown acceptance tests."""
 import json
+import math
 import subprocess
 import time
 from gi.repository import Gio, GLib
@@ -25,21 +26,31 @@ def wait(predicate, seconds=6):
         time.sleep(0.1)
     raise AssertionError('Timed out waiting for GNOME presentation state')
 def keys(*args): subprocess.run(['xdotool',*args],check=True)
+def screenshot(name):
+    update()
+    subprocess.run(['import','-window','root',f'/artifacts/{name}.png'],check=True,timeout=10)
+    update()
 wait(lambda: call('State') is not None, 40)
 # GNOME may open Overview on a fresh session; Escape returns to the desktop.
-keys('key','Escape')
+time.sleep(2)
+bus.call_sync('org.gnome.Shell','/org/gnome/Shell','org.freedesktop.DBus.Properties','Set',GLib.Variant('(ssv)',('org.gnome.Shell','OverviewActive',GLib.Variant('b',False))),None,Gio.DBusCallFlags.NONE,1000,None)
 time.sleep(0.5)
 keys('mousemove','450','350')
-assert update()=='normal'
+result=update()
+assert result=='normal',(result,state())
 assert state()['enabled'] and not state()['grabbed']
 for style in ['solid','dash','dot','glow','particle','star']:
-    settings['trail_style']=style;update();keys('mousemove','500','370');time.sleep(0.08);keys('mousemove','450','350')
+    settings['trail_style']=style;update()
+    for i in range(30):
+        keys('mousemove',str(200+i*15),str(round(350+60*math.sin(i/5))));time.sleep(0.012)
+    screenshot(f'trail-{style}')
 for mode in ['annotate','whiteboard']:
     packet['request'].update(mode=mode,serial=packet['request']['serial']+1)
     assert update()==mode
     assert state()['grabbed']
     keys('mousedown','1','mousemove','600','400','mouseup','1');time.sleep(0.15)
     assert state()['strokes']==1,state()
+    screenshot(mode)
     keys('key','ctrl+z');time.sleep(0.1);assert state()['strokes']==0
     keys('mousedown','1','mousemove','700','440','mouseup','1');time.sleep(0.1)
     keys('key','BackSpace');time.sleep(0.1);assert state()['strokes']==0
@@ -49,6 +60,7 @@ packet['request'].update(mode='zoom',serial=packet['request']['serial']+1)
 update()
 wait(lambda: (update(),state()['snapshot'])[1])
 assert state()['grabbed']
+screenshot('zoom')
 keys('key','Escape');time.sleep(0.15);assert not state()['snapshot'] and not state()['grabbed']
 # A second bus client cannot take over an active lease.
 other=connection()

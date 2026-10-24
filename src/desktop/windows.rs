@@ -13,7 +13,7 @@ use std::{
 };
 use windows_sys::Win32::{
     Foundation::*,
-    Graphics::Gdi::*,
+    Graphics::{Dwm::DwmFlush, Gdi::*},
     System::{LibraryLoader::GetModuleHandleW, RemoteDesktop::*},
     UI::{HiDpi::*, Input::KeyboardAndMouse::*, WindowsAndMessaging::*},
 };
@@ -225,6 +225,8 @@ impl Runtime {
         self.mode = mode;
         self.zoom = self.controller.bridge.appearance().presentation.zoom;
         if mode == Mode::Zoom {
+            // Wait for DWM to remove our previous overlay before taking the image.
+            DwmFlush();
             self.snapshot = Some(
                 self.buffer
                     .as_ref()
