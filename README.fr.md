@@ -228,7 +228,7 @@ La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et t
 - **Aucune détection des champs de mot de passe.** Arrêter avant toute saisie sensible.
 - **La capture du clavier seule ne détecte pas le verrouillage de GNOME.** Arrêter avant de verrouiller/changer de session. Les outils de présentation actifs ajoutent un arrêt au verrouillage.
 - Linux : les nouveaux claviers rejoignent automatiquement la capture en mode tous. En sélection, un clavier reconnu revient après rebranchement ; sans numéro de série, conserver le même port USB. Les modificateurs sont suivis séparément par clavier : effectuer une combinaison sur un même clavier.
-- Les clics sont affichés dans l’incrustation sur les deux systèmes. Sous Wayland, aucun halo à la position du pointeur : evdev ne fournit pas les coordonnées globales du compositeur. Sous Windows, voir les contraintes d’alignement de l’écran sélectionné dans [WINDOWS.md](docs/WINDOWS.md).
+- Les clics sont affichés dans l’incrustation sur les deux systèmes. Sous Wayland, la source Navigateur ne reçoit pas de coordonnées du pointeur. L’extension GNOME 48 propose séparément l’anneau et les effets du bureau via Présentation. Sous Windows, voir les contraintes d’alignement de l’écran sélectionné dans [WINDOWS.md](docs/WINDOWS.md).
 - Changement de disposition dans GNOME : arrêter, choisir la nouvelle disposition, redémarrer.
 - Pas encore de molette/déplacement du pointeur, de composition des accents/Compose/IME, de synchronisation initiale Verr. Maj/Verr. Num.
 - La position, les couleurs, le format et le style de l’anneau sont mémorisés. La taille, la durée, les options de capture, le moniteur choisi et la langue restent limités à la session.

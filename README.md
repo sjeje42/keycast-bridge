@@ -49,7 +49,7 @@ See the [exact validation status](docs/VALIDATION.md).
 
 Linux defaults to all keyboards, with optional multiple selection and udev hotplug. A privileged opener passes evdev descriptors over a private Unix socket to a reader that drops privileges. Reconnecting a selected keyboard uses its serial/name or physical USB port/name, never a remembered event number. Without a serial, use the same port. Modifiers are tracked per keyboard: perform a shortcut on one keyboard.
 
-Optional left/right/middle mouse feedback is available on both systems. On Windows, enable **Click ring** before starting; this also enables mouse capture. A sole monitor is selected automatically, including after another monitor is unplugged. With multiple monitors, choose the one captured in OBS under **Settings → Capture**. Align the monitor capture and browser source in OBS. The ring is drawn in OBS, not on the desktop. Linux/Wayland has no pointer-position halo because raw evdev motion does not provide compositor coordinates. See the [Windows limitations](docs/WINDOWS.md).
+Optional left/right/middle mouse feedback is available on both systems. On Windows, enable **Click ring** before starting; this also enables mouse capture. A sole monitor is selected automatically, including after another monitor is unplugged. With multiple monitors, choose the one captured in OBS under **Settings → Capture**. Align the monitor capture and browser source in OBS. This click ring is drawn in the OBS Browser Source. Raw Linux evdev capture does not supply pointer coordinates to that source; desktop rings and effects are available separately on Windows and GNOME 48 under **Settings → Presentation**. See the [Windows limitations](docs/WINDOWS.md).
 
 ## Features
 
@@ -241,7 +241,7 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 - No automatic password-field detection: stop capture before entering secrets, even in shortcuts-only mode.
 - Linux hotplug continues without restarting. A selected keyboard without a serial number must return to the same USB port.
 - Layout changes in GNOME are not automatically tracked; stop, choose the new layout, then restart.
-- No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization. Appearance and canvas settings persist; size, duration, capture options, monitor selection and language remain session-only.
+- No text reconstruction, Compose/dead-key composition, IME or mouse-wheel visualization in the key overlay. Desktop pointer motion is visualized by the separate presentation tools. Appearance and canvas settings persist; size, duration, capture options, monitor selection and language remain session-only.
 - Key-repeat events are intentionally ignored. Modifiers held before Start must be released and pressed again. Caps Lock / Num Lock state already active at startup is not synchronized with GNOME.
 - System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; keyboard capture alone has no lock-screen auto-pause. Enabled desktop presentation tools additionally stop on session lock.
 - Manual desktop testing is confirmed on Debian 13, Fedora, Windows 10 and Windows 11. Check your own OBS scene before going live. Untested configurations and regression checks are listed in [VALIDATION.md](docs/VALIDATION.md) and [TESTING.md](docs/TESTING.md).

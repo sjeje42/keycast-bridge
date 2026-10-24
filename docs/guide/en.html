@@ -53,11 +53,11 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tr>
 <tr>
 <td>Stop</td>
-<td>End capture and clear the overlay.</td>
+<td>End capture, clear the overlay and stop desktop tools.</td>
 </tr>
 <tr>
 <td>Ctrl + Alt + F12</td>
-<td>Emergency stop. The combination is also delivered to the active application.</td>
+<td>Emergency stop. Desktop tools may consume this registered shortcut while enabled.</td>
 </tr>
 <tr>
 <td>Test overlay</td>
@@ -123,7 +123,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tr>
 </tbody>
 </table>
-<p>Click a swatch to open the color chooser. The <strong>Dark palette</strong> and <strong>Light palette</strong> buttons restore coordinated colors while preserving position, canvas dimensions and ring style. <strong>Reset all</strong> in this tab resets position, colors and ring style; it does not change canvas size or capture options.</p>
+<p>Click a swatch to open the color chooser. The <strong>Dark palette</strong> and <strong>Light palette</strong> buttons restore coordinated colors while preserving position, canvas dimensions and ring style. <strong>Reset all</strong> in this tab resets position, colors, ring style and presentation styles; it does not change canvas size or capture options.</p>
 <h2 id="5-settings-canvas-and-size">5. Settings — Canvas and size</h2>
 <p><strong>Size</strong> controls key text in logical canvas pixels, from 20 to 96. <strong>Duration</strong> controls how long the last shortcut remains visible, from 300 to 5000 ms. Held modifiers remain visible until release, irrespective of Duration.</p>
 <p>The canvas presets are 1280 × 720, 1920 × 1080, 2560 × 1440, 3840 × 2160, 1080 × 1920 and 1080 × 1080. Custom width and height each range from 160 to 7680 pixels.</p>
@@ -139,11 +139,11 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p><strong>Also show text keys</strong> expands capture to ordinary text. It can reveal private information and passwords. The application does not detect password fields; stop capture before entering secrets, including when using shortcut-only mode.</p>
 <h3 id="mouse-and-multiple-monitors">Mouse and multiple monitors</h3>
 <p>Enable <strong>Show mouse clicks</strong> before starting capture. Left, right and middle buttons have independent colors. A very short click is held visually for at least 150 ms; a held button remains highlighted through a drag. There is no scroll-wheel movement display.</p>
-<p>On <strong>Windows</strong>, enable <strong>Ring</strong> before starting: this also enables <strong>Show mouse clicks</strong>. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In <strong>Settings → Capture → Monitor captured in OBS</strong>, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.</p>
+<p>On <strong>Windows</strong>, enable <strong>Click ring</strong> before starting: this also enables <strong>Show mouse clicks</strong>. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In <strong>Settings → Capture → Monitor captured in OBS</strong>, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.</p>
 <p>The ring is drawn inside the OBS overlay, not directly on the Windows desktop. Accurate alignment requires matching the selected monitor capture and Browser Source rectangles and aspect ratio. Window captures or crops are not mapped automatically.</p>
 <p>On <strong>Linux/Wayland</strong>, keyboard and button feedback work across screens. The Browser Source does not receive pointer coordinates; GNOME 48 desktop rings are available separately through <strong>Presentation</strong> and Display Capture.</p>
 <h3 id="click-ring-windows">Click ring — Windows</h3>
-<p>Open <strong>Settings → Click ring</strong> to configure:</p>
+<p>Open <strong>Settings → Ring</strong> to configure:</p>
 <table>
 <thead>
 <tr>
@@ -175,7 +175,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tbody>
 </table>
 <p>Each click displays the ring for 0.5 seconds. Radius and thickness follow canvas scaling. The reduced preview repeats without starting capture. Changes apply live and are saved. <strong>Reset ring</strong> restores purple, a 30px radius, 3px thickness, neon off and pulse on.</p>
-<p>Enable <strong>Ring</strong> in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.</p>
+<p>Enable <strong>Click ring</strong> in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.</p>
 <h2 id="7-saved-settings-and-privacy">7. Saved settings and privacy</h2>
 <p>Position, palette, canvas dimensions and ring style are saved automatically. Other controls—including size, duration, capture options, selected monitor and language—remain session-only in this version. A message in Settings reports a save failure while retaining the live changes for the current session.</p>
 <p>Preference locations:</p>

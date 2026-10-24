@@ -50,8 +50,8 @@ La fenêtre principale compacte contient l’état de la capture, les options de
 | Commande | Utilité |
 | --- | --- |
 | Démarrer | Lancer la capture avec les options choisies. |
-| Arrêter | Terminer la capture et effacer l’incrustation. |
-| Ctrl + Alt + F12 | Arrêt d’urgence. La combinaison est également reçue par le logiciel actif. |
+| Arrêter | Terminer la capture, effacer l’incrustation et arrêter les outils du bureau. |
+| Ctrl + Alt + F12 | Arrêt d’urgence. Les outils du bureau peuvent intercepter ce raccourci lorsqu’ils sont actifs. |
 | Tester le rendu | Arrêter la capture et afficher un exemple pour vérifier OBS. |
 | Copier l’URL OBS | Copier l’adresse locale de la session. |
 | Ouvrir l’aperçu | Ouvrir l’incrustation dans le navigateur ; elle est transparente et peut sembler vide en l’absence de saisie affichée. |
@@ -83,7 +83,7 @@ La ligne du dernier raccourci et la ligne des modificateurs/souris se déplacent
 | Clic droit | La mise en évidence du bouton droit. |
 | Clic molette | La mise en évidence du bouton central. |
 
-Cliquez sur une pastille pour ouvrir le sélecteur de couleur. **Palette sombre** et **Palette claire** rétablissent un ensemble de couleurs en conservant la position, les dimensions et le style de l’anneau. **Tout réinitialiser**, dans cet onglet, réinitialise la position, les couleurs et le style de l’anneau : le format et les options de capture restent inchangés.
+Cliquez sur une pastille pour ouvrir le sélecteur de couleur. **Palette sombre** et **Palette claire** rétablissent un ensemble de couleurs en conservant la position, les dimensions et le style de l’anneau. **Tout réinitialiser**, dans cet onglet, réinitialise la position, les couleurs, l’anneau et les styles de présentation : le format et les options de capture restent inchangés.
 
 ## 5. Paramètres — Format et taille
 
@@ -123,7 +123,7 @@ Sous **Linux/Wayland**, les touches et boutons fonctionnent sur plusieurs écran
 
 ### Anneau au clic — Windows
 
-Ouvrez **Paramètres → Anneau au clic** pour régler :
+Ouvrez **Paramètres → Anneau** pour régler :
 
 | Réglage | Fonction |
 | --- | --- |
@@ -139,7 +139,7 @@ Activez **Cercle au clic** dans la fenêtre principale pour l’afficher dans OB
 
 ## 7. Mémorisation et confidentialité
 
-La position, les couleurs, le format et le style de l’anneau sont enregistrés automatiquement. Les autres réglages — taille, durée, options de capture, moniteur choisi et langue — restent limités à la session dans cette version. En cas d’échec de sauvegarde, un message le signale dans les Paramètres ; les changements restent appliqués pour la session en cours.
+La position, les couleurs, le format, l’anneau et les styles de présentation sont enregistrés automatiquement. Les autres réglages — taille, durée, options de capture, moniteur choisi et langue — restent limités à la session dans cette version. En cas d’échec de sauvegarde, un message le signale dans les Paramètres ; les changements restent appliqués pour la session en cours.
 
 Emplacements du fichier de préférences :
 

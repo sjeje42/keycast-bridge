@@ -53,11 +53,11 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tr>
 <tr>
 <td>Arrêter</td>
-<td>Terminer la capture et effacer l’incrustation.</td>
+<td>Terminer la capture, effacer l’incrustation et arrêter les outils du bureau.</td>
 </tr>
 <tr>
 <td>Ctrl + Alt + F12</td>
-<td>Arrêt d’urgence. La combinaison est également reçue par le logiciel actif.</td>
+<td>Arrêt d’urgence. Les outils du bureau peuvent intercepter ce raccourci lorsqu’ils sont actifs.</td>
 </tr>
 <tr>
 <td>Tester le rendu</td>
@@ -123,7 +123,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </tr>
 </tbody>
 </table>
-<p>Cliquez sur une pastille pour ouvrir le sélecteur de couleur. <strong>Palette sombre</strong> et <strong>Palette claire</strong> rétablissent un ensemble de couleurs en conservant la position, les dimensions et le style de l’anneau. <strong>Tout réinitialiser</strong>, dans cet onglet, réinitialise la position, les couleurs et le style de l’anneau : le format et les options de capture restent inchangés.</p>
+<p>Cliquez sur une pastille pour ouvrir le sélecteur de couleur. <strong>Palette sombre</strong> et <strong>Palette claire</strong> rétablissent un ensemble de couleurs en conservant la position, les dimensions et le style de l’anneau. <strong>Tout réinitialiser</strong>, dans cet onglet, réinitialise la position, les couleurs, l’anneau et les styles de présentation : le format et les options de capture restent inchangés.</p>
 <h2 id="5-parametres-format-et-taille">5. Paramètres — Format et taille</h2>
 <p><strong>Taille</strong> règle le texte des touches entre 20 et 96 pixels du format logique. <strong>Durée</strong> règle l’affichage du dernier raccourci entre 300 et 5000 ms. Les modificateurs maintenus restent visibles jusqu’au relâchement, quelle que soit cette durée.</p>
 <p>Les formats prédéfinis sont 1280 × 720, 1920 × 1080, 2560 × 1440, 3840 × 2160, 1080 × 1920 et 1080 × 1080. Une largeur et une hauteur personnalisées peuvent chacune aller de 160 à 7680 pixels.</p>
@@ -143,7 +143,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p>Le cercle apparaît dans l’incrustation OBS, pas directement sur le bureau Windows. Son alignement exige des proportions et des rectangles identiques pour la capture du moniteur et la source Navigateur. Les captures de fenêtres et les recadrages ne sont pas compensés automatiquement.</p>
 <p>Sous <strong>Linux/Wayland</strong>, les touches et boutons fonctionnent sur plusieurs écrans. La source Navigateur ne reçoit pas de coordonnées du pointeur ; GNOME 48 propose séparément l’anneau du bureau via <strong>Présentation</strong> et la capture d’écran.</p>
 <h3 id="anneau-au-clic-windows">Anneau au clic — Windows</h3>
-<p>Ouvrez <strong>Paramètres → Anneau au clic</strong> pour régler :</p>
+<p>Ouvrez <strong>Paramètres → Anneau</strong> pour régler :</p>
 <table>
 <thead>
 <tr>
@@ -177,7 +177,7 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 <p>Chaque clic affiche l’anneau pendant 0,5 seconde. Le rayon et l’épaisseur suivent la mise à l’échelle du canevas. L’aperçu réduit se répète sans démarrer la capture. Les modifications s’appliquent en direct et sont mémorisées. <strong>Réinitialiser l’anneau</strong> restaure le violet, un rayon de 30 px, une épaisseur de 3 px, sans néon et avec pulsation.</p>
 <p>Activez <strong>Cercle au clic</strong> dans la fenêtre principale pour l’afficher dans OBS. Il reste lié au moniteur choisi et apparaît au clic, pas continuellement autour du curseur. Cette fonction n’ajoute pas de halo global sous Linux.</p>
 <h2 id="7-memorisation-et-confidentialite">7. Mémorisation et confidentialité</h2>
-<p>La position, les couleurs, le format et le style de l’anneau sont enregistrés automatiquement. Les autres réglages — taille, durée, options de capture, moniteur choisi et langue — restent limités à la session dans cette version. En cas d’échec de sauvegarde, un message le signale dans les Paramètres ; les changements restent appliqués pour la session en cours.</p>
+<p>La position, les couleurs, le format, l’anneau et les styles de présentation sont enregistrés automatiquement. Les autres réglages — taille, durée, options de capture, moniteur choisi et langue — restent limités à la session dans cette version. En cas d’échec de sauvegarde, un message le signale dans les Paramètres ; les changements restent appliqués pour la session en cours.</p>
 <p>Emplacements du fichier de préférences :</p>
 <ul>
 <li>Windows : <code>%APPDATA%\keycast-bridge\appearance.json</code></li>

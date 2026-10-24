@@ -50,8 +50,8 @@ The compact main window contains the capture status, mouse options, Start/Stop/T
 | Control | Purpose |
 | --- | --- |
 | Start | Begin capture with the options currently selected. |
-| Stop | End capture and clear the overlay. |
-| Ctrl + Alt + F12 | Emergency stop. The combination is also delivered to the active application. |
+| Stop | End capture, clear the overlay and stop desktop tools. |
+| Ctrl + Alt + F12 | Emergency stop. Desktop tools may consume this registered shortcut while enabled. |
 | Test overlay | Stop capture and display a sample shortcut for checking OBS. |
 | Copy OBS URL | Copy this session's local overlay address. |
 | Open preview | Open the overlay in your browser; it is transparent and can look empty when no input is displayed. |
@@ -83,7 +83,7 @@ The shortcut row and live modifier/mouse row move together. Their alignment foll
 | Right click | Right mouse button highlight. |
 | Middle click | Middle mouse button highlight. |
 
-Click a swatch to open the color chooser. The **Dark palette** and **Light palette** buttons restore coordinated colors while preserving position, canvas dimensions and ring style. **Reset all** in this tab resets position, colors and ring style; it does not change canvas size or capture options.
+Click a swatch to open the color chooser. The **Dark palette** and **Light palette** buttons restore coordinated colors while preserving position, canvas dimensions and ring style. **Reset all** in this tab resets position, colors, ring style and presentation styles; it does not change canvas size or capture options.
 
 ## 5. Settings — Canvas and size
 
@@ -115,7 +115,7 @@ This supports workflows such as the Photoshop/Affinity Pen tool: hold Shift, Ctr
 
 Enable **Show mouse clicks** before starting capture. Left, right and middle buttons have independent colors. A very short click is held visually for at least 150 ms; a held button remains highlighted through a drag. There is no scroll-wheel movement display.
 
-On **Windows**, enable **Ring** before starting: this also enables **Show mouse clicks**. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In **Settings → Capture → Monitor captured in OBS**, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.
+On **Windows**, enable **Click ring** before starting: this also enables **Show mouse clicks**. The ring works with one monitor, selected automatically. If other monitors are unplugged, it automatically follows the sole remaining monitor. With multiple monitors, select the monitor captured in OBS. In **Settings → Capture → Monitor captured in OBS**, choose the display used in OBS. Use its resolution and desktop position to identify it; DISPLAY numbers need not match OBS's source order. The selection can change during capture. Keyboard overlay position does not move the pointer ring. Clicks on another monitor show button feedback but no ring on the selected monitor. If the selected monitor disappears and multiple monitors remain connected, its ring is suspended until an available monitor is selected; keyboard and button feedback continue.
 
 The ring is drawn inside the OBS overlay, not directly on the Windows desktop. Accurate alignment requires matching the selected monitor capture and Browser Source rectangles and aspect ratio. Window captures or crops are not mapped automatically.
 
@@ -123,7 +123,7 @@ On **Linux/Wayland**, keyboard and button feedback work across screens. The Brow
 
 ### Click ring — Windows
 
-Open **Settings → Click ring** to configure:
+Open **Settings → Ring** to configure:
 
 | Setting | Purpose |
 | --- | --- |
@@ -135,7 +135,7 @@ Open **Settings → Click ring** to configure:
 
 Each click displays the ring for 0.5 seconds. Radius and thickness follow canvas scaling. The reduced preview repeats without starting capture. Changes apply live and are saved. **Reset ring** restores purple, a 30px radius, 3px thickness, neon off and pulse on.
 
-Enable **Ring** in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.
+Enable **Click ring** in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.
 
 ## 7. Saved settings and privacy
 
