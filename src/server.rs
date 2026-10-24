@@ -226,6 +226,13 @@ mod tests {
             x: 0.0,
             y: 25.0,
             accent: "#22aa44".into(),
+            ring: crate::appearance::RingAppearance {
+                color: "#44aaff".into(),
+                radius: 80,
+                thickness: 7,
+                neon: true,
+                pulse: false,
+            },
             ..Default::default()
         };
         b.set_appearance(style.clone());

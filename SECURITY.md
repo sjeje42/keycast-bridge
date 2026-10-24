@@ -21,7 +21,7 @@ Only IPv4 localhost is bound. A random per-launch capability token protects the 
 
 Other same-user software, administrators, a compromised GUI or malicious OBS browser extensions are outside the threat model. The token may appear in OBS configuration or browser history: do not share it. Restarting rotates it. The emergency shortcut consumes no keys; other applications receive it too. On Linux, press it on a captured keyboard, with all modifiers on that keyboard. No independent security audit is claimed.
 
-Appearance preferences (position, colors and canvas dimensions only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.
+Appearance preferences (position, colors, ring effects and canvas dimensions only) are written to the user configuration directory. They contain no captured keys, pointer history or capability token. Loaded coordinates and colors are validated before rendering. The overlay/WebSocket remain read-only; appearance changes originate in the native application.
 
 The embedded English/French help uses the same localhost token and Host/Origin checks. It is static HTML with no scripts or external assets. Canvas configuration does not control OBS remotely.
 

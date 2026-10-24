@@ -45,7 +45,7 @@ try {
   assert.deepEqual(await page.locator('kbd.held').allTextContents(), ['AltGr']);
   await send({type:'clear'});
   assert.equal(await page.locator('.keys').count(), 0);
-  const appearance = {x:0, y:0, background:'#123456', key_background:'#234567', text:'#fedcba', accent:'#11aa33', right_click:'#ee2244', middle_click:'#2299ee'};
+  const appearance = {x:0, y:0, background:'#123456', key_background:'#234567', text:'#fedcba', accent:'#11aa33', right_click:'#ee2244', middle_click:'#2299ee', ring:{color:'#ff8844',radius:60,thickness:8,neon:true,pulse:false}};
   const config = {type:'config', size:40, duration:5000, dark:true, halo:true, appearance};
   await send(config);
   await send({type:'modifiers', keys:['Ctrl','Shift']});
@@ -71,7 +71,39 @@ try {
   assert.equal(await page.locator('svg rect').nth(1).getAttribute('fill'), appearance.middle_click);
   const ringStyle = await page.locator('.ring').evaluate(el => { const rect=el.getBoundingClientRect(); return {x:rect.x+rect.width/2,y:rect.y+rect.height/2,color:getComputedStyle(el).borderTopColor}; });
   assert.ok(Math.abs(ringStyle.x-896)<1 && Math.abs(ringStyle.y-432)<1, `pointer ring independent of keyboard position: ${JSON.stringify(ringStyle)}`);
-  assert.equal(ringStyle.color, 'rgb(17, 170, 51)');
+  assert.equal(ringStyle.color, 'rgb(255, 136, 68)', 'ring color is independent of key/button accent');
+  const ringBox = await page.locator('.ring').boundingBox();
+  assert.ok(Math.abs(ringBox.width-80)<1 && Math.abs(ringBox.height-80)<1, 'radius scales with the canvas');
+  for (const neon of [false,true]) {
+    for (const pulse of [false,true]) {
+      await send({...config, size:96, appearance:{...appearance,ring:{...appearance.ring,neon,pulse}}});
+      await send({type:'mouse',button:1,pressed:true,x:0.7,y:0.6});
+      const css = await page.locator('.ring').evaluate(el => {
+        const s = getComputedStyle(el);
+        return {width:s.width, thickness:s.borderTopWidth, glow:s.boxShadow, animation:s.animationName};
+      });
+      assert.equal(css.width, '120px', 'ring radius does not depend on key size');
+      assert.equal(css.thickness, '8px');
+      assert.equal(css.glow !== 'none', neon);
+      assert.ok(css.animation.includes(pulse ? 'ring-pulse' : 'ring-fade'));
+    }
+  }
+  await send({...config,appearance:{...appearance,ring:{color:'url(https://invalid.test)',radius:-5,thickness:999,neon:'true',pulse:'false'}}});
+  await send({type:'mouse',button:1,pressed:true,x:0.7,y:0.6});
+  assert.deepEqual(await page.locator('.ring').evaluate(el => ({width:el.style.width,thickness:el.style.borderWidth,color:getComputedStyle(el).borderTopColor,neon:el.classList.contains('neon'),pulse:el.classList.contains('pulsing')})), {width:'20px',thickness:'10px',color:'rgb(168, 121, 255)',neon:false,pulse:true});
+  await send({...config,appearance:{...appearance,ring:{radius:999,thickness:0,pulse:false}}});
+  assert.equal(await page.locator('.ring').evaluate(el => el.style.width), '400px', 'live update resizes current ring');
+  assert.equal(await page.locator('.ring').evaluate(el => el.style.borderWidth), '1px');
+  await send({...config,halo:false});
+  assert.equal(await page.locator('.ring').count(),0,'disabling click ring clears it immediately');
+  await send(config);
+  await send({type:'mouse',button:1,pressed:true,x:0.2,y:0.3});
+  await page.waitForTimeout(300);
+  await send({type:'mouse',button:2,pressed:true,x:0.8,y:0.9});
+  await page.waitForTimeout(250);
+  assert.equal(await page.locator('.ring').count(),1,'new click restarts ring lifetime');
+  await page.waitForTimeout(300);
+  assert.equal(await page.locator('.ring').count(),0,'ring expires without another input event');
   for (const [canvas_width,canvas_height] of [[1280,720],[1080,1920],[1080,1080],[3840,2160]]) {
     await send({...config, appearance:{...appearance,canvas_width,canvas_height}});
     const box = await page.locator('.canvas').boundingBox();
@@ -92,10 +124,14 @@ try {
   assert.equal(await page.locator('.overlay').evaluate(el => el.style.top), '100%');
   assert.equal(await page.locator('kbd.held').first().evaluate(el => getComputedStyle(el).outlineColor), 'rgb(168, 121, 255)');
   await send({type:'clear'});
+  assert.equal(await page.locator('.ring').count(),0);
   await send({type:'modifiers', keys:['Alt']});
+  await send(config);
+  await send({type:'mouse',button:1,pressed:true,x:0.5,y:0.5});
   await page.evaluate(() => window.overlaySocket.close());
   assert.equal(await page.locator('.keys').count(), 0, 'disconnect clears held state');
-  console.log('PASS: held modifiers, releases, clear/disconnect, free placement, landscape/portrait bounds, custom colors, pointer ring and invalid settings.');
+  assert.equal(await page.locator('.ring').count(), 0, 'disconnect clears ring');
+  console.log('PASS: held modifiers, placement, scaling, ring colors/dimensions/effects, live updates, lifecycle and invalid settings.');
 } finally {
   await browser?.close();
   server.close();

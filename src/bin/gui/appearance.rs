@@ -9,10 +9,10 @@ use keycast_bridge::{
 };
 use std::{cell::Cell, rc::Rc, sync::Arc, time::Duration};
 
-fn rgba(color: &str) -> gdk::RGBA {
+pub(super) fn rgba(color: &str) -> gdk::RGBA {
     gdk::RGBA::parse(color).unwrap_or(gdk::RGBA::WHITE)
 }
-fn hex(color: gdk::RGBA) -> String {
+pub(super) fn hex(color: gdk::RGBA) -> String {
     format!(
         "#{:02x}{:02x}{:02x}",
         (color.red() * 255.0).round() as u8,
@@ -34,7 +34,7 @@ fn colors(a: &Appearance) -> [&str; 6] {
         &a.middle_click,
     ]
 }
-fn save(state: &Bridge, failed: &Cell<bool>) {
+pub(super) fn save(state: &Bridge, failed: &Cell<bool>) {
     failed.set(preferences_path().is_none_or(|path| state.appearance().save(&path).is_err()));
 }
 
@@ -126,6 +126,7 @@ pub fn build(root: &GtkBox, state: Arc<Bridge>, language: ComboBoxText) {
             if mode != 2 {
                 a.x = previous.x;
                 a.y = previous.y;
+                a.ring = previous.ring;
             }
             if mode == 1 {
                 a.light();

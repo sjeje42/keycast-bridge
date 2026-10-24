@@ -1,6 +1,6 @@
 # Keycast Bridge — User guide
 
-Version **0.2.0-alpha.8** · [Français](USER_GUIDE.fr.md)
+Version **0.2.0** · [Français](USER_GUIDE.fr.md)
 
 Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse clicks in a transparent OBS Browser Source. The native application controls capture and appearance; OBS combines the overlay with your screen or application capture.
 
@@ -8,14 +8,14 @@ Keycast Bridge shows keyboard shortcuts, held modifier keys and optional mouse c
 
 ### Windows x64
 
-Download the Windows ZIP from the project's GitHub Releases. Extract the **entire archive** into a writable folder and open `keycast-bridge.exe`. Keep the DLLs and subfolders beside the executable. There is no installer, driver or background service. Use the application as a normal user. The alpha is unsigned; secure desktops, UAC prompts and elevated applications are outside its supported capture target.
+Download the Windows ZIP from the project's GitHub Releases. Extract the **entire archive** into a writable folder and open `keycast-bridge.exe`. Keep the DLLs and subfolders beside the executable. There is no installer, driver or background service. Use the application as a normal user. The Windows executable is unsigned; secure desktops, UAC prompts and elevated applications are outside its supported capture target.
 
 ### Debian 13 amd64
 
 Download the Debian package from Releases, open a terminal in its folder and run:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb
 ```
 
 Open Keycast Bridge from the application menu. Do **not** run the graphical application with sudo. Starting keyboard capture requests administrator authorization through Polkit; the capture helper manages the input devices. You do not need to add yourself to the `input` group.
@@ -79,11 +79,11 @@ The shortcut row and live modifier/mouse row move together. Their alignment foll
 | Background | The translucent background of each row. |
 | Key background | The surface of each key. |
 | Text | Letters, separators and mouse outline. |
-| Accent / left click | Held-key outlines, left mouse button and Windows click ring. |
+| Accent / left click | Held-key outlines and left mouse button. |
 | Right click | Right mouse button highlight. |
 | Middle click | Middle mouse button highlight. |
 
-Click a swatch to open the color chooser. The **Dark palette** and **Light palette** buttons restore coordinated colors while preserving position and canvas dimensions. **Reset all** in this tab resets position and colors only; it does not change canvas size or capture options.
+Click a swatch to open the color chooser. The **Dark palette** and **Light palette** buttons restore coordinated colors while preserving position, canvas dimensions and ring style. **Reset all** in this tab resets position, colors and ring style; it does not change canvas size or capture options.
 
 ## 5. Settings — Canvas and size
 
@@ -101,7 +101,7 @@ Example: for a vertical 1080 × 1920 tutorial, choose that preset in the applica
 
 On **Linux**, the default captures all recognized keyboards, including newly attached keyboards. You can instead select specific keyboards in Settings and refresh the device list. Set the keyboard layout to match your desktop: French AZERTY, US or UK QWERTY, or German QWERTZ. Unplugging a keyboard drops its held-key state. Reconnecting or replacing keyboards in automatic mode does not require restarting OBS.
 
-On **Windows**, all keyboards in the current session are captured and the layout follows the foreground window. Individual keyboard selection is not available in this alpha.
+On **Windows**, all keyboards in the current session are captured and the layout follows the foreground window. Individual keyboard selection is not available in this version.
 
 ### Shortcuts, text and held modifiers
 
@@ -121,9 +121,25 @@ The ring is drawn inside the OBS overlay, not directly on the Windows desktop. A
 
 On **Linux/Wayland**, keyboard and button feedback work across screens, but pointer-position rings are not available.
 
+### Click ring — Windows
+
+Open **Settings → Click ring** to configure:
+
+| Setting | Purpose |
+| --- | --- |
+| Color | Dedicated ring color, independent of keys and mouse-button colors. |
+| Base radius | 10–200 OBS canvas pixels, independent of key size. |
+| Thickness | 1–20 pixels, never exceeding the radius. |
+| Neon glow | Adds an inner and outer glow in the selected color. |
+| Pulse effect | Expands the ring from 70 to 140% of its base radius as it disappears. Disabled: fixed radius with a fade. |
+
+Each click displays the ring for 0.5 seconds. Radius and thickness follow canvas scaling. The reduced preview repeats without starting capture. Changes apply live and are saved. **Reset ring** restores purple, a 30px radius, 3px thickness, neon off and pulse on.
+
+Enable **Click ring** in the main window to show it in OBS. It stays tied to the selected monitor and appears on clicks, not continuously around the cursor. This feature does not add a global pointer halo on Linux.
+
 ## 7. Saved settings and privacy
 
-Position, palette and canvas dimensions are saved automatically. Other controls—including size, duration, capture options, selected monitor and language—remain session-only in this alpha. A message in Settings reports a save failure while retaining the live changes for the current session.
+Position, palette, canvas dimensions and ring style are saved automatically. Other controls—including size, duration, capture options, selected monitor and language—remain session-only in this version. A message in Settings reports a save failure while retaining the live changes for the current session.
 
 Preference locations:
 

@@ -18,7 +18,7 @@ Unit tests cover layout-dependent Ctrl+A/Ctrl+Q, modifier release, ignored repea
 
 The included `scripts/smoke.mjs` exercises a running demo over HTTP and WebSocket (Node.js 22). Build `keycast-bridge-demo` first and ensure port 48732 is free.
 
-See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
+See [VALIDATION.md](VALIDATION.md) for checks actually completed for this version.
 
 ## Linux desktop + OBS regression checklist (Debian 13 / Fedora)
 
@@ -40,7 +40,7 @@ See [VALIDATION.md](VALIDATION.md) for checks actually completed for this alpha.
 - [ ] OBS reconnect / hidden source / slow consumer: no stale key replay.
 - [ ] Long session: no persistent key logs or increasing memory backlog.
 
-**Not guaranteed in this alpha:** initial Caps/Num Lock state, automatic desktop layout tracking, multi-keyboard chords, Compose/IME, lock-screen auto-pause, mouse wheel/motion.
+**Not guaranteed in this version:** initial Caps/Num Lock state, automatic desktop layout tracking, multi-keyboard chords, Compose/IME, lock-screen auto-pause, mouse wheel/motion.
 
 
 ## Keyboard hotplug and mouse buttons (physical hardware)
@@ -82,4 +82,8 @@ Drag the schematic preview; test all nine presets and numeric X/Y via keyboard. 
 
 ## Settings and canvas
 
-Check initial main-window fit on 1280×720/1366×768 displays and high-DPI scaling. Open the gear, switch all three tabs, close/reopen Settings and verify capture continues. Choose a portrait preset and a custom canvas, align OBS width/height, then restart and confirm dimensions persist. With mismatched browser dimensions, verify centered transparent margins and no distortion. Check the main dimension hint, preview aspect and pointer ring. Open the complete guide in each language with the network disconnected; also open the bundled HTML directly.
+Check initial main-window fit on 1280×720/1366×768 displays and high-DPI scaling. Open the gear, switch all settings tabs (including Click ring on Windows), close/reopen Settings and verify capture continues. Choose a portrait preset and a custom canvas, align OBS width/height, then restart and confirm dimensions persist. With mismatched browser dimensions, verify centered transparent margins and no distortion. Check the main dimension hint, preview aspect and pointer ring. Open the complete guide in each language with the network disconnected; also open the bundled HTML directly.
+
+## Custom click ring (Windows)
+
+In Settings → Click ring, change color, base radius and thickness; try all four neon/pulse combinations. Check the reduced preview and OBS output. Verify a 10px radius caps thickness at 10px; a 200px radius accepts 20px thickness. Change key size and palette: ring dimensions and color must remain independent. Confirm each click fades within 0.5s, a rapid second click restarts the effect, and Stop/disconnect/disable clears it. Change style while capture is active: held modifiers and capture must continue. Restart and confirm all five ring settings persist; test an old preference file without a ring section. Reset ring must preserve other appearance settings. Repeat with portrait/4K canvas, a scaled browser source and multiple monitors. Record actual manual results, not just completion of this checklist.

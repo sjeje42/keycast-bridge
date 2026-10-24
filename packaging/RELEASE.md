@@ -1,35 +1,31 @@
-## Français — 0.2.0-alpha.8
+## Français — 0.2.0 stable
 
-- Icône officielle intégrée à l’application, aux lanceurs Linux et à l’exécutable Windows.
-- Original HD 2048 × 2048 conservé ; icônes Linux/GTK de 16 à 1024 pixels et ICO Windows à sept tailles, de 16 à 256 pixels.
-- Propriétés de l’exécutable Windows : nom du produit et version générée depuis `Cargo.toml`.
-- Guides PDF illustrés français et anglais inclus dans les paquets et disponibles séparément. Les guides en ligne et l’aide HTML intégrée restent disponibles. Les PDF conservent leur édition illustrée existante ; les guides HTML/Markdown sont actualisés pour cette version.
-- Documentation d’installation, historique des versions et périmètre des validations clarifiés ; politique de signature préparée pour une future candidature SignPath Foundation.
-- Contrôles automatiques des icônes installées, des ressources Windows et des métadonnées de version.
+Première version stable après les retours positifs de tests prolongés par des utilisateurs faisant de la formation.
 
-**Windows x64** : extraire tout `keycast-bridge_0.2.0-alpha.8_windows-x64.zip`, puis ouvrir `keycast-bridge.exe`.
+- **Paramètres → Anneau au clic** sous Windows : couleur indépendante, rayon de base de 10 à 200 px, épaisseur de 1 à 20 px (limitée au rayon), effet néon et pulsation activables séparément.
+- Aperçu animé réduit, réglages appliqués en direct et mémorisés, bouton de réinitialisation de l’anneau.
+- Dimensions exprimées dans le canevas OBS ; le cercle reste centré sur le clic, quel que soit le positionnement des touches. Sans pulsation, il conserve son rayon et disparaît en fondu après 0,5 s.
+- Anciennes préférences conservées ; les nouveaux réglages reçoivent leurs valeurs par défaut.
+- Guides en ligne et aide HTML français/anglais actualisés. Les PDF illustrés existants restent inclus dans leur édition précédente ; les nouveaux réglages sont décrits dans l’aide intégrée.
 
-**Debian 13 amd64** : `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`.
+**Windows x64** : extraire entièrement `keycast-bridge_0.2.0_windows-x64.zip` et lancer `keycast-bridge.exe`.
 
-Les empreintes des téléchargements sont regroupées dans `SHA256SUMS`. Cette version reste une alpha ; vérifier sa scène OBS avant une diffusion.
+**Debian 13 amd64** : `sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb`.
 
-## English — 0.2.0-alpha.8
+L’anneau demeure une fonction Windows, visible au clic dans OBS. La version Linux conserve l’affichage des touches et des boutons de souris. Les exécutables Windows restent non signés ; la préparation SignPath n’est pas une signature active. Les empreintes des fichiers sont dans `SHA256SUMS`.
 
-- Official icon integrated into the application, Linux launchers and Windows executable.
-- Original 2048 × 2048 artwork preserved; Linux/GTK icons from 16 to 1024 pixels and a seven-size Windows ICO from 16 to 256 pixels.
-- Windows executable properties now include the product name and version derived from `Cargo.toml`.
-- Illustrated English and French PDF guides bundled in the packages and available separately. Online guides and embedded HTML help remain available. PDFs retain their existing illustrated edition; HTML/Markdown guides are updated for this version.
-- Clearer installation documentation, changelog and validation scope; preparatory code signing policy for a future SignPath Foundation application.
-- Automated checks cover installed icons, Windows resources and executable version metadata.
+## English — 0.2.0 stable
 
-**Windows x64**: extract the complete `keycast-bridge_0.2.0-alpha.8_windows-x64.zip`, then open `keycast-bridge.exe`.
+First stable release following positive extended field-testing feedback from users who deliver training.
 
-**Debian 13 amd64**: `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`.
+- Windows **Settings → Click ring**: independent color, 10–200px base radius, 1–20px thickness (capped by radius), independently selectable neon and pulse effects.
+- Reduced animated preview, live saved settings and a ring-only reset button.
+- Dimensions use OBS canvas pixels; the ring remains centered on the click independently of key placement. Without pulse it retains its radius and fades away after 0.5s.
+- Existing preferences are retained; new settings receive defaults.
+- Updated English/French online and embedded HTML guides. Existing illustrated PDFs are included in their earlier edition; new controls are documented in embedded help.
 
-Download checksums are listed in `SHA256SUMS`. This remains an alpha; check your OBS scene before a live broadcast.
+**Windows x64**: extract all of `keycast-bridge_0.2.0_windows-x64.zip` and launch `keycast-bridge.exe`.
 
-## Code signing policy
+**Debian 13 amd64**: `sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb`.
 
-[Code signing policy](https://github.com/sjeje42/keycast-bridge/blob/main/CODE_SIGNING_POLICY.md) — SignPath Foundation application in preparation. This release remains unsigned; no SignPath acceptance or signing is claimed.
-
-Candidature SignPath Foundation en préparation. Cette release reste non signée ; aucune acceptation ni signature SignPath n’est annoncée.
+The click ring remains Windows-only and appears in OBS on clicks. Linux retains key and mouse-button feedback. Windows executables remain unsigned; SignPath preparation is not active signing. File checksums are in `SHA256SUMS`.

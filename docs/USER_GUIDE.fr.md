@@ -1,6 +1,6 @@
 # Keycast Bridge — Guide d’utilisation
 
-Version **0.2.0-alpha.8** · [English](USER_GUIDE.en.md)
+Version **0.2.0** · [English](USER_GUIDE.en.md)
 
 Keycast Bridge affiche les raccourcis clavier, les modificateurs maintenus et, en option, les clics de souris dans une source Navigateur OBS transparente. L’application contrôle la capture et l’apparence ; OBS superpose le résultat à la capture de votre écran ou logiciel.
 
@@ -8,14 +8,14 @@ Keycast Bridge affiche les raccourcis clavier, les modificateurs maintenus et, e
 
 ### Windows x64
 
-Téléchargez le ZIP Windows dans les Releases GitHub du projet. Extrayez **toute l’archive** dans un dossier accessible en écriture, puis ouvrez `keycast-bridge.exe`. Conservez les DLL et les sous-dossiers à côté de l’exécutable. Il n’y a ni installateur, ni pilote, ni service permanent. Lancez l’application en utilisateur normal. Cette alpha n’est pas signée ; les bureaux sécurisés, les fenêtres UAC et les logiciels exécutés en administrateur ne font pas partie de la cible de capture prise en charge.
+Téléchargez le ZIP Windows dans les Releases GitHub du projet. Extrayez **toute l’archive** dans un dossier accessible en écriture, puis ouvrez `keycast-bridge.exe`. Conservez les DLL et les sous-dossiers à côté de l’exécutable. Il n’y a ni installateur, ni pilote, ni service permanent. Lancez l’application en utilisateur normal. Cette version n’est pas signée ; les bureaux sécurisés, les fenêtres UAC et les logiciels exécutés en administrateur ne font pas partie de la cible de capture prise en charge.
 
 ### Debian 13 amd64
 
 Téléchargez le paquet Debian depuis les Releases, ouvrez un terminal dans son dossier et lancez :
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb
 ```
 
 Ouvrez Keycast Bridge depuis le menu des applications. **Ne lancez pas l’interface avec sudo.** Le démarrage de la capture demande une autorisation administrateur via Polkit ; le composant de capture gère ensuite les périphériques. Il n’est pas nécessaire de vous ajouter au groupe `input`.
@@ -79,11 +79,11 @@ La ligne du dernier raccourci et la ligne des modificateurs/souris se déplacent
 | Fond | Le fond translucide de chaque ligne. |
 | Touches | La surface de chaque touche. |
 | Texte | Les lettres, les séparateurs et le contour de la souris. |
-| Accent / clic gauche | Le contour des touches maintenues, le bouton gauche et le cercle au clic sous Windows. |
+| Accent / clic gauche | Le contour des touches maintenues et le bouton gauche. |
 | Clic droit | La mise en évidence du bouton droit. |
 | Clic molette | La mise en évidence du bouton central. |
 
-Cliquez sur une pastille pour ouvrir le sélecteur de couleur. **Palette sombre** et **Palette claire** rétablissent un ensemble de couleurs en conservant la position et les dimensions. **Tout réinitialiser**, dans cet onglet, réinitialise seulement la position et les couleurs : le format et les options de capture restent inchangés.
+Cliquez sur une pastille pour ouvrir le sélecteur de couleur. **Palette sombre** et **Palette claire** rétablissent un ensemble de couleurs en conservant la position, les dimensions et le style de l’anneau. **Tout réinitialiser**, dans cet onglet, réinitialise la position, les couleurs et le style de l’anneau : le format et les options de capture restent inchangés.
 
 ## 5. Paramètres — Format et taille
 
@@ -101,7 +101,7 @@ Exemple : pour un tutoriel vertical en 1080 × 1920, choisissez ce format dans l
 
 Sous **Linux**, le réglage par défaut capture tous les claviers reconnus, y compris ceux branchés ensuite. Vous pouvez sélectionner des claviers précis dans les Paramètres et actualiser la liste. Choisissez une disposition correspondant à votre bureau : AZERTY France, QWERTY États-Unis ou Royaume-Uni, QWERTZ Allemagne. Débrancher un clavier efface son état de touches maintenues. En mode automatique, rebrancher ou remplacer un clavier ne demande pas de redémarrer OBS.
 
-Sous **Windows**, tous les claviers de la session sont capturés et la disposition suit la fenêtre active. Cette alpha ne propose pas de sélection individuelle des claviers Windows.
+Sous **Windows**, tous les claviers de la session sont capturés et la disposition suit la fenêtre active. Cette version ne propose pas de sélection individuelle des claviers Windows.
 
 ### Raccourcis, texte et modificateurs
 
@@ -121,9 +121,25 @@ Le cercle apparaît dans l’incrustation OBS, pas directement sur le bureau Win
 
 Sous **Linux/Wayland**, les touches et boutons fonctionnent sur plusieurs écrans, mais le cercle à la position du pointeur n’est pas disponible.
 
+### Anneau au clic — Windows
+
+Ouvrez **Paramètres → Anneau au clic** pour régler :
+
+| Réglage | Fonction |
+| --- | --- |
+| Couleur | Couleur propre à l’anneau, indépendante des touches et des boutons de souris. |
+| Rayon de base | De 10 à 200 pixels du canevas OBS ; indépendant de la taille des touches. |
+| Épaisseur | De 1 à 20 pixels, sans dépasser le rayon. |
+| Effet néon | Ajoute une lueur intérieure et extérieure de la couleur choisie. |
+| Effet pulsation | Agrandit l’anneau de 70 à 140 % du rayon de base pendant sa disparition. Désactivé : rayon fixe avec fondu. |
+
+Chaque clic affiche l’anneau pendant 0,5 seconde. Le rayon et l’épaisseur suivent la mise à l’échelle du canevas. L’aperçu réduit se répète sans démarrer la capture. Les modifications s’appliquent en direct et sont mémorisées. **Réinitialiser l’anneau** restaure le violet, un rayon de 30 px, une épaisseur de 3 px, sans néon et avec pulsation.
+
+Activez **Cercle au clic** dans la fenêtre principale pour l’afficher dans OBS. Il reste lié au moniteur choisi et apparaît au clic, pas continuellement autour du curseur. Cette fonction n’ajoute pas de halo global sous Linux.
+
 ## 7. Mémorisation et confidentialité
 
-La position, les couleurs et le format sont enregistrés automatiquement. Les autres réglages — taille, durée, options de capture, moniteur choisi et langue — restent limités à la session dans cette alpha. En cas d’échec de sauvegarde, un message le signale dans les Paramètres ; les changements restent appliqués pour la session en cours.
+La position, les couleurs, le format et le style de l’anneau sont enregistrés automatiquement. Les autres réglages — taille, durée, options de capture, moniteur choisi et langue — restent limités à la session dans cette version. En cas d’échec de sauvegarde, un message le signale dans les Paramètres ; les changements restent appliqués pour la session en cours.
 
 Emplacements du fichier de préférences :
 

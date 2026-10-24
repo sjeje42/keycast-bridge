@@ -1,6 +1,6 @@
-# Validation — 0.2.0-alpha.8
+# Validation — 0.2.0
 
-This page separates reported manual desktop testing from automated checks. It records the scope of the current alpha; [TESTING.md](TESTING.md) is the reusable regression procedure, not a list of tests already passed.
+This page separates reported manual desktop testing from automated checks. It records the scope of the current stable release; [TESTING.md](TESTING.md) is the reusable regression procedure, not a list of tests already passed.
 
 ## Manual desktop validation
 
@@ -15,9 +15,11 @@ Status confirmed by the maintainer on 2026-09-28, following development testing 
 
 Development feedback also confirmed multi-monitor use, held modifiers with mouse input, appearance/settings changes, and the alpha.7 fixes for Windows help opening and the single-monitor click ring. These reports establish successful use in the tested setups. They are not a per-platform pass for every scenario in the regression procedure.
 
+On 2026-10-24 the maintainer reported positive extended field testing by friends who deliver training, and chose to leave alpha. These reports do not constitute a manual acceptance test of the new ring controls. New ring controls are covered by preference/protocol/browser regression tests and the Windows GUI smoke test; manual visual feedback on the new effects is still welcome.
+
 ## Automated validation
 
-The icon integration was validated before the version bump: the following pipelines passed for source commit [`0af3929`](https://github.com/sjeje42/keycast-bridge/commit/0af3929b8e2c8e7b2152a997a758deb423073b8f) on 2026-09-29. The release commit must pass the same three gates again before publication.
+Historical baseline: the icon integration was validated before the stable version work: the following pipelines passed for source commit [`0af3929`](https://github.com/sjeje42/keycast-bridge/commit/0af3929b8e2c8e7b2152a997a758deb423073b8f) on 2026-09-29. The release commit must pass the same three gates again before publication.
 
 | Pipeline | Environment | Evidence |
 | --- | --- | --- |
@@ -29,7 +31,7 @@ Coverage includes Rust tests and Clippy, browser overlay regressions, HTTP/WebSo
 
 Regression coverage includes monitor mapping and removal, single-monitor selection, mouse/ring settings, held modifiers, persistent position/colors/canvas dimensions, scaling and pointer placement, settings-window behavior and embedded guides. Package checks cover the bundled HTML and PDF documentation, installed Linux icons, GTK icon-resource lookup, and the Windows executable's embedded icon and Cargo-derived product/version metadata.
 
-Alpha.8 packages include the official icon and PDF guides. Earlier releases retain their original binaries. The manual desktop reports above predate this release and are not a new manual acceptance pass for alpha.8.
+Stable packages retain the official icon and PDF guides. Earlier releases retain their original binaries. Current ring coverage includes preference migration and persistence, independent colors/dimensions, all effect combinations, live updates, scaling, expiry and disconnect cleanup.
 
 ## Remaining coverage and operating limits
 
@@ -38,7 +40,7 @@ Alpha.8 packages include the official icon and PDF guides. Earlier releases reta
 - Mixed DPI combinations, portrait/negative-origin monitor layouts, USB removal while modifiers are held, unusual browser associations and small/high-DPI settings dialogs remain regression scenarios unless a dated result is recorded.
 - Windows click rings require aligned full-monitor capture and OBS Browser Source geometry. Linux supports mouse-button feedback but not pointer-position rings. Application canvas settings do not change OBS properties automatically.
 
-This is alpha software. Check the intended OBS scene before a live broadcast and stop capture before entering sensitive information. See [SECURITY.md](../SECURITY.md) for the security model.
+Check the intended OBS scene before a live broadcast and stop capture before entering sensitive information. See [SECURITY.md](../SECURITY.md) for the security model.
 
 ## Release gate
 

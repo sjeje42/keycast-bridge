@@ -20,12 +20,12 @@ PDF guides: [English](docs/pdf/Keycast_Bridge_User_Guide_EN.pdf) · [Français](
 
 ## Quick install
 
-[Download version 0.2.0-alpha.8](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0-alpha.8)
+[Download version 0.2.0](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0)
 
 [Code signing policy](CODE_SIGNING_POLICY.md) — SignPath Foundation application in preparation; current Windows releases remain unsigned.
 
 - **Windows 10/11 x64:** download the ZIP, extract it completely and launch `keycast-bridge.exe`.
-- **Debian 13 amd64:** download the `.deb`, run `sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb`, then open **Keycast Bridge** from the applications menu.
+- **Debian 13 amd64:** download the `.deb`, run `sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb`, then open **Keycast Bridge** from the applications menu.
 
 Windows executables are unsigned; SmartScreen may display a warning. See [antivirus guidance and SHA256 verification](docs/WINDOWS.md#smartscreen-antivirus-and-integrity).
 
@@ -33,7 +33,7 @@ Windows executables are unsigned; SmartScreen may display a warning. See [antivi
 
 [Documentation française](README.fr.md) · [Security model](SECURITY.md) · [Testing](docs/TESTING.md) · [Documentation index](docs/README.md) · [Changelog](CHANGELOG.md)
 
-Version **0.2.0-alpha.8**. New implementation, not a Screenkey fork. GPL-3.0-only.
+Version **0.2.0**. New implementation, not a Screenkey fork. GPL-3.0-only.
 Rust capture and server, native GTK4 controls (English / French), Svelte + TypeScript browser overlay.
 Manually tested on Debian 13 (GNOME), Fedora, Windows 10 and Windows 11. Fedora release and desktop details were not recorded. This does not establish compatibility with every Wayland compositor. See [validation scope and evidence](docs/VALIDATION.md).
 
@@ -66,7 +66,7 @@ Optional left/right/middle mouse feedback is available on both systems. On Windo
 Download the `.deb` from [GitHub Releases](https://github.com/sjeje42/keycast-bridge/releases), then open a terminal in the download directory:
 
 ```sh
-sudo apt install ./keycast-bridge_0.2.0.alpha.8-1_amd64.deb
+sudo apt install ./keycast-bridge_0.2.0-1_amd64.deb
 ```
 
 Launch **Keycast Bridge** from the applications menu. No compilation required. APT installs dependencies; the package includes the capture helper and Polkit policy. Capture never starts automatically. Uninstall with `sudo apt remove keycast-bridge`.
@@ -201,7 +201,7 @@ Dependency names and package-manager commands: [Ubuntu](https://packages.ubuntu.
 
 The URL changes after every app launch. Update it in OBS. This deliberately avoids storing a long-lived token. OBS does not need administrator privileges.
 
-**If Browser is absent from your OBS source list**, that OBS build has no Browser Source support. Install an OBS build/package providing that feature; this alpha does not implement an alternative window overlay.
+**If Browser is absent from your OBS source list**, that OBS build has no Browser Source support. Install an OBS build/package providing that feature; this version does not implement an alternative window overlay.
 
 ## Appearance and settings
 
@@ -213,7 +213,7 @@ Shift, Ctrl, Alt and combinations stay visible in a live row while held, includi
 
 Open the top-right gear → **Position and colors**, then drag the block in the schematic preview. Nine presets and **X/Y (%)** fields also support keyboard adjustment. 0% means the left/top edge and 100% the right/bottom edge of the available space, with a safety margin. Both rows and the mouse icon move together.
 
-Customize background, key background, text and all three click colors. The accent also colors held-key outlines and the click ring. Light/dark palettes preserve position; **Reset all** restores default position and colors.
+Customize background, key background, text and all three click colors. The accent also colors held-key outlines; the ring has its own color. Light/dark palettes preserve position and ring style; **Reset all** restores default position, colors and ring style.
 
 Changes apply live in OBS during capture. The GTK preview is schematic; **Test overlay** shows exact output in OBS but stops active capture. Positions are relative to the Browser Source; cropping that source can hide content. The click ring remains at the pointer.
 
@@ -221,7 +221,7 @@ Position, colors and canvas dimensions persist in `%APPDATA%\keycast-bridge\appe
 
 ### Settings and OBS canvas
 
-Open the top-right gear for **Position and colors**, **Canvas and size**, and **Capture**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; the Windows ZIP and Debian package include them alongside the HTML guides.
+Open the top-right gear for **Position and colors**, **Canvas and size**, **Capture**, and (on Windows) **Click ring**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; the Windows ZIP and Debian package include them alongside the HTML guides.
 
 ## Development and demo
 
@@ -244,7 +244,7 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 - No text reconstruction, Compose/dead-key composition, IME, mouse wheel/motion visualization. Appearance and canvas settings persist; size, duration, capture options, monitor selection and language remain session-only.
 - Key-repeat events are intentionally ignored. Modifiers held before Start must be released and pressed again. Caps Lock / Num Lock state already active at startup is not synchronized with GNOME.
 - System-wide evdev access does not identify focused windows, lock screens or active sessions. Stop before locking the session; lock-screen auto-pause is not implemented.
-- Manual desktop testing is confirmed on Debian 13, Fedora, Windows 10 and Windows 11. This remains an alpha: check your own OBS scene before going live. Untested configurations and regression checks are listed in [VALIDATION.md](docs/VALIDATION.md) and [TESTING.md](docs/TESTING.md).
+- Manual desktop testing is confirmed on Debian 13, Fedora, Windows 10 and Windows 11. Check your own OBS scene before going live. Untested configurations and regression checks are listed in [VALIDATION.md](docs/VALIDATION.md) and [TESTING.md](docs/TESTING.md).
 
 ## License and acknowledgments
 

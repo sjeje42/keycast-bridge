@@ -4,15 +4,15 @@
 
 ## Version formats
 
-For application version `0.2.0-alpha.8`:
+For application version `0.2.0`:
 
 | Purpose | Value | Reason |
 | --- | --- | --- |
-| Cargo, application, release tag, Windows ZIP | `0.2.0-alpha.8` (tag prefixed with `v`) | Semantic version of the application |
-| Debian package metadata | `0.2.0~alpha.8-1` | The tilde sorts a prerelease before `0.2.0`; `-1` is the package revision |
-| Debian download filename | `0.2.0.alpha.8-1` | The packaging script replaces the tilde with a dot to keep the GitHub asset name stable |
+| Cargo, application, release tag, Windows ZIP | `0.2.0` (tag prefixed with `v`) | Semantic version of the application |
+| Debian package metadata | `0.2.0-1` | Stable version; `-1` is the package revision |
+| Debian download filename | `0.2.0-1` | Same version as package metadata for a stable release |
 
-The Debian filename is not the package metadata version. Do not replace the tilde in the package metadata with a dot. These derived forms are intentional, not independent versions to bump.
+For prereleases only, the packaging script converts the SemVer hyphen to a tilde in Debian metadata, then the tilde to a dot in the download filename. Stable versions have no prerelease suffix. GitHub publication uses `--latest` for stable versions and `--prerelease` for versions with a prerelease suffix; all three CI gates still apply.
 
 ## Preparing a release
 

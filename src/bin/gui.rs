@@ -4,6 +4,8 @@
 mod appearance_controls;
 #[path = "gui/browser.rs"]
 mod browser;
+#[path = "gui/ring.rs"]
+mod ring_controls;
 
 use gtk4::{
     glib, prelude::*, Application, ApplicationWindow, Box as GtkBox, Button, CheckButton,
@@ -244,6 +246,8 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     let style_tab = Label::new(None);
     let format_tab = Label::new(None);
     let capture_tab = Label::new(None);
+    let ring_page = GtkBox::new(Orientation::Vertical, 10);
+    let ring_tab = Label::new(None);
     for (page, label) in [
         (&style_page, &style_tab),
         (&format_page, &format_tab),
@@ -262,6 +266,17 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             .hscrollbar_policy(gtk4::PolicyType::Automatic)
             .build();
         tabs.append_page(&scroll, Some(label));
+    }
+    if cfg!(windows) {
+        ring_page.set_margin_top(16);
+        ring_page.set_margin_bottom(16);
+        ring_page.set_margin_start(16);
+        ring_page.set_margin_end(16);
+        let scroll = ScrolledWindow::builder()
+            .child(&ring_page)
+            .hscrollbar_policy(gtk4::PolicyType::Never)
+            .build();
+        tabs.append_page(&scroll, Some(&ring_tab));
     }
     settings_root.append(&tabs);
     let settings_footer = GtkBox::new(Orientation::Horizontal, 8);
@@ -307,6 +322,9 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
             "en"
         },
     ));
+    if cfg!(windows) {
+        ring_controls::build(&ring_page, &ring_tab, state.clone(), language.clone());
+    }
     header.append(&language);
     let gear = Button::from_icon_name("preferences-system-symbolic");
     header.append(&gear);
@@ -678,6 +696,7 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
     window.present();
     if std::env::var("KEYCAST_SMOKE_TEST").as_deref() == Ok("1") {
         let window = window.clone();
+        let tabs = tabs.clone();
         glib::timeout_add_local_once(Duration::from_millis(650), move || {
             if window.height() >= 480 {
                 let adjustment = scroll.vadjustment();
@@ -700,6 +719,9 @@ fn build_ui(app: &Application, state: Arc<Bridge>) {
                 );
             }
             gear_for_smoke.emit_clicked();
+            if cfg!(windows) {
+                tabs.set_current_page(Some(3));
+            }
             assert!(
                 settings_for_smoke.is_visible(),
                 "Settings gear did not open the window"

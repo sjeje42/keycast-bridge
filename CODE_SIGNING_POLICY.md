@@ -34,7 +34,7 @@ Before enabling signing, configure an explicit file allowlist and a verifiable a
 
 ## Privacy
 
-Keycast Bridge does not persist captured keystrokes or mouse events and sends no telemetry. It processes input transiently in memory and serves its overlay and embedded help only on IPv4 loopback, `127.0.0.1`, with a per-launch token. It does not upload captured input to a remote service. Saved appearance preferences contain position, colors and canvas dimensions, not captured input.
+Keycast Bridge does not persist captured keystrokes or mouse events and sends no telemetry. It processes input transiently in memory and serves its overlay and embedded help only on IPv4 loopback, `127.0.0.1`, with a per-launch token. It does not upload captured input to a remote service. Saved appearance preferences contain position, colors, ring effects and canvas dimensions, not captured input.
 
 The user may choose to record or broadcast the overlay with OBS. That output is controlled by OBS and the user's recording/streaming settings, outside Keycast Bridge. The application does not detect password fields or automatically pause on session lock; stop capture before entering secrets. Optional all-keys mode can display ordinary text.
 

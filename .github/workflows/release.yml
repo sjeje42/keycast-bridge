@@ -1,4 +1,4 @@
-name: Publish verified alpha
+name: Publish verified release
 on:
   workflow_run:
     workflows: [Build and test, Debian 13 package, Windows portable]
@@ -7,7 +7,7 @@ permissions:
   contents: write
   actions: read
 concurrency:
-  group: publish-alpha
+  group: publish-keycast
   cancel-in-progress: false
 jobs:
   publish:
@@ -67,5 +67,9 @@ jobs:
           cd dist
           sha256sum *.deb *.zip *.pdf > SHA256SUMS
           cd ..
-          gh release create "$tag" dist/*.deb dist/*.zip dist/*.pdf dist/SHA256SUMS --target "$SHA" --prerelease --title "Keycast Bridge $version — Linux & Windows" --notes-file packaging/RELEASE.md
+          release_flags=(--latest)
+          if [[ "$version" == *-* ]]; then
+            release_flags=(--prerelease)
+          fi
+          gh release create "$tag" dist/*.deb dist/*.zip dist/*.pdf dist/SHA256SUMS --target "$SHA" "${release_flags[@]}" --title "Keycast Bridge $version — Linux & Windows" --notes-file packaging/RELEASE.md
 
