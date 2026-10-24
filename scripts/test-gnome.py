@@ -26,6 +26,9 @@ def wait(predicate, seconds=6):
     raise AssertionError('Timed out waiting for GNOME presentation state')
 def keys(*args): subprocess.run(['xdotool',*args],check=True)
 wait(lambda: call('State') is not None, 40)
+# GNOME may open Overview on a fresh session; Escape returns to the desktop.
+keys('key','Escape')
+time.sleep(0.5)
 keys('mousemove','450','350')
 assert update()=='normal'
 assert state()['enabled'] and not state()['grabbed']

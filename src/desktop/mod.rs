@@ -5,7 +5,7 @@ use std::sync::{
     Arc, Mutex,
 };
 
-#[cfg(windows)]
+#[cfg(any(windows, test))]
 mod drawing;
 #[cfg(target_os = "linux")]
 mod gnome;

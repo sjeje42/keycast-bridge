@@ -12,7 +12,7 @@ For application version `0.2.0`:
 | Debian package metadata | `0.2.0-1` | Stable version; `-1` is the package revision |
 | Debian download filename | `0.2.0-1` | Same version as package metadata for a stable release |
 
-For prereleases only, the packaging script converts the SemVer hyphen to a tilde in Debian metadata, then the tilde to a dot in the download filename. Stable versions have no prerelease suffix. GitHub publication uses `--latest` for stable versions and `--prerelease` for versions with a prerelease suffix; all three CI gates still apply.
+For prereleases only, the packaging script converts the SemVer hyphen to a tilde in Debian metadata, then the tilde to a dot in the download filename. Stable versions have no prerelease suffix. GitHub publication uses `--latest` for stable versions and `--prerelease` for versions with a prerelease suffix; all four CI gates still apply.
 
 ## Preparing a release
 
@@ -31,4 +31,6 @@ GitHub documentation: https://docs.github.com/en/code-security/how-tos/report-an
 
 ## Planned Windows signing
 
-See the [Code signing policy](../CODE_SIGNING_POLICY.md) for the proposed scope and pending preparation. The current workflows do not sign artifacts and still publish unsigned builds after the three CI gates pass. Before offering signed builds, add the signing approval and signature-verification stages before packaging/checksumming/publication. Do not label an unsigned fallback as a signed release. Signing changes file hashes: publish a new version with new checksums instead of overwriting the existing alpha ZIP.
+See the [Code signing policy](../CODE_SIGNING_POLICY.md) for the proposed scope and pending preparation. The current workflows do not sign artifacts and still publish unsigned builds after the four CI gates pass. Before offering signed builds, add the signing approval and signature-verification stages before packaging/checksumming/publication. Do not label an unsigned fallback as a signed release. Signing changes file hashes: publish a new version with new checksums instead of overwriting the existing alpha ZIP.
+
+The GNOME 48 presentation workflow is a required fourth publication gate. It runs the extension in a Debian 13 nested Wayland session and tests modal input, frozen snapshots and client-lifetime cleanup. Desktop effects still require real multi-monitor acceptance on Windows and Debian/GNOME before the stable release is approved.

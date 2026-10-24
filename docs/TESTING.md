@@ -87,3 +87,18 @@ Check initial main-window fit on 1280×720/1366×768 displays and high-DPI scali
 ## Custom click ring (Windows)
 
 In Settings → Click ring, change color, base radius and thickness; try all four neon/pulse combinations. Check the reduced preview and OBS output. Verify a 10px radius caps thickness at 10px; a 200px radius accepts 20px thickness. Change key size and palette: ring dimensions and color must remain independent. Confirm each click fades within 0.5s, a rapid second click restarts the effect, and Stop/disconnect/disable clears it. Change style while capture is active: held modifiers and capture must continue. Restart and confirm all five ring settings persist; test an old preference file without a ring section. Reset ring must preserve other appearance settings. Repeat with portrait/4K canvas, a scaled browser source and multiple monitors. Record actual manual results, not just completion of this checklist.
+
+## Desktop presentation acceptance (0.2.0 candidate)
+
+Automated: `node scripts/test-presentation.mjs` checks bounded scene state and settings. Rust/Cairo tests check transparent circle/square spotlight apertures, all six rendered trail styles and annotation/whiteboard backgrounds. Windows tests create a real layered window, enter each modal tool, send Escape and verify input styles/closure. The GNOME 48 workflow runs a nested Wayland compositor on Debian 13 and exercises drawing, undo, clear, Escape, zoom snapshots, competing clients and heartbeat/connection cleanup.
+
+Before approving the stable release, test on physical Windows 10/11 and Debian 13/GNOME 48:
+
+1. Enable tools; confirm all six trails and ring color/radius/width/neon/pulse, both spotlight shapes and dimming extremes. Move normally and shake; straight fast motion must not trigger the locator.
+2. Move between monitors with different resolutions/scaling, including a secondary monitor left of the primary on Windows. Verify normal clicks reach applications under passive effects.
+3. Use Ctrl+Alt+D/B/Z on each monitor. Draw multiple strokes; verify Ctrl+Z removes one, Backspace clears, Escape restores input and clears temporary content. Zoom with wheel/+/- and pan to all edges. Check the displayed image is explicitly frozen.
+4. Alt-Tab from a Windows modal tool; lock/unlock, unplug a monitor, stop/close/terminate the app, and disable the GNOME extension. No invisible input grab or effect may remain; tools must not reactivate after lock.
+5. Record with OBS Display Capture/PipeWire at 1080p and 4K. Confirm cursor alignment, readable neon/trails and no duplicate OBS click ring. Window Capture is not the desktop-effect path.
+6. Reopen the app: styles restored, tools off, no strokes/snapshot retained. Check CPU/GPU load during a long tutorial and shortcut conflicts with the actual training software.
+
+These new tools are not covered by the earlier alpha field-test report. Record OS/GNOME version, scaling, display topology and OBS capture method with acceptance results.

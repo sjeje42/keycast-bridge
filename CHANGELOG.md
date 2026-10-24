@@ -2,15 +2,15 @@
 
 Notable changes, newest first. Dates refer to GitHub release publication. Versions before 0.2.0 were prereleases. [Current release notes](packaging/RELEASE.md) provide the bilingual installation summary; this file preserves earlier releases.
 
-## Unreleased
-
-No changes yet.
-
-## [0.2.0](https://github.com/sjeje42/keycast-bridge/releases/tag/v0.2.0) — 2026-10-24
+## 0.2.0 — Unreleased (stable candidate)
 
 ### Added
 
-- Windows click-ring settings: dedicated color, base radius (10–200 canvas pixels), thickness (1–20 pixels, capped by radius), neon glow and optional pulse.
+- Explicitly enabled desktop presentation tools on Windows and Debian 13/GNOME 48: six trail styles, shake to locate, circle/square spotlight with radius and dimming controls.
+- Temporary annotation and whiteboard with pen color/width, Ctrl+Z, Backspace and Escape. Frozen in-memory zoom (1.25×–8×), panning and wheel/keyboard zoom controls.
+- Per-monitor effects, native Windows overlay and a bundled GNOME Shell extension with an expiring session-bus owner lease.
+
+- Shared desktop/Windows OBS ring settings: dedicated color, base radius (10–200 canvas pixels), thickness (1–20 pixels, capped by radius), neon glow and optional pulse.
 - A dedicated settings tab with a reduced animated preview and ring-only reset; settings apply live and persist between sessions.
 - Regression checks for older preferences, persistence, live capture state, all effect combinations, canvas scaling and ring lifecycle.
 
@@ -18,7 +18,7 @@ No changes yet.
 
 - First stable release following positive field-testing feedback from trainers reported by the maintainer. Windows executables remain unsigned.
 - Ring size and color are independent of keyboard size and palette; light/dark palettes preserve ring style. Old preferences load with default ring settings.
-- Stable versions publish as GitHub's latest release after Linux, Debian and Windows gates; prerelease versions retain prerelease status.
+- Stable versions publish as GitHub's latest release after Linux, Debian, Windows and GNOME 48 gates; prerelease versions retain prerelease status.
 - Updated English/French online and embedded guides for the new controls. Existing illustrated PDF guides retain their earlier edition.
 
 

@@ -220,10 +220,10 @@ pub fn build(root: &GtkBox, tab: &Label, state: Arc<Bridge>, language: ComboBoxT
             updating.set(false);
             previous = Some(a);
         }
-        tab.set_text(tr(fr, "Anneau au clic", "Click ring"));
+        tab.set_text(tr(fr, "Anneau", "Ring"));
         help.set_text(tr(fr,
-            "Aperçu réduit et répété. Le rayon et l’épaisseur sont exprimés en pixels du canevas OBS, indépendamment de la taille des touches. Le néon ajoute une lueur ; la pulsation agrandit l’anneau (70–140 % du rayon) avant sa disparition après 0,5 s. Activez « Cercle au clic » dans la fenêtre principale.",
-            "Reduced, repeating preview. Radius and thickness use OBS canvas pixels, independently of key size. Neon adds a glow; pulse expands the ring (70–140% of the radius) before it disappears after 0.5 s. Enable “Click ring” in the main window."));
+            "Aperçu de l’anneau au clic. Réglages partagés avec l’anneau du bureau (Présentation). Rayon et épaisseur en pixels, indépendants des touches. Le néon ajoute une lueur ; la pulsation anime l’anneau. Le cercle OBS se règle dans la fenêtre principale.",
+            "Click ring preview. Settings are shared with the desktop ring (Presentation). Radius and thickness use pixels, independently of key size. Neon adds a glow; pulse animates the ring. Enable the OBS click ring in the main window."));
         color_label.set_text(tr(fr, "Couleur", "Color"));
         color.set_title(tr(fr, "Couleur de l’anneau", "Ring color"));
         color.set_tooltip_text(Some(tr(fr, "Couleur de l’anneau", "Ring color")));

@@ -203,3 +203,87 @@ pub(super) fn draw(
         });
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::presentation::Point;
+    use gtk4::cairo::{Format, ImageSurface};
+    fn render(scene: &Scene, a: &Appearance, mode: Mode) -> Vec<u8> {
+        let mut image = ImageSurface::create(Format::ARgb32, 256, 256).unwrap();
+        let c = Context::new(&image).unwrap();
+        draw(&c, (256.0, 256.0), scene, a, mode, 1.0);
+        drop(c);
+        image.flush();
+        let result = image.data().unwrap().to_vec();
+        result
+    }
+    fn alpha(pixels: &[u8], x: usize, y: usize) -> u8 {
+        pixels[(y * 256 + x) * 4 + 3]
+    }
+    #[test]
+    fn spotlight_leaves_correct_transparent_aperture() {
+        let mut a = Appearance::default();
+        a.presentation.ring = false;
+        a.presentation.spotlight = true;
+        a.presentation.spotlight_radius = 50;
+        let mut scene = Scene::default();
+        scene.pointer = Point { x: 128.0, y: 128.0 };
+        let circle = render(&scene, &a, Mode::Normal);
+        assert_eq!(alpha(&circle, 128, 128), 0);
+        assert!(alpha(&circle, 10, 10) > 150);
+        assert!(alpha(&circle, 170, 170) > 150);
+        a.presentation.spotlight_shape = SpotlightShape::Square;
+        let square = render(&scene, &a, Mode::Normal);
+        assert_eq!(alpha(&square, 170, 170), 0);
+    }
+    #[test]
+    fn all_trails_render_and_expire_without_opaque_background() {
+        let mut a = Appearance::default();
+        a.presentation.ring = false;
+        a.presentation.trail = true;
+        let mut scene = Scene::default();
+        for i in 0..20 {
+            scene.move_to(
+                Point {
+                    x: 40.0 + f64::from(i) * 7.0,
+                    y: 128.0,
+                },
+                0.7 + f64::from(i) * 0.01,
+                false,
+            );
+        }
+        for style in [
+            TrailStyle::Solid,
+            TrailStyle::Dash,
+            TrailStyle::Dot,
+            TrailStyle::Glow,
+            TrailStyle::Particle,
+            TrailStyle::Star,
+        ] {
+            a.presentation.trail_style = style;
+            let pixels = render(&scene, &a, Mode::Normal);
+            assert!(pixels.chunks_exact(4).any(|p| p[3] > 0), "{style:?}");
+            assert_eq!(alpha(&pixels, 0, 0), 0);
+        }
+        scene.expire(2.0);
+        let pixels = render(&scene, &a, Mode::Normal);
+        assert!(pixels.iter().all(|b| *b == 0));
+    }
+    #[test]
+    fn annotation_and_whiteboard_have_distinct_backgrounds() {
+        let a = Appearance::default();
+        let mut scene = Scene::default();
+        scene.move_to(Point { x: 100.0, y: 100.0 }, 0.8, false);
+        scene.begin_stroke(&a.presentation);
+        scene.move_to(Point { x: 150.0, y: 100.0 }, 0.9, false);
+        let annotation = render(&scene, &a, Mode::Annotate);
+        assert_eq!(alpha(&annotation, 200, 200), 0);
+        assert_eq!(alpha(&annotation, 125, 100), 255);
+        let board = render(&scene, &a, Mode::Whiteboard);
+        assert_eq!(
+            &board[(200 * 256 + 200) * 4..(200 * 256 + 200) * 4 + 4],
+            &[255, 255, 255, 255]
+        );
+    }
+}

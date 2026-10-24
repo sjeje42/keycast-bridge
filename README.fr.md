@@ -219,7 +219,7 @@ Position, couleurs et format sont enregistrés dans `%APPDATA%\keycast-bridge\ap
 
 ### Paramètres et format OBS
 
-La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille**, **Capture** et, sous Windows, **Anneau au clic**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; les versions HTML/Markdown restent incluses dans les paquets. Sous Windows, le guide et l’aperçu utilisent le navigateur par défaut ; en cas d’échec, une boîte de dialogue propose **Copier le lien**. Garder Keycast Bridge ouvert pour consulter cette aide locale. Les PDF illustrés sont également téléchargeables séparément dans les Releases et dans `docs/pdf/` ; le ZIP Windows et le paquet Debian les incluent à côté des guides HTML.
+La roue crantée en haut à droite ouvre **Position et couleurs**, **Format et taille**, **Capture** **Anneau** et **Présentation**. La fenêtre principale garde les commandes d’enregistrement ; les réglages sont dans une fenêtre séparée. Choisissez des dimensions standard ou personnalisées (160–7680 px par côté), puis reportez les mêmes valeurs dans les propriétés de la source Navigateur OBS. Le rendu s’ajuste sans déformation à une fenêtre de navigateur différente, avec des marges transparentes. Le format est mémorisé avec la position et les couleurs. **Guide complet** ouvre l’aide intégrée hors ligne ; les versions HTML/Markdown restent incluses dans les paquets. Sous Windows, le guide et l’aperçu utilisent le navigateur par défaut ; en cas d’échec, une boîte de dialogue propose **Copier le lien**. Garder Keycast Bridge ouvert pour consulter cette aide locale. Les PDF illustrés sont également téléchargeables séparément dans les Releases et dans `docs/pdf/` ; le ZIP Windows et le paquet Debian les incluent à côté des guides HTML.
 
 ## Confidentialité et limites
 
@@ -263,3 +263,7 @@ Le frontend doit être compilé avant Rust : ses fichiers sont intégrés aux ex
 Copyright © 2026 Jérôme Stavrianos. Projet sous **GPL-3.0-only** : voir [LICENSE](LICENSE).
 
 Keycast Bridge est une nouvelle implémentation inspirée du besoin couvert par Screenkey. Aucun code ni élément graphique de Screenkey n’est inclus. Les dépendances conservent leurs licences respectives.
+
+## Outils de présentation sur le bureau
+
+Windows et Debian 13/GNOME 48 : anneau personnalisable, six traînées, localisation en secouant la souris, spotlight, annotation, tableau blanc et zoom figé. Activez-les dans **Paramètres → Présentation** ; GNOME nécessite l’extension fournie. Utilisez la capture d’écran OBS pour inclure ces effets. [Installation, raccourcis et limites](docs/PRESENTATION.fr.md).

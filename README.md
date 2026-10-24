@@ -221,7 +221,7 @@ Position, colors and canvas dimensions persist in `%APPDATA%\keycast-bridge\appe
 
 ### Settings and OBS canvas
 
-Open the top-right gear for **Position and colors**, **Canvas and size**, **Capture**, and (on Windows) **Click ring**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; the Windows ZIP and Debian package include them alongside the HTML guides.
+Open the top-right gear for **Position and colors**, **Canvas and size**, **Capture**, **Ring**, and **Presentation**. The main window keeps recording controls visible; settings use a separate window. Choose standard or custom canvas dimensions (160–7680 px per side) and enter the same values in OBS Browser Source properties. A different browser viewport is fitted uniformly with transparent margins. Canvas dimensions join position/colors in saved preferences. **Complete guide** opens the embedded offline help; HTML/Markdown copies remain included in packages. On Windows, help and preview use the default browser; if opening fails, a dialog offers **Copy link**. Keep Keycast Bridge open while reading its local help page. The illustrated PDFs are also available separately in the release downloads and in `docs/pdf/`; the Windows ZIP and Debian package include them alongside the HTML guides.
 
 ## Development and demo
 
@@ -249,3 +249,7 @@ The generated web assets are embedded into Rust binaries; build the web frontend
 ## License and acknowledgments
 
 Copyright © 2026 Jérôme Stavrianos. Licensed under **GPL-3.0-only**, see [LICENSE](LICENSE). No Screenkey source code or assets are included. Screenkey inspired the use case. Dependencies retain their own licenses.
+
+## Desktop presentation tools
+
+Windows and Debian 13/GNOME 48: customizable pointer ring, six trail styles, shake to locate, spotlight, annotation, whiteboard and frozen zoom. Enable them explicitly in **Settings → Presentation**; GNOME requires the included extension. Use OBS Display Capture to include these effects. [Setup, shortcuts and limitations](docs/PRESENTATION.en.md).

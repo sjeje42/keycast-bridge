@@ -45,3 +45,7 @@ Check the intended OBS scene before a live broadcast and stop capture before ent
 ## Release gate
 
 All three automated pipelines must succeed for the same commit before a new binary release. Keep successful CI run links and record manual tests using the fields in [TESTING.md](TESTING.md). Existing releases retain their original binaries and validation history.
+
+## Desktop tools — stable candidate
+
+The 0.2.0 presentation tools are new work, separate from the positive field-testing report for earlier builds. Native Windows and GNOME 48 integration tests, bounded scene tests and Cairo pixel checks are included. Physical multi-monitor/DPI and OBS acceptance for the new tools remains to be recorded using `TESTING.md`. The stable release must not be approved solely on the older alpha feedback.

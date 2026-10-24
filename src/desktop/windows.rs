@@ -119,6 +119,7 @@ impl Buffer {
             monitor.top,
             SRCCOPY | CAPTUREBLT,
         );
+        GdiFlush();
         ReleaseDC(null_mut(), screen);
         anyhow::ensure!(copied != 0, "Desktop snapshot failed");
         let length = self.width as usize * self.height as usize * 4;
@@ -568,5 +569,66 @@ pub(super) fn run(controller: &Arc<Controller>) {
         WTSUnRegisterSessionNotification(hwnd);
         DestroyWindow(hwnd);
         UnregisterClassW(class.as_ptr(), instance);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::server::Bridge;
+    struct Cleanup(Arc<Controller>);
+    impl Drop for Cleanup {
+        fn drop(&mut self) {
+            self.0.shutdown();
+        }
+    }
+    fn await_status(c: &Controller, expected: &str) {
+        let deadline = Instant::now() + Duration::from_secs(4);
+        while Instant::now() < deadline {
+            if c.status() == expected {
+                return;
+            }
+            std::thread::sleep(Duration::from_millis(40));
+        }
+        panic!("Expected desktop mode {expected}, got {}", c.status());
+    }
+    #[test]
+    fn native_overlay_modes_release_input_and_close() {
+        let c = Controller::new(Bridge::new());
+        let _cleanup = Cleanup(c.clone());
+        assert!(!c.enabled());
+        c.enable(true);
+        await_status(&c, "Normal");
+        unsafe {
+            let name: Vec<u16> = "KeycastBridgePresentation\0".encode_utf16().collect();
+            let hwnd = FindWindowW(name.as_ptr(), null());
+            assert!(!hwnd.is_null());
+            assert_ne!(
+                GetWindowLongPtrW(hwnd, GWL_EXSTYLE) as u32 & WS_EX_TRANSPARENT,
+                0
+            );
+            for mode in [Mode::Whiteboard, Mode::Annotate, Mode::Zoom] {
+                c.mode(mode);
+                await_status(&c, &format!("{mode:?}"));
+                assert_eq!(
+                    GetWindowLongPtrW(hwnd, GWL_EXSTYLE) as u32 & WS_EX_TRANSPARENT,
+                    0
+                );
+                assert_ne!(IsWindowVisible(hwnd), 0);
+                PostMessageW(hwnd, WM_KEYDOWN, VK_ESCAPE as usize, 0);
+                await_status(&c, "Normal");
+                assert_ne!(
+                    GetWindowLongPtrW(hwnd, GWL_EXSTYLE) as u32 & WS_EX_TRANSPARENT,
+                    0
+                );
+            }
+            c.enable(false);
+            let deadline = Instant::now() + Duration::from_secs(2);
+            while IsWindowVisible(hwnd) != 0 && Instant::now() < deadline {
+                std::thread::sleep(Duration::from_millis(30));
+            }
+            assert_eq!(IsWindowVisible(hwnd), 0);
+        }
+        c.shutdown();
     }
 }

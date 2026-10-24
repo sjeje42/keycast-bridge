@@ -238,4 +238,59 @@ th,td { text-align:left; vertical-align:top; border:1px solid #cbd5e1; padding:1
 </table>
 <p>Pour un signalement utile, précisez la version de l’application, le système, le bureau et sa mise à l’échelle, le format choisi, les dimensions de la source OBS et les étapes de reproduction. Les captures d’écran sont utiles ; masquez l’URL de session et toute information privée affichée.</p>
 <h3 id="le-guide-ou-lapercu-ne-souvre-pas">Le guide ou l’aperçu ne s’ouvre pas</h3>
-<p>Sous Windows, le bouton utilise le navigateur par défaut du système. Si Windows refuse l’ouverture, une boîte de dialogue propose <strong>Copier le lien</strong> : collez-le dans votre navigateur et gardez Keycast Bridge ouvert. Vérifiez le navigateur par défaut dans les paramètres Windows. Le guide est aussi disponible hors ligne dans <code>guide/fr.html</code> à côté de l’exécutable.</p></main></body></html>
+<p>Sous Windows, le bouton utilise le navigateur par défaut du système. Si Windows refuse l’ouverture, une boîte de dialogue propose <strong>Copier le lien</strong> : collez-le dans votre navigateur et gardez Keycast Bridge ouvert. Vérifiez le navigateur par défaut dans les paramètres Windows. Le guide est aussi disponible hors ligne dans <code>guide/fr.html</code> à côté de l’exécutable.</p>
+<h2 id="outils-de-presentation-sur-le-bureau">Outils de présentation sur le bureau</h2>
+<p>Ouvrez <strong>Paramètres → Présentation</strong>, puis activez les <strong>outils sur le bureau</strong>. Ils restent <strong>arrêtés à chaque lancement</strong> de Keycast Bridge. Ils fonctionnent indépendamment de la capture du clavier. Le bouton <strong>Arrêter</strong> de la fenêtre principale arrête aussi les outils du bureau.</p>
+<p>Sous Windows 10/11, aucune installation supplémentaire n’est nécessaire. Sous Debian 13 avec GNOME 48/Wayland, activez l’extension GNOME <strong>Keycast Bridge presentation tools</strong> fournie. Après installation du paquet Debian, fermez puis rouvrez votre session, puis exécutez :</p>
+<pre><code class="language-sh">gnome-extensions enable keycast-bridge@jeromelab.fr
+</code></pre>
+<p>Pour une installation depuis les sources, lancez <code>./scripts/install-gnome-extension.sh</code> avec votre utilisateur habituel, puis fermez/rouvrez la session et activez l’extension. Les autres compositeurs et versions de GNOME ne sont pas encore pris en charge pour ces outils du bureau ; l’incrustation du clavier reste indépendante. Désactiver ou désinstaller l’extension supprime immédiatement ses effets.</p>
+<h3 id="effets-du-pointeur">Effets du pointeur</h3>
+<ul>
+<li><strong>Anneau :</strong> choisissez la couleur, le rayon (10–200 px), l’épaisseur (1–20 px), le néon et la pulsation dans <strong>Paramètres → Anneau</strong>. Activez l’anneau continu dans <strong>Présentation</strong>. Un anneau bref marque aussi les clics. Les mêmes réglages d’apparence s’appliquent à l’anneau optionnel de la source OBS.</li>
+<li><strong>Traînée :</strong> six styles sont proposés : Plein, Tiret, Point, Lueur, Particule et Étoile. La couleur et l’épaisseur suivent celles de l’anneau ; les points disparaissent en 0,65 seconde.</li>
+<li><strong>Secouer pour localiser :</strong> faites rapidement plusieurs allers-retours avec la souris. Un grand anneau apparaît brièvement. Un déplacement rapide en ligne droite ne le déclenche pas.</li>
+<li><strong>Spotlight :</strong> assombrissez l’écran courant autour d’une zone éclairée en <strong>cercle ou carré</strong>. Réglez le rayon (40–600 px ; demi-côté pour le carré) et l’assombrissement (0–90 %).</li>
+</ul>
+<p>Ces effets suivent le pointeur d’un écran à l’autre et laissent les applications utilisables normalement. Windows utilise les pixels physiques ; GNOME utilise les pixels logiques du bureau. La mise à l’échelle peut donc modifier la taille physique apparente.</p>
+<h3 id="dessin-et-tableau-blanc">Dessin et tableau blanc</h3>
+<p>Placez le pointeur sur l’écran souhaité, puis pressez <strong>Ctrl+Alt+D</strong> pour annoter ou <strong>Ctrl+Alt+B</strong> pour afficher un fond blanc. Les boutons des paramètres ouvrent ces modes sur l’écran situé sous le pointeur. Choisissez la couleur et l’épaisseur du trait (1–40 px) dans Présentation.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Commande</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dessiner</td>
+<td>Maintenir le bouton gauche et déplacer la souris</td>
+</tr>
+<tr>
+<td>Annuler le dernier trait</td>
+<td>Ctrl+Z</td>
+</tr>
+<tr>
+<td>Tout effacer</td>
+<td>Retour arrière</td>
+</tr>
+<tr>
+<td>Quitter le mode et effacer les dessins</td>
+<td>Échap</td>
+</tr>
+<tr>
+<td>Arrêter tous les outils du bureau</td>
+<td>Ctrl+Alt+F12</td>
+</tr>
+</tbody>
+</table>
+<p>Ces modes utilisent la souris et le clavier tant qu’ils sont actifs. L’application située dessous ne reçoit pas les clics de dessin. L’écran ciblé reste fixe jusqu’à la sortie du mode. Les dessins sont temporaires : aucun export ni enregistrement automatique. La mémoire est limitée à 128 traits avec un nombre de points borné ; les traits très longs sont simplifiés.</p>
+<h3 id="zoom-fige">Zoom figé</h3>
+<p>Placez le pointeur sur l’écran souhaité et pressez <strong>Ctrl+Alt+Z</strong>, ou cliquez sur <strong>Zoom</strong>. Keycast Bridge prend une image de cet écran en mémoire et l’agrandit. <strong>L’image est figée : ce n’est pas une loupe en direct.</strong> Les animations et changements de l’application n’apparaissent qu’après avoir quitté puis relancé le zoom.</p>
+<p>Déplacez le pointeur pour naviguer ; utilisez la molette ou <strong>+ / −</strong> pour modifier le grossissement (1,25×–8×). Le facteur initial est réglable. <strong>Échap</strong> revient au bureau et supprime l’image de la mémoire de l’application. Le dessin utilise les modes séparés annotation et tableau blanc.</p>
+<h3 id="obs-raccourcis-et-changements-de-session">OBS, raccourcis et changements de session</h3>
+<p>Utilisez la <strong>capture d’écran</strong> OBS sous Windows ou la <strong>capture d’écran / PipeWire</strong> sous GNOME pour inclure ces effets. La capture d’une fenêtre et la seule source Navigateur du clavier ne les incluent pas. Lorsque vous capturez l’anneau du bureau, désactivez le <strong>Cercle au clic</strong> de la source Navigateur OBS pour éviter deux anneaux superposés.</p>
+<p>Les raccourcis du bureau sont enregistrés uniquement lorsque les outils sont actifs. Si Windows signale un conflit, fermez ou reconfigurez l’utilitaire qui utilise déjà ces touches avant de réactiver les outils. Sous GNOME, les raccourcis peuvent être modifiés via le schéma GSettings de l’extension. Des touches réservées par le compositeur ou une autre application peuvent entrer en conflit.</p>
+<p>La fermeture de l’application, l’arrêt des outils, le verrouillage de la session ou un changement de disposition des écrans suppriment les effets. GNOME les arrête aussi à l’ouverture de la Vue d’ensemble. Il faut ensuite les réactiver explicitement. Si l’application de contrôle disparaît, l’extension GNOME s’arrête en deux secondes maximum ; sous Windows, la perte du focus quitte le mode dessin/zoom. Quand les outils de présentation sont désactivés, la capture du clavier conserve ses limites de sécurité habituelles : arrêtez-la avant de saisir des secrets.</p>
+<p>Les effets ciblent les sessions de bureau ordinaires ; les contenus protégés, bureaux sécurisés et applications en plein écran exclusif peuvent ne pas apparaître ou accepter les surimpressions. Aucun historique du pointeur, dessin ou cliché du zoom n’est enregistré sur disque ou transmis au serveur OBS. Seuls les réglages d’apparence sont mémorisés.</p></main></body></html>
